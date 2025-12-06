@@ -1,1 +1,65 @@
-/* You can add global styles to this file, and also import other style files */
+/* src/styles.css */
+:root {
+  /* PALETA "AEROSPACE MATTE" */
+  --bg-deep: #0a0a0a;
+  /* Obsidiana */
+  --bg-panel: #141414;
+  /* Gris Pizarra Oscuro */
+  --text-main: #e0e0e0;
+  /* Blanco Mate */
+  --text-dim: #6b7280;
+  /* Gris Texto Secundario */
+
+  /* ACENTOS TÉCNICOS */
+  --accent-primary: #ffffff;
+  /* Blanco Puro para datos críticos */
+  --accent-error: #ff3333;
+  /* Rojo Alerta */
+  --accent-success: #00ff41;
+  /* Verde Terminal (sutil) */
+
+  /* TIPOGRAFÍA */
+  --font-mono: 'Courier New', Courier, monospace;
+  /* Estilo Terminal */
+
+  /* BORDES Y EFECTOS */
+  --border-thin: 1px solid rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(20, 20, 20, 0.8);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  overflow: hidden;
+  /* Control total del scroll por fases */
+  height: 100vh;
+  width: 100vw;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Utilidades Simples */
+.hidden {
+  display: none !important;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.full-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

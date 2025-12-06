@@ -1,0 +1,60 @@
+.boot-container {
+    width: 100%;
+    height: 100vh;
+    background-color: var(--bg-deep);
+    z-index: 1000;
+}
+
+.terminal-window {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.header-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-dim);
+    border-bottom: var(--border-thin);
+    padding-bottom: 5px;
+}
+
+.progress-wrapper {
+    width: 100%;
+    height: 4px;
+    background-color: var(--bg-panel);
+    border: var(--border-thin);
+    position: relative;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--accent-primary);
+    transition: width 0.1s linear;
+}
+
+.console-output {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-main);
+}
+
+/* Efecto de parpadeo del cursor */
+.cursor {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}

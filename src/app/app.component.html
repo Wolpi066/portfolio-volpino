@@ -1,0 +1,19 @@
+<main>
+    @if (narrative.currentPhase() === 'BOOT') {
+    <app-boot-sequence></app-boot-sequence>
+    }
+
+    @else if (narrative.currentPhase() === 'INTERFACE') {
+    <app-main-interface></app-main-interface>
+    }
+
+    @else if (narrative.currentPhase() === 'TRAP') {
+    <app-main-interface></app-main-interface>
+
+    <div style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:5000; 
+                display:flex; align-items:center; justify-content:center; 
+                background:rgba(0,0,0,0.8); color:red; font-family: 'Courier New';">
+        <h1>[FASE 3: SYSTEM_RESET TRIGGERED]</h1>
+    </div>
+    }
+</main>

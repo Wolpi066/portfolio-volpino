@@ -1,0 +1,59 @@
+<div class="interface-container">
+
+    <div class="grid-overlay"></div>
+
+    <header class="hud-header">
+        <div class="data-block"><span class="label">OP:</span> {{ data.profile.name }}</div>
+        <div class="data-block"><span class="label">IP:</span> {{ data.profile.ip }}</div>
+        <div class="data-block"><span class="label">UPTIME:</span> {{ uptime }}</div>
+        <div class="data-block status-ok"><span class="label">NET:</span> ONLINE</div>
+    </header>
+
+    <main class="blueprints-wrapper">
+
+        <section class="panel skills-panel">
+            <h3 class="panel-title">// TECH_STACK_MODULE</h3>
+            <div class="skill-list">
+                @for (skill of data.skills; track skill.name) {
+                <div class="skill-row">
+                    <div class="skill-info">
+                        <span class="skill-name">{{ skill.name }}</span>
+                        <span class="skill-cat">[{{ skill.category }}]</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" [style.width.%]="skill.level"></div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <section class="panel projects-panel">
+            <h3 class="panel-title">// DEPLOYED_UNITS</h3>
+            <div class="projects-grid">
+                @for (proj of data.projects; track proj.id) {
+                <div class="project-card">
+                    <div class="card-header">
+                        <span class="id-tag">ID: {{ proj.id }}</span>
+                        <span class="status-tag" [class.prototype]="proj.status === 'PROTOTYPE'">{{ proj.status
+                            }}</span>
+                    </div>
+                    <h4 class="proj-name">{{ proj.name }}</h4>
+                    <p class="proj-type">{{ proj.type }}</p>
+                </div>
+                }
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="hud-footer">
+        <div class="footer-line">
+            <span>SYS_VER: {{ data.profile.version }}</span>
+
+            <button class="reset-btn" (click)="triggerSystemReset()">
+                [ SYSTEM_RESET(); ]
+            </button>
+        </div>
+    </footer>
+</div>

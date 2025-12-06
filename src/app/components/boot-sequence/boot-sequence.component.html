@@ -1,0 +1,17 @@
+<div class="boot-container flex-center">
+    <div class="terminal-window">
+        <div class="header-line">
+            <span class="system-name">VOLPINO_OS v1.0</span>
+            <span class="status">BOOTING...</span>
+        </div>
+
+        <div class="progress-wrapper">
+            <div class="progress-bar" [style.width.%]="progress"></div>
+        </div>
+
+        <div class="console-output">
+            <p>> {{ currentLog }}<span class="cursor">_</span></p>
+            <p class="percentage">{{ progress }}%</p>
+        </div>
+    </div>
+</div>
