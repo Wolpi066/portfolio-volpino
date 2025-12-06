@@ -1,0 +1,92 @@
+.trap-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Fondo semioscuro */
+    backdrop-filter: blur(4px);
+    /* Desenfoque de la interfaz de fondo */
+    z-index: 5000;
+}
+
+.glass-modal {
+    width: 90%;
+    max-width: 400px;
+    background: rgba(20, 20, 20, 0.85);
+    border: 1px solid var(--accent-error);
+    box-shadow: 0 0 30px rgba(255, 51, 51, 0.2);
+    padding: 2px;
+    /* Espacio para el borde interior */
+    animation: modal-entry 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.modal-header {
+    background: rgba(255, 51, 51, 0.1);
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 51, 51, 0.3);
+}
+
+.warning-title {
+    color: var(--accent-error);
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 12px;
+}
+
+.modal-body {
+    padding: 30px 20px;
+    text-align: center;
+}
+
+h2.glitch-text {
+    font-size: 20px;
+    color: white;
+    margin-bottom: 10px;
+    text-shadow: 2px 0 var(--accent-error);
+}
+
+.warning-desc {
+    color: var(--text-dim);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    padding: 0 20px 20px 20px;
+}
+
+.danger-btn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--accent-error);
+    color: var(--accent-error);
+    padding: 12px;
+    font-family: var(--font-mono);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.danger-btn:hover {
+    background: var(--accent-error);
+    color: black;
+}
+
+@keyframes modal-entry {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

@@ -6,8 +6,10 @@ export type PortfolioPhase = 'BOOT' | 'INTERFACE' | 'TRAP' | 'DESTRUCTION' | 'RE
     providedIn: 'root'
 })
 export class NarrativeService {
-    // Usamos Signals para reactividad instantánea
     currentPhase = signal<PortfolioPhase>('BOOT');
+
+    // Agregamos esto para guardar la captura de pantalla
+    capturedScreen = signal<string | null>(null);
 
     constructor() { }
 

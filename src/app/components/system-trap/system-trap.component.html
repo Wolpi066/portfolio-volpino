@@ -1,0 +1,21 @@
+<div class="trap-overlay flex-center" [class.hidden]="isHidden">
+    <div class="glass-modal">
+        <div class="modal-header">
+            <span class="warning-icon">⚠️</span>
+            <span class="warning-title">CRITICAL_SYSTEM_ALERT</span>
+        </div>
+
+        <div class="modal-body">
+            <h2 class="glitch-text">WIPE SYSTEM DATA?</h2>
+            <p class="warning-desc">
+                Action is irreversible. All cached data will be lost.
+                <br>Proceed with kernel panic?
+            </p>
+        </div>
+
+        <div class="modal-actions">
+            <button class="danger-btn" (click)="confirmWipe()">YES</button>
+            <button class="danger-btn" (click)="confirmWipe()">YES</button>
+        </div>
+    </div>
+</div>

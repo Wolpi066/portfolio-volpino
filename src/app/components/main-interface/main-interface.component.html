@@ -1,59 +1,126 @@
-<div class="interface-container">
-
+<div class="main-scroll-container">
     <div class="grid-overlay"></div>
-
     <header class="hud-header">
-        <div class="data-block"><span class="label">OP:</span> {{ data.profile.name }}</div>
-        <div class="data-block"><span class="label">IP:</span> {{ data.profile.ip }}</div>
-        <div class="data-block"><span class="label">UPTIME:</span> {{ uptime }}</div>
-        <div class="data-block status-ok"><span class="label">NET:</span> ONLINE</div>
+        <div class="header-left">
+            <span class="status-dot"></span>
+            <span class="sys-text">SYSTEM: ONLINE</span>
+        </div>
+        <div class="header-right">
+            <span class="sys-text">UPTIME: {{ uptime }}</span>
+            <span class="sys-text">VER: 2.5.0</span>
+        </div>
     </header>
 
-    <main class="blueprints-wrapper">
-
-        <section class="panel skills-panel">
-            <h3 class="panel-title">// TECH_STACK_MODULE</h3>
-            <div class="skill-list">
-                @for (skill of data.skills; track skill.name) {
-                <div class="skill-row">
-                    <div class="skill-info">
-                        <span class="skill-name">{{ skill.name }}</span>
-                        <span class="skill-cat">[{{ skill.category }}]</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" [style.width.%]="skill.level"></div>
+    <section class="scroll-section hero-section">
+        <div class="content-wrapper">
+            <div class="profile-layout" #observeItem>
+                <div class="photo-container">
+                    <div class="photo-frame">
+                        <img [src]="data.profile.photo" alt="Profile" class="profile-img"
+                            [class.glitching]="isImageGlitching" onerror="this.src='assets/placeholder.png'">
+                        <div class="corner c-tl"></div>
+                        <div class="corner c-tr"></div>
+                        <div class="corner c-bl"></div>
+                        <div class="corner c-br"></div>
+                        <div class="scan-bar"></div>
                     </div>
                 </div>
-                }
-            </div>
-        </section>
-
-        <section class="panel projects-panel">
-            <h3 class="panel-title">// DEPLOYED_UNITS</h3>
-            <div class="projects-grid">
-                @for (proj of data.projects; track proj.id) {
-                <div class="project-card">
-                    <div class="card-header">
-                        <span class="id-tag">ID: {{ proj.id }}</span>
-                        <span class="status-tag" [class.prototype]="proj.status === 'PROTOTYPE'">{{ proj.status
-                            }}</span>
+                <div class="info-container">
+                    <h4 class="pre-title">// OPERATOR_PROFILE</h4>
+                    <h1 class="glitch-name" [attr.data-text]="data.profile.name">{{ data.profile.name }}</h1>
+                    <h2 class="job-title">{{ data.profile.title }}</h2>
+                    <div class="data-grid">
+                        <div class="data-item"><span class="label">AGE:</span> <span class="val">{{ data.profile.age }}
+                                YEARS</span></div>
+                        <div class="data-item"><span class="label">LOC:</span> <span class="val">{{
+                                data.profile.location }}</span></div>
+                        <div class="data-item full-width"><span class="label">EMAIL:</span> <span class="val">{{
+                                data.profile.email }}</span></div>
+                        <div class="data-item full-width"><span class="label">PHONE:</span> <span class="val">{{
+                                data.profile.phone }}</span></div>
                     </div>
-                    <h4 class="proj-name">{{ proj.name }}</h4>
-                    <p class="proj-type">{{ proj.type }}</p>
+                    <p class="bio-text">{{ data.profile.bio }}</p>
+                    <div class="social-links">
+                        <a [href]="'https://' + data.profile.github" target="_blank" class="tech-btn">GITHUB_ACCESS
+                            []</a>
+                    </div>
                 </div>
-                }
             </div>
-        </section>
-
-    </main>
-
-    <footer class="hud-footer">
-        <div class="footer-line">
-            <span>SYS_VER: {{ data.profile.version }}</span>
-
-            <button class="reset-btn" (click)="triggerSystemReset()">
-                [ SYSTEM_RESET(); ]
-            </button>
         </div>
-    </footer>
+        <div class="scroll-indicator">SCROLL_DOWN [v]</div>
+    </section>
+
+    <section class="scroll-section skills-section">
+        <div class="content-wrapper full-width-wrapper">
+            <h2 class="section-title" #observeItem>// SYSTEM_CAPABILITIES_MATRIX</h2>
+            <div class="skills-dashboard" #observeItem>
+                @for (group of skillsByCategory; track group.name) {
+                <div class="skill-category-panel">
+                    <h3 class="category-title">:: {{ group.name }} ::</h3>
+                    <div class="category-grid">
+                        @for (skill of group.items; track skill.name) {
+                        <div class="tech-bar-container">
+                            <div class="bar-header">
+                                <span class="skill-name">{{ skill.name }}</span>
+                                <span class="skill-pct">{{ skill.level }}%</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" [style.--w]="skill.level + '%'">
+                                    <div class="fill-glow"></div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="scroll-section edu-section">
+        <div class="content-wrapper">
+            <h2 class="section-title" #observeItem>// EDUCATION_LOGS</h2>
+            <div class="timeline-container">
+                @for (study of data.studies; track study.title; let i = $index) {
+                <div class="study-card" [class.expanded]="expandedStudyIndex === i" (click)="toggleStudy(i)"
+                    #observeItem [style.transition-delay]="i * 100 + 'ms'">
+                    <div class="study-header">
+                        <div class="header-left">
+                            <span class="status-indicator" [class.active]="study.status === 'IN_PROGRESS'"
+                                [class.abandoned]="study.status === 'ABANDONED'"></span>
+                            <h3 class="study-title">{{ study.title }}</h3>
+                        </div>
+                        <div class="header-right">
+                            <span class="institution">{{ study.institution }}</span>
+                            <span class="period">[{{ study.period }}]</span>
+                            <span class="arrow-icon">{{ expandedStudyIndex === i ? '▲' : '▼' }}</span>
+                        </div>
+                    </div>
+                    <div class="study-details">
+                        <div class="tags-container">
+                            <span class="tag-label">MODULES_LOADED:</span>
+                            @for (tag of study.tags; track tag) {
+                            <span class="tech-tag">{{ tag }}</span>
+                            }
+                        </div>
+                        @if (study.certificate) {
+                        <div class="cert-container">
+                            <a [href]="study.certificate" target="_blank" class="cert-link"
+                                (click)="$event.stopPropagation()">
+                                VIEW_CERTIFICATE_SOURCE >>
+                            </a>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+            <footer class="section-footer">
+                <button type="button" class="reset-btn" (click)="triggerSystemReset()">
+                    [ SYSTEM_RESET(); ]
+                </button>
+            </footer>
+        </div>
+    </section>
 </div>
