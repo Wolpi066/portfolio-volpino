@@ -65,7 +65,7 @@ Es súper fácil. Si tenés Node.js y Angular CLI instalados:
 
 Me encanta resolver problemas complejos y crear interfaces que impacten. Si te gustó el proyecto o querés charlar sobre código, ¡contactame!
 
-[LinkedIn](https://www.linkedin.com/) | [GitHub](https://github.com/Wolpi066) | 📧 volpinoemiliano@gmail.com
+[LinkedIn](www.linkedin.com/in/emiliano-volpino-626647268) | [GitHub](https://github.com/Wolpi066) | 📧 volpinoemiliano@gmail.com
 
 ---
 
