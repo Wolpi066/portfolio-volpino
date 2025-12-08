@@ -8,7 +8,6 @@ export type PortfolioPhase = 'BOOT' | 'INTERFACE' | 'TRAP' | 'DESTRUCTION' | 'RE
 export class NarrativeService {
     currentPhase = signal<PortfolioPhase>('BOOT');
 
-    // Agregamos esto para guardar la captura de pantalla
     capturedScreen = signal<string | null>(null);
 
     constructor() { }

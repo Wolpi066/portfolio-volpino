@@ -12,26 +12,18 @@
     color: #e0e0e0;
     font-family: 'Courier New', monospace;
     overflow-y: scroll;
-
-    /* CLAVE: Scroll magnético obligatorio */
     scroll-snap-type: y mandatory;
     scroll-behavior: smooth;
-
     position: relative;
-
-    /* OCULTAR BARRA DE SCROLL */
     scrollbar-width: none;
-    /* Firefox */
     -ms-overflow-style: none;
-    /* IE 10+ */
 }
 
-/* Ocultar barra en Chrome/Safari/Edge */
 .main-scroll-container::-webkit-scrollbar {
     display: none;
 }
 
-/* Fondo Fijo (No scrollea) */
+/* Fondo Fijo */
 .grid-overlay {
     position: fixed;
     top: 0;
@@ -80,16 +72,13 @@
 
 /* --- SECCIONES GENÉRICAS --- */
 .scroll-section {
-    height: 100vh;
-    /* Altura forzada para que funcione el Snap */
+    min-height: 100vh;
     width: 100%;
     scroll-snap-align: start;
-    /* Engancha al inicio de la sección */
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    /* Padding extra arriba para que el header no tape el contenido */
     padding: 80px 20px 20px 20px;
     box-sizing: border-box;
 }
@@ -116,7 +105,6 @@
     transition: 1s ease-out;
 }
 
-/* Clase activada por JS */
 .visible {
     opacity: 1 !important;
     transform: none !important;
@@ -196,13 +184,13 @@
 
     10% {
         transform: translate(-5px, 2px) skewX(5deg);
-        filter: hue-rotate(90deg) saturate(2);
+        filter: hue-rotate(90deg) saturate(2) contrast(1.5);
         opacity: 0.9;
     }
 
     20% {
         transform: translate(5px, -3px) skewX(-5deg) scale(1.02);
-        filter: hue-rotate(-90deg) saturate(2);
+        filter: hue-rotate(-90deg) saturate(2) contrast(1.5);
         opacity: 0.8;
     }
 
@@ -290,6 +278,12 @@
     right: -1px;
     border-top: none;
     border-left: none;
+}
+
+.photo-frame:hover .corner {
+    width: 20px;
+    height: 20px;
+    box-shadow: 0 0 10px #00ffaa;
 }
 
 .info-container {
@@ -386,11 +380,11 @@
 }
 
 
-/* --- SECCIÓN 2: SKILLS DASHBOARD (REDDISEÑO) --- */
+/* --- SECCIÓN 2: SKILLS DASHBOARD --- */
 .skills-dashboard {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
     opacity: 0;
     transform: translateY(30px);
     transition: 1s ease-out;
@@ -402,110 +396,137 @@
 }
 
 .skill-category-panel {
-    background: rgba(15, 20, 25, 0.8);
-    border: 1px solid rgba(0, 170, 255, 0.2);
-    padding: 20px;
-    position: relative;
-}
-
-.skill-category-panel::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, #00aaff, transparent);
+    margin-bottom: 20px;
 }
 
 .category-title {
     color: #00aaff;
-    font-size: 14px;
+    font-size: 12px;
+    letter-spacing: 3px;
     margin-bottom: 20px;
-    letter-spacing: 2px;
+    border-left: 3px solid #00aaff;
+    padding-left: 10px;
     text-transform: uppercase;
-    border-bottom: 1px dashed rgba(0, 170, 255, 0.2);
-    padding-bottom: 5px;
 }
 
-.category-grid {
+/* Grid de Chips */
+.holo-grid {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 15px;
 }
 
-.tech-bar-container {
-    width: 100%;
-}
-
-.bar-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-    font-size: 11px;
-    color: #ccc;
-}
-
-.skill-pct {
-    color: #00ffaa;
-    font-weight: bold;
-}
-
-.progress-track {
-    width: 100%;
-    height: 8px;
-    background: #111;
-    border: 1px solid #333;
+.skill-card {
     position: relative;
-    overflow: hidden;
+    width: 140px;
+    height: 60px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.progress-fill {
-    height: 100%;
-    width: 0%;
-    /* Start */
-    background: #00aaff;
-    position: relative;
-    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+.skill-card:hover {
+    transform: translateY(-5px);
+    z-index: 10;
 }
 
-/* Activa la animación cuando es visible */
-.visible .progress-fill {
-    width: var(--w);
-}
-
-.fill-glow {
+.card-bg {
     position: absolute;
     top: 0;
-    right: 0;
-    bottom: 0;
-    width: 5px;
-    background: #fff;
-    box-shadow: 0 0 10px #fff;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(20, 30, 40, 0.6);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    transition: 0.3s;
 }
 
-/* Colores por Categoría */
-.skill-category-panel:nth-child(2) .progress-fill {
-    background: #ff33aa;
+.skill-card:hover .card-bg {
+    background: rgba(0, 170, 255, 0.15);
+    border-color: #00ffaa;
+    box-shadow: 0 0 15px rgba(0, 255, 170, 0.2);
+}
+
+.card-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #aaccff;
+}
+
+.skill-name {
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.skill-level {
+    font-size: 9px;
+    color: #557799;
+    margin-top: 4px;
+}
+
+.skill-icon {
+    font-size: 10px;
+    color: #00aaff;
+    margin-bottom: 2px;
+}
+
+.skill-card:hover .skill-name {
+    color: #fff;
+    text-shadow: 0 0 5px #00ffaa;
+}
+
+.skill-card:hover .skill-level {
+    color: #00ffaa;
+}
+
+.skill-card:hover .skill-icon {
+    color: #00ffaa;
 }
 
 .skill-category-panel:nth-child(2) .category-title {
     color: #ff33aa;
+    border-left-color: #ff33aa;
 }
 
-.skill-category-panel:nth-child(3) .progress-fill {
-    background: #00ffaa;
+.skill-category-panel:nth-child(2) .card-bg {
+    border-color: rgba(255, 51, 170, 0.3);
+}
+
+.skill-category-panel:nth-child(2) .skill-card:hover .card-bg {
+    border-color: #ff33aa;
+    background: rgba(255, 51, 170, 0.15);
+    box-shadow: 0 0 15px rgba(255, 51, 170, 0.2);
+}
+
+.skill-category-panel:nth-child(2) .skill-icon,
+.skill-category-panel:nth-child(2) .skill-card:hover .skill-level {
+    color: #ff33aa;
 }
 
 .skill-category-panel:nth-child(3) .category-title {
-    color: #00ffaa;
+    color: #ffee00;
+    border-left-color: #ffee00;
 }
 
-.skill-category-panel:nth-child(4) .progress-fill {
-    background: #ffee00;
+.skill-category-panel:nth-child(3) .card-bg {
+    border-color: rgba(255, 238, 0, 0.3);
 }
 
-.skill-category-panel:nth-child(4) .category-title {
+.skill-category-panel:nth-child(3) .skill-card:hover .card-bg {
+    border-color: #ffee00;
+    background: rgba(255, 238, 0, 0.15);
+    box-shadow: 0 0 15px rgba(255, 238, 0, 0.2);
+}
+
+.skill-category-panel:nth-child(3) .skill-icon,
+.skill-category-panel:nth-child(3) .skill-card:hover .skill-level {
     color: #ffee00;
 }
 
@@ -689,4 +710,14 @@
     .skills-dashboard {
         grid-template-columns: 1fr;
     }
+
+    .skill-card {
+        width: 100%;
+    }
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
 }

@@ -8,9 +8,9 @@ import { NarrativeService } from '../../services/narrative.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './boot-sequence.component.html',
-  styleUrls: ['./boot-sequence.component.css'] // Asegúrate que el archivo CSS exista también
+  styleUrls: ['./boot-sequence.component.css']
 })
-// IMPORTANTE: Debe decir "export class"
+
 export class BootSequenceComponent implements OnInit {
   private narrative = inject(NarrativeService);
 
@@ -35,7 +35,7 @@ export class BootSequenceComponent implements OnInit {
 
     // Simulación de carga
     const interval = setInterval(() => {
-      // Incremento aleatorio para parecer real
+      // Incremento aleatorio
       this.progress += Math.floor(Math.random() * 5) + 1;
 
       // Actualizar logs basado en progreso
@@ -49,7 +49,7 @@ export class BootSequenceComponent implements OnInit {
         this.progress = 100;
         clearInterval(interval);
         setTimeout(() => {
-          // TERMINÓ LA CARGA -> CAMBIAR FASE
+          // CAMBIAR FASE
           this.narrative.setPhase('INTERFACE');
         }, 800);
       }

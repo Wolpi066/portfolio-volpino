@@ -1,29 +1,5 @@
 import { Injectable } from '@angular/core';
-
-export interface Skill {
-    name: string;
-    level: number; // 0 - 100
-    category: 'CORE' | 'FRONTEND' | 'BACKEND' | 'TOOLS';
-}
-
-export interface Project {
-    id: string;
-    name: string;
-    type: string;
-    status: 'DEPLOYED' | 'PROTOTYPE' | 'IN_PROGRESS';
-    description: string;
-    techStack: string[];
-    githubUrl?: string;
-}
-
-export interface Study {
-    title: string;
-    institution: string;
-    period: string;
-    tags: string[];
-    certificate?: string;
-    status: 'COMPLETED' | 'IN_PROGRESS' | 'ABANDONED';
-}
+import { Skill, Project, Study } from '../models/portfolio.models'; // <--- Importación limpia
 
 @Injectable({
     providedIn: 'root'
@@ -44,7 +20,6 @@ export class DataService {
             email: 'volpinoemiliano@gmail.com',
             phone: '+54 11 4989-1159',
             github: 'github.com/Wolpi066',
-            // CORRECCIÓN: Ruta directa a raíz (public)
             photo: 'fotoDePerfil.png',
             bio: `Soy estudiante de programación con gran interés en desarrollarme profesionalmente dentro del área IT. Me apasiona programar y aprender nuevas tecnologías. Me caracterizo por mi rápido aprendizaje, la capacidad para resolver problemas de manera creativa y la facilidad para integrarme en equipos de trabajo. Actualmente me encuentro ampliando mis habilidades en desarrollo web y programación.`
         };
@@ -92,7 +67,6 @@ export class DataService {
                 period: '2022',
                 status: 'COMPLETED',
                 tags: ['HTML5', 'CSS3', 'SASS', 'SEO', 'Bootstrap'],
-                // CORRECCIÓN: Ruta directa
                 certificate: 'certificadoCoderDesarrolloWeb.png'
             },
             {
@@ -101,8 +75,7 @@ export class DataService {
                 period: '2022',
                 status: 'COMPLETED',
                 tags: ['JavaScript', 'DOM', 'Events', 'Async'],
-                // CORRECCIÓN: Ruta directa
-                certificate: 'certificadoCoderJavaScript.png'
+                certificate: 'CertificadoCoder JavaScript.png'
             },
             {
                 title: 'ANALISTA EN SISTEMAS',
@@ -123,7 +96,8 @@ export class DataService {
                 status: 'DEPLOYED',
                 description: 'Plataforma de comercio electrónico robusta con arquitectura MVC. Backend en PHP nativo optimizado con autenticación JWT y base de datos MySQL. Frontend modular SPA construido con Angular 17+ y diseño responsivo. Incluye gestión de stock inteligente y panel de administración.',
                 techStack: ['Angular', 'PHP', 'MySQL', 'JWT', 'MVC'],
-                githubUrl: 'https://github.com/Wolpi066/Breath'
+                githubUrl: 'https://github.com/Wolpi066/Breath',
+                videoUrl: 'heroBreathe.mp4'
             },
             {
                 id: '02',
@@ -132,7 +106,8 @@ export class DataService {
                 status: 'PROTOTYPE',
                 description: 'Videojuego 2D de alto rendimiento desarrollado en C++ utilizando la librería gráfica Raylib. Implementado bajo metodología TDD (Test Driven Development) con Tau para asegurar la estabilidad del motor físico y la lógica del juego.',
                 techStack: ['C++', 'Raylib', 'CodeBlocks', 'TDD'],
-                githubUrl: 'https://github.com/Wolpi066/ElCisma'
+                githubUrl: 'https://github.com/Wolpi066/ElCisma',
+                videoUrl: 'ElCisma.mp4'
             },
         ];
     }

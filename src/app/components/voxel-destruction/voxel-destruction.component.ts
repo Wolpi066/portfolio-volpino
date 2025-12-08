@@ -7,64 +7,8 @@ import { NarrativeService } from '../../services/narrative.service';
   selector: 'app-voxel-destruction',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div #rendererContainer class="destruction-container"></div>
-    
-    <img *ngIf="capturedImage && !isReady" [src]="capturedImage" class="seamless-placeholder">
-    
-    <div class="code-overlay" [class.active]="isGlitching">
-      <div class="code-column" *ngFor="let i of [1,2,3,4,5]">
-        {{ getRandomHex() }}
-      </div>
-    </div>
-
-    <div class="terminal-overlay" [class.visible]="showRebootText">
-      <div class="line error">>> FATAL_SYSTEM_ERROR: 0xC000021A</div>
-      <div class="line">>> KERNEL_DATA_INPAGE_ERROR</div>
-      <div class="line">>> DUMPING_PHYSICAL_MEMORY...</div>
-      <div class="line blink">_</div>
-    </div>
-  `,
-  styles: [`
-    .destruction-container {
-      position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: #000;
-      z-index: 9999;
-    }
-    
-    /* Imagen perfecta sobre el canvas */
-    .seamless-placeholder {
-      position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      object-fit: cover; /* Asegura que cubra igual que el background */
-      z-index: 10000; /* Encima del canvas negro */
-      pointer-events: none;
-    }
-
-    .code-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 10001; display: flex; justify-content: space-between;
-      pointer-events: none; opacity: 0; padding: 0 20px;
-    }
-    .code-overlay.active { opacity: 0.4; }
-    .code-column {
-      font-family: 'Courier New', monospace; color: #00ff41; font-size: 12px;
-      width: 20px; word-break: break-all; text-shadow: 0 0 5px #00ff41; opacity: 0.7;
-    }
-    .terminal-overlay {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      font-family: 'Courier New', monospace; width: 80%; max-width: 600px;
-      background: rgba(0,0,0,0.95); border: 1px solid #ff3333; padding: 30px;
-      box-shadow: 0 0 30px rgba(255, 0, 0, 0.2); z-index: 10002;
-      opacity: 0; transition: opacity 0.2s;
-    }
-    .line { margin-bottom: 8px; color: #ccc; font-size: 14px; }
-    .line.error { color: #ff3333; font-weight: bold; text-shadow: 0 0 8px #ff0000; }
-    .visible { opacity: 1; }
-    .blink { animation: blink 0.5s infinite; }
-    @keyframes blink { 50% { opacity: 0; } }
-  `]
+  templateUrl: './voxel-destruction.component.html', // <--- Vinculación
+  styleUrls: ['./voxel-destruction.component.css']
 })
 export class VoxelDestructionComponent implements AfterViewInit, OnDestroy {
   @ViewChild('rendererContainer') rendererContainer!: ElementRef;
@@ -79,7 +23,7 @@ export class VoxelDestructionComponent implements AfterViewInit, OnDestroy {
   private startTime = 0;
 
   capturedImage: string | null = null;
-  isReady = false; // Controla cuando quitamos la imagen estática
+  isReady = false;
   isGlitching = false;
   showRebootText = false;
 
@@ -94,7 +38,7 @@ export class VoxelDestructionComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     const imgData = this.narrative.capturedScreen();
-    this.capturedImage = imgData; // Guardar para el HTML
+    this.capturedImage = imgData;
     this.initGlitchShader(imgData);
   }
 
@@ -112,11 +56,7 @@ export class VoxelDestructionComponent implements AfterViewInit, OnDestroy {
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
 
     const texture = imgDataUrl ? new THREE.TextureLoader().load(imgDataUrl, () => {
-      // Callback: Se ejecuta cuando la textura cargó
-      // Esperamos un frame para asegurar que se pintó
-      requestAnimationFrame(() => {
-        this.isReady = true; // Ocultar imagen estática
-      });
+      requestAnimationFrame(() => this.isReady = true);
     }) : new THREE.Texture();
 
     if (imgDataUrl) {
@@ -162,9 +102,7 @@ export class VoxelDestructionComponent implements AfterViewInit, OnDestroy {
       `
     });
 
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    this.scene.add(new THREE.Mesh(geometry, this.material));
-
+    this.scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.material));
     this.startTime = Date.now();
     this.animate();
   }
@@ -174,23 +112,10 @@ export class VoxelDestructionComponent implements AfterViewInit, OnDestroy {
     const elapsed = (Date.now() - this.startTime) / 1000;
     let intensity = 0;
 
-    // Ajusté los tiempos para que el glitch empiece suave
-    if (elapsed < 1.0) {
-      // Fase 1: Imagen quieta (Tensión)
-      intensity = 0.0;
-    }
-    else if (elapsed < 3.0) {
-      // Fase 2: Glitch progresivo
-      intensity = (elapsed - 1.0) * 0.3;
-      this.isGlitching = true;
-    }
-    else if (elapsed < 4.5) {
-      // Fase 3: Caos total y Texto
-      intensity = 1.0 + Math.random() * 0.5;
-      this.showRebootText = true;
-    }
+    if (elapsed < 1.0) intensity = 0.0;
+    else if (elapsed < 3.0) { intensity = (elapsed - 1.0) * 0.3; this.isGlitching = true; }
+    else if (elapsed < 4.5) { intensity = 1.0 + Math.random() * 0.5; this.showRebootText = true; }
     else {
-      // Fase 4: Pantalla negra final
       intensity = 0;
       this.isGlitching = false;
       this.scene.background = new THREE.Color(0x000000);

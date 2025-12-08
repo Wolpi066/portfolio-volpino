@@ -1,5 +1,7 @@
 <div class="main-scroll-container">
+
     <div class="grid-overlay"></div>
+
     <header class="hud-header">
         <div class="header-left">
             <span class="status-dot"></span>
@@ -14,6 +16,7 @@
     <section class="scroll-section hero-section">
         <div class="content-wrapper">
             <div class="profile-layout" #observeItem>
+
                 <div class="photo-container">
                     <div class="photo-frame">
                         <img [src]="data.profile.photo" alt="Profile" class="profile-img"
@@ -25,10 +28,12 @@
                         <div class="scan-bar"></div>
                     </div>
                 </div>
+
                 <div class="info-container">
                     <h4 class="pre-title">// OPERATOR_PROFILE</h4>
                     <h1 class="glitch-name" [attr.data-text]="data.profile.name">{{ data.profile.name }}</h1>
                     <h2 class="job-title">{{ data.profile.title }}</h2>
+
                     <div class="data-grid">
                         <div class="data-item"><span class="label">AGE:</span> <span class="val">{{ data.profile.age }}
                                 YEARS</span></div>
@@ -39,12 +44,21 @@
                         <div class="data-item full-width"><span class="label">PHONE:</span> <span class="val">{{
                                 data.profile.phone }}</span></div>
                     </div>
+
                     <p class="bio-text">{{ data.profile.bio }}</p>
+
                     <div class="social-links">
-                        <a [href]="'https://' + data.profile.github" target="_blank" class="tech-btn">GITHUB_ACCESS
-                            []</a>
+                        <a [href]="'https://' + data.profile.github" target="_blank" class="tech-btn">
+                            GITHUB_ACCESS []
+                        </a>
+
+                        <a href="assets/CV_Emiliano_Volpino.pdf" download="CV_Emiliano_Volpino.pdf" target="_blank"
+                            class="tech-btn">
+                            DOWNLOAD_CV [PDF]
+                        </a>
                     </div>
                 </div>
+
             </div>
         </div>
         <div class="scroll-indicator">SCROLL_DOWN [v]</div>
@@ -53,22 +67,21 @@
     <section class="scroll-section skills-section">
         <div class="content-wrapper full-width-wrapper">
             <h2 class="section-title" #observeItem>// SYSTEM_CAPABILITIES_MATRIX</h2>
+
             <div class="skills-dashboard" #observeItem>
                 @for (group of skillsByCategory; track group.name) {
                 <div class="skill-category-panel">
                     <h3 class="category-title">:: {{ group.name }} ::</h3>
+
                     <div class="category-grid">
                         @for (skill of group.items; track skill.name) {
-                        <div class="tech-bar-container">
-                            <div class="bar-header">
+                        <div class="skill-card">
+                            <div class="card-bg"></div>
+                            <div class="card-content">
+                                <span class="skill-icon">◈</span>
                                 <span class="skill-name">{{ skill.name }}</span>
-                                <span class="skill-pct">{{ skill.level }}%</span>
                             </div>
-                            <div class="progress-track">
-                                <div class="progress-fill" [style.--w]="skill.level + '%'">
-                                    <div class="fill-glow"></div>
-                                </div>
-                            </div>
+                            <div class="card-border"></div>
                         </div>
                         }
                     </div>
@@ -81,10 +94,12 @@
     <section class="scroll-section edu-section">
         <div class="content-wrapper">
             <h2 class="section-title" #observeItem>// EDUCATION_LOGS</h2>
+
             <div class="timeline-container">
                 @for (study of data.studies; track study.title; let i = $index) {
                 <div class="study-card" [class.expanded]="expandedStudyIndex === i" (click)="toggleStudy(i)"
                     #observeItem [style.transition-delay]="i * 100 + 'ms'">
+
                     <div class="study-header">
                         <div class="header-left">
                             <span class="status-indicator" [class.active]="study.status === 'IN_PROGRESS'"
@@ -97,6 +112,7 @@
                             <span class="arrow-icon">{{ expandedStudyIndex === i ? '▲' : '▼' }}</span>
                         </div>
                     </div>
+
                     <div class="study-details">
                         <div class="tags-container">
                             <span class="tag-label">MODULES_LOADED:</span>
@@ -104,6 +120,7 @@
                             <span class="tech-tag">{{ tag }}</span>
                             }
                         </div>
+
                         @if (study.certificate) {
                         <div class="cert-container">
                             <a [href]="study.certificate" target="_blank" class="cert-link"
@@ -116,6 +133,7 @@
                 </div>
                 }
             </div>
+
             <footer class="section-footer">
                 <button type="button" class="reset-btn" (click)="triggerSystemReset()">
                     [ SYSTEM_RESET(); ]
@@ -123,4 +141,5 @@
             </footer>
         </div>
     </section>
+
 </div>

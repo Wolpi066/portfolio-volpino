@@ -1,0 +1,16 @@
+/* Sacar cursor para movil */
+@media (pointer: fine) {
+    * {
+        cursor: none !important;
+    }
+}
+
+@media (pointer: coarse) {
+    app-tech-cursor {
+        display: none;
+    }
+
+    * {
+        cursor: auto !important;
+    }
+}

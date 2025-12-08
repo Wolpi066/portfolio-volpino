@@ -1,0 +1,55 @@
+<div #rendererContainer class="holo-container" (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)">
+</div>
+
+<div class="hud-overlay">
+    <div class="scan-line"></div>
+
+    <div class="hud-top-left">
+        <h1>// ORBIT_VIEW</h1>
+        <div class="sub-text">SYSTEM: ONLINE</div>
+
+        <div class="legend-box">
+            <div class="legend-item"><span class="dot web"></span> WEB / APP</div>
+            <div class="legend-item"><span class="dot game"></span> GAME DEV</div>
+        </div>
+    </div>
+
+    <div class="hud-bottom-center">
+        <div class="nav-hint">[ HOVER NODES TO SCAN ]</div>
+        <div class="nav-hint">[ CLICK TO ACCESS DATA ]</div>
+    </div>
+</div>
+
+<div class="project-card" [class.visible]="activeProject()">
+
+    @if (activeProject()?.videoUrl || activeProject()?.heroImage) {
+    <div class="card-media">
+        <video *ngIf="activeProject()?.videoUrl" [src]="activeProject()?.videoUrl" autoplay loop muted playsinline
+            class="media-content">
+        </video>
+        <img *ngIf="!activeProject()?.videoUrl && activeProject()?.heroImage" [src]="activeProject()?.heroImage"
+            class="media-content">
+        <div class="media-overlay"></div>
+    </div>
+    }
+
+    <div class="card-content">
+        <div class="card-header">
+            <span class="card-id">ID: {{ activeProject()?.id }}</span>
+            <button class="close-btn" (click)="closeProject()">[X]</button>
+        </div>
+        <h2 class="card-title">{{ activeProject()?.name }}</h2>
+        <div class="card-divider"></div>
+        <p class="card-desc">{{ activeProject()?.description }}</p>
+        <div class="tech-stack">
+            @for (tech of activeProject()?.techStack; track tech) {
+            <span class="tech-badge">{{ tech }}</span>
+            }
+        </div>
+        <div class="card-actions">
+            <a [href]="activeProject()?.githubUrl" target="_blank" class="action-btn">
+                <span>GITHUB REPO</span> <span class="arrow">→</span>
+            </a>
+        </div>
+    </div>
+</div>

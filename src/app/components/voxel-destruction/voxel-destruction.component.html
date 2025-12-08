@@ -1,0 +1,16 @@
+<div #rendererContainer class="destruction-container"></div>
+
+<img *ngIf="capturedImage && !isReady" [src]="capturedImage" class="seamless-placeholder">
+
+<div class="code-overlay" [class.active]="isGlitching">
+    <div class="code-column" *ngFor="let i of [1,2,3,4,5]">
+        {{ getRandomHex() }}
+    </div>
+</div>
+
+<div class="terminal-overlay" [class.visible]="showRebootText">
+    <div class="line error">>> FATAL_SYSTEM_ERROR: 0xC000021A</div>
+    <div class="line">>> KERNEL_DATA_INPAGE_ERROR</div>
+    <div class="line">>> DUMPING_PHYSICAL_MEMORY...</div>
+    <div class="line blink">_</div>
+</div>

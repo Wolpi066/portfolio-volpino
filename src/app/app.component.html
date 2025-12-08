@@ -19,7 +19,11 @@
     }
 
     @else if (narrative.currentPhase() === 'REBIRTH') {
+    @defer {
     <app-holo-rebirth></app-holo-rebirth>
+    } @loading {
+    <div style="color: cyan; position:absolute; top:50%; left:50%">LOADING_HOLO_CORE...</div>
+    }
     }
 </main>
 <router-outlet />

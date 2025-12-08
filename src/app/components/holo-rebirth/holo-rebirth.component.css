@@ -1,0 +1,244 @@
+.holo-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #050505;
+    z-index: 1;
+}
+
+.hud-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+    background: radial-gradient(circle, transparent 50%, black 140%);
+}
+
+.legend-box {
+    margin-top: 15px;
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+    padding-left: 10px;
+}
+
+.legend-item {
+    font-family: 'Courier New';
+    font-size: 10px;
+    color: #ccc;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 5px currentColor;
+}
+
+.dot.web {
+    background-color: #00ffff;
+    color: #00ffff;
+}
+
+
+.dot.game {
+    background-color: #ff00ff;
+    color: #ff00ff;
+}
+
+
+
+.hud-top-left {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    color: #00ffff;
+    font-family: 'Courier New';
+}
+
+.hud-bottom-center {
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    text-align: center;
+}
+
+.nav-hint {
+    font-size: 10px;
+    color: rgba(0, 255, 255, 0.5);
+    font-family: 'Courier New';
+    letter-spacing: 2px;
+}
+
+.scan-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.5), transparent);
+    animation: scan 8s linear infinite;
+    opacity: 0.2;
+}
+
+/* TARJETA */
+.project-card {
+    position: absolute;
+    top: 50%;
+    right: 10%;
+    width: 350px;
+    background: rgba(5, 10, 15, 0.95);
+    border: 1px solid #00ffff;
+    padding: 2px;
+    transform: translateY(-50%) translateX(50px);
+    opacity: 0;
+    transition: 0.4s;
+    pointer-events: none;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card.visible {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+    pointer-events: auto;
+}
+
+/* MEDIA */
+.card-media {
+    width: 100%;
+    height: 180px;
+    position: relative;
+    background: #000;
+    border-bottom: 1px solid #00ffff;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.media-content {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.media-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 100% 4px;
+    pointer-events: none;
+}
+
+.card-content {
+    padding: 20px;
+    font-family: 'Courier New';
+    color: #fff;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #00ffff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #ff3333;
+}
+
+.card-title {
+    font-size: 18px;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.card-divider {
+    height: 1px;
+    background: #00ffff;
+    margin: 10px 0;
+    opacity: 0.3;
+}
+
+.card-desc {
+    font-size: 11px;
+    color: #ccc;
+    margin-bottom: 10px;
+    border-left: 2px solid #00aaaa;
+    padding-left: 10px;
+}
+
+.tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.tech-badge {
+    font-size: 9px;
+    padding: 2px 5px;
+    border: 1px solid #00ffaa;
+    color: #00ffaa;
+    border-radius: 2px;
+}
+
+.action-btn {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #00ffff;
+    color: #00ffff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 11px;
+    transition: 0.2s;
+}
+
+.action-btn:hover {
+    background: #00ffff;
+    color: black;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.2;
+    }
+}
+
+@keyframes scan {
+    0% {
+        top: -10%;
+    }
+
+    100% {
+        top: 110%;
+    }
+}

@@ -1,0 +1,46 @@
+:host {
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+    mix-blend-mode: difference;
+}
+
+.cursor-arrow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.05s ease-out, filter 0.2s;
+    will-change: transform;
+    filter: drop-shadow(0 0 5px #00ffaa);
+}
+
+.cursor-arrow svg path {
+    transition: fill 0.2s;
+}
+
+.cursor-trail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    background: rgba(0, 255, 170, 0.5);
+    border-radius: 50%;
+    margin-left: 2px;
+    margin-top: 2px;
+    transition: transform 0.15s ease-out;
+}
+
+/* ESTADO HOVER */
+.cursor-arrow.hovering {
+    filter: drop-shadow(0 0 8px #ff3333);
+    transform: scale(1.2);
+}
+
+.cursor-arrow.hovering path {
+    fill: #ff3333;
+}

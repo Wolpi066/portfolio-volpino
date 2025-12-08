@@ -1,59 +1,72 @@
-# PortfolioVolpino
+# 🚀 Portfolio Interactivo - Emiliano Volpino
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.8.
+¡Hola! Bienvenidos a mi repositorio.
 
-## Development server
+Es una **Single Page Application (SPA)** diseñada como una experiencia narrativa. Básicamente, te llevo desde una terminal de sistema retro hasta un entorno 3D en el espacio.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## 🌟 La Experiencia (Cómo funciona)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+La app está dividida en "Fases" que controlan la narrativa:
 
-## Code scaffolding
+1.  **Fase 1: Boot Sequence** 🟢
+    * Un pre-loader estilo BIOS/Terminal que simula la carga del sistema operativo.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+2.  **Fase 2: Main Interface (Aerospace UI)** 🛸
+    * Mi perfil, skills y estudios presentados con una estética de ingeniería aeroespacial.
+    * Le metí mucho cariño al **Scroll-Telling** (animaciones al bajar) y al **Cursor Táctico** personalizado.
+    * **Skills Matrix:** Mis habilidades no son una lista aburrida, son chips holográficos.
 
-```bash
-ng generate component component-name
-```
+3.  **Fase 3: The System Trap** ⚠️
+    * Hay un botón de "System Reset" escondido abajo de todo.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+4.  **Fase 4: Glitch & Data Corruption** 👾
+    * Uso `html2canvas` para sacarle una "foto" a la web en tiempo real y después la rompo con **Shaders WebGL** (Three.js) simulando un fallo de tarjeta gráfica y corrupción de datos.
 
-```bash
-ng generate --help
-```
+5.  **Fase 5: Holo Rebirth (El Planeta 3D)** 🌍
+    * El sistema se reinicia en un entorno 3D interactivo.
+    * Es un planeta wireframe con físicas de ondas (Ripple Effect) al hacer click.
+    * Los marcadores orbitando son mis proyectos reales (como **Breath Shop** y **El Cisma**). Podés clickearlos para ver info y videos.
 
-## Building
+---
 
-To build the project run:
+## 🛠️ Stack Tecnológico
 
-```bash
-ng build
-```
+* **Framework:** Angular 17+ (Aprovechando Standalone Components, Signals y la nueva sintaxis `@defer`).
+* **3D & Gráficos:** Three.js (WebGL puro).
+* **VFX:** html2canvas + Custom GLSL Shaders (para el efecto Matrix/Glitch).
+* **Estilos:** CSS3 Puro. Todo el diseño grid/flex y las animaciones están hechas a mano.
+* **Deploy:** GitHub Pages (automatizado con `angular-cli-ghpages`).
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## 🚀 ¿Querés correrlo en tu máquina?
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Es súper fácil. Si tenés Node.js y Angular CLI instalados:
 
-```bash
-ng test
-```
+1.  **Cloná el repo:**
+    git clone [https://github.com/Wolpi066/portfolio-volpino.git](https://github.com/Wolpi066/portfolio-volpino.git)
+    cd portfolio-volpino
 
-## Running end-to-end tests
+2.  **Instalá las dependencias:**
+    npm install
 
-For end-to-end (e2e) testing, run:
+3.  **Levantá el servidor:**
+    ng serve
+    Y andá a `http://localhost:4200/` para ver la magia.
 
-```bash
-ng e2e
-```
+---
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## 👤 Autor
 
-## Additional Resources
+**Emiliano Volpino**
+*Full Stack Developer & Creative Coder*
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Me encanta resolver problemas complejos y crear interfaces que impacten. Si te gustó el proyecto o querés charlar sobre código, ¡contactame!
+
+[LinkedIn](https://www.linkedin.com/) | [GitHub](https://github.com/Wolpi066) | 📧 volpinoemiliano@gmail.com
+
+---
+
+*Hecho con 💻, 🎵 y mucho café.*

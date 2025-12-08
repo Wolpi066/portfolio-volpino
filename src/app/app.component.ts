@@ -19,13 +19,12 @@ import { TechCursorComponent } from "./components/tech-cursor/tech-cursor.compon
     RouterOutlet,
     BootSequenceComponent,
     MainInterfaceComponent,
-    SystemTrapComponent, // <--- AGREGAR AQUÍ
-    VoxelDestructionComponent, // <--- Y AGREGAR AQUÍ
-    HoloRebirthComponent, // <--- NUEVO
+    SystemTrapComponent,
+    VoxelDestructionComponent,
+    HoloRebirthComponent,
     TechCursorComponent
   ],
-  templateUrl: 'app.component.html',
-  styleUrls: ['app.component.css']
+  templateUrl: 'app.component.html'
 })
 export class AppComponent {
   narrative = inject(NarrativeService);

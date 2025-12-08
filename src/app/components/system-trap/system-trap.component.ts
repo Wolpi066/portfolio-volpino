@@ -18,9 +18,8 @@ export class SystemTrapComponent {
   confirmWipe() {
     if (this.isProcessing) return;
     this.isProcessing = true;
-    this.isHidden = true; // Ocultar modal
+    this.isHidden = true;
 
-    // Fallback de seguridad: Si la captura falla, iniciar destrucción en 1.5s sí o sí
     const safetyTimer = setTimeout(() => {
       if (this.narrative.currentPhase() !== 'DESTRUCTION') {
         console.warn("Capture timeout - Forcing destruction");
@@ -29,7 +28,6 @@ export class SystemTrapComponent {
     }, 1500);
 
     setTimeout(() => {
-      // Capturar solo el viewport visible para velocidad
       html2canvas(document.body, {
         scale: 1,
         useCORS: true,
@@ -43,13 +41,12 @@ export class SystemTrapComponent {
         height: window.innerHeight,
         ignoreElements: (element) => element.classList.contains('trap-overlay')
       }).then(canvas => {
-        clearTimeout(safetyTimer); // Cancelar fallback si tuvo éxito
+        clearTimeout(safetyTimer);
         const imgData = canvas.toDataURL('image/png');
         this.narrative.capturedScreen.set(imgData);
         this.narrative.setPhase('DESTRUCTION');
       }).catch(err => {
         console.error("Error capturing:", err);
-        // El safetyTimer se encargará de avanzar
       });
     }, 100);
   }
