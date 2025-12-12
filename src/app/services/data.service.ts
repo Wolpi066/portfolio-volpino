@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Skill, Project, Study } from '../models/portfolio.models';
+import { Skill, Project, Study } from '../models/portfolio.models'; // <--- Importación limpia
 
 @Injectable({
     providedIn: 'root'
@@ -92,7 +92,7 @@ export class DataService {
                 name: 'BREATH SHOP',
                 type: 'FULL-STACK E-COMMERCE',
                 status: 'DEPLOYED',
-                description: 'Plataforma de comercio electrónico robusta con arquitectura MVC. Backend en PHP nativo optimizado con autenticación JWT y base de datos MySQL. Frontend modular SPA construido con Angular 17+ y diseño responsivo. Incluye gestión de stock inteligente y panel de administración.',
+                description: 'Plataforma de comercio electrónico robusta con arquitectura MVC. Backend en PHP nativo optimizado. Frontend modular SPA construido con Angular 17+.',
                 techStack: ['Angular', 'PHP', 'MySQL', 'JWT', 'MVC'],
                 githubUrl: 'https://github.com/Wolpi066/Breath',
                 videoUrl: 'assets/heroBreathe.mp4'
@@ -102,7 +102,7 @@ export class DataService {
                 name: 'EL CISMA',
                 type: 'GAME DEVELOPMENT',
                 status: 'PROTOTYPE',
-                description: 'Videojuego 2D de alto rendimiento desarrollado en C++ utilizando la librería gráfica Raylib. Implementado bajo metodología TDD (Test Driven Development) con Tau para asegurar la estabilidad del motor físico y la lógica del juego.',
+                description: 'Videojuego 2D de alto rendimiento desarrollado en C++ utilizando Raylib. Metodología TDD para físicas y lógica.',
                 techStack: ['C++', 'Raylib', 'CodeBlocks', 'TDD'],
                 githubUrl: 'https://github.com/Wolpi066/ElCisma',
                 videoUrl: 'assets/ElCisma.mp4'
@@ -112,7 +112,7 @@ export class DataService {
                 name: 'WARFRAME TUTOR',
                 type: 'FRONTEND INFO-SITE',
                 status: 'DEPLOYED',
-                description: 'Plataforma web de guías y tutoriales para Warframe. Diseño responsivo utilizando Bootstrap 5, con navegación multinivel y optimización de recursos gráficos. Incluye secciones de farming, builds y consejos para principiantes.',
+                description: 'Plataforma web de guías para Warframe. Diseño responsivo con Bootstrap 5, navegación multinivel y optimización gráfica.',
                 techStack: ['HTML5', 'CSS3', 'Bootstrap 5', 'Responsive'],
                 githubUrl: 'https://github.com/Wolpi066/warframetutor',
                 heroImage: 'assets/Rhino_Banner.avif'

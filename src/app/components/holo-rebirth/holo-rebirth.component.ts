@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-// IMPORTACIONES CORREGIDAS
+// IMPORTACIONES
 import { DataService } from '../../services/data.service';
-import { Project } from '../../models/portfolio.models'; // <--- Project viene de aquí
+import { Project } from '../../models/portfolio.models';
 
 @Component({
   selector: 'app-holo-rebirth',
@@ -126,7 +126,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
 
   loadProjectMarkers() {
     const projects = this.dataService.projects;
-    const coords = [{ lat: 20, lon: 0 }, { lat: -20, lon: 60 }];
+    const coords = [{ lat: 20, lon: 0 }, { lat: -20, lon: 60 }, { lat: 40, lon: -60 }]; // Añadida coordenada para el 3er proyecto
 
     projects.forEach((proj, i) => {
       const pos = coords[i % coords.length];
