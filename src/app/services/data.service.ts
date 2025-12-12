@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Skill, Project, Study } from '../models/portfolio.models'; // <--- Importación limpia
+import { Skill, Project, Study } from '../models/portfolio.models';
 
 @Injectable({
     providedIn: 'root'
@@ -8,9 +8,7 @@ export class DataService {
 
     get profile() {
         const birthDate = new Date('2003-09-09');
-        const ageDifMs = Date.now() - birthDate.getTime();
-        const ageDate = new Date(ageDifMs);
-        const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+        const age = Math.abs(new Date(Date.now() - birthDate.getTime()).getUTCFullYear() - 1970);
 
         return {
             name: 'EMILIANO VOLPINO',
@@ -20,7 +18,7 @@ export class DataService {
             email: 'volpinoemiliano@gmail.com',
             phone: '+54 11 4989-1159',
             github: 'github.com/Wolpi066',
-            photo: 'fotoDePerfil.png',
+            photo: 'assets/fotoDePerfil.png',
             bio: `Soy estudiante de programación con gran interés en desarrollarme profesionalmente dentro del área IT. Me apasiona programar y aprender nuevas tecnologías. Me caracterizo por mi rápido aprendizaje, la capacidad para resolver problemas de manera creativa y la facilidad para integrarme en equipos de trabajo. Actualmente me encuentro ampliando mis habilidades en desarrollo web y programación.`
         };
     }
@@ -52,7 +50,7 @@ export class DataService {
                 institution: 'UCES',
                 period: '2025 - 2026',
                 status: 'IN_PROGRESS',
-                tags: ['C++', 'Java', 'POO', 'TDD (Tau)', 'HTML5', 'CSS3', 'Bootstrap', 'Angular', 'PHP', 'TypeScript', 'SQL', 'Raylib']
+                tags: ['C++', 'Java', 'POO', 'TDD', 'HTML5', 'CSS3', 'Bootstrap', 'Angular', 'PHP', 'TS', 'SQL']
             },
             {
                 title: 'CIBERSEGURIDAD',
@@ -67,7 +65,7 @@ export class DataService {
                 period: '2022',
                 status: 'COMPLETED',
                 tags: ['HTML5', 'CSS3', 'SASS', 'SEO', 'Bootstrap'],
-                certificate: 'certificadoCoderDesarrolloWeb.png'
+                certificate: 'assets/certificadoCoderDesarrolloWeb.png'
             },
             {
                 title: 'JAVASCRIPT',
@@ -75,7 +73,7 @@ export class DataService {
                 period: '2022',
                 status: 'COMPLETED',
                 tags: ['JavaScript', 'DOM', 'Events', 'Async'],
-                certificate: 'CertificadoCoder JavaScript.png'
+                certificate: 'assets/CertificadoCoder JavaScript.png'
             },
             {
                 title: 'ANALISTA EN SISTEMAS',
@@ -97,7 +95,7 @@ export class DataService {
                 description: 'Plataforma de comercio electrónico robusta con arquitectura MVC. Backend en PHP nativo optimizado con autenticación JWT y base de datos MySQL. Frontend modular SPA construido con Angular 17+ y diseño responsivo. Incluye gestión de stock inteligente y panel de administración.',
                 techStack: ['Angular', 'PHP', 'MySQL', 'JWT', 'MVC'],
                 githubUrl: 'https://github.com/Wolpi066/Breath',
-                videoUrl: 'heroBreathe.mp4'
+                videoUrl: 'assets/heroBreathe.mp4'
             },
             {
                 id: '02',
@@ -107,7 +105,17 @@ export class DataService {
                 description: 'Videojuego 2D de alto rendimiento desarrollado en C++ utilizando la librería gráfica Raylib. Implementado bajo metodología TDD (Test Driven Development) con Tau para asegurar la estabilidad del motor físico y la lógica del juego.',
                 techStack: ['C++', 'Raylib', 'CodeBlocks', 'TDD'],
                 githubUrl: 'https://github.com/Wolpi066/ElCisma',
-                videoUrl: 'ElCisma.mp4'
+                videoUrl: 'assets/ElCisma.mp4'
+            },
+            {
+                id: '03',
+                name: 'WARFRAME TUTOR',
+                type: 'FRONTEND INFO-SITE',
+                status: 'DEPLOYED',
+                description: 'Plataforma web de guías y tutoriales para Warframe. Diseño responsivo utilizando Bootstrap 5, con navegación multinivel y optimización de recursos gráficos. Incluye secciones de farming, builds y consejos para principiantes.',
+                techStack: ['HTML5', 'CSS3', 'Bootstrap 5', 'Responsive'],
+                githubUrl: 'https://github.com/Wolpi066/warframetutor',
+                heroImage: 'assets/Rhino_Banner.avif'
             },
         ];
     }
