@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Skill, Project, Study } from '../models/portfolio.models'; // <--- Importación limpia
+import { Skill, Project, Study } from '../models/portfolio.models';
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +25,16 @@ export class DataService {
 
     get skills(): Skill[] {
         return [
+            { name: 'REACT.JS', level: 85, category: 'FRONTEND' },
+            { name: 'NODE.JS', level: 85, category: 'BACKEND' },
+            { name: 'EXPRESS', level: 85, category: 'BACKEND' },
+            { name: 'POSTGRESQL', level: 85, category: 'BACKEND' },
+            { name: 'TAILWIND CSS', level: 90, category: 'FRONTEND' },
+            { name: 'VITE', level: 85, category: 'TOOLS' },
+            { name: 'VERCEL', level: 90, category: 'TOOLS' },
+            { name: 'RAILWAY', level: 85, category: 'TOOLS' },
+            { name: 'CLOUDFLARE', level: 80, category: 'TOOLS' },
+            
             { name: 'POO (OOP)', level: 95, category: 'CORE' },
             { name: 'C++', level: 85, category: 'CORE' },
             { name: 'HTML5', level: 99, category: 'FRONTEND' },
@@ -117,6 +127,16 @@ export class DataService {
                 githubUrl: 'https://github.com/Wolpi066/warframetutor',
                 heroImage: 'assets/Rhino_Banner.avif'
             },
+            {
+                id: '04',
+                name: 'E-COMMERCE B2B & POS',
+                type: 'FULL-STACK ENTERPRISE',
+                status: 'EN STAGING (Confidencial)',
+                isConfidential: true,
+                description: "Plataforma transaccional dual (Mayorista/Minorista) con Punto de Venta integrado, importación masiva 'All-or-Nothing', procesamiento seguro de Webhooks (Mercado Pago) y Cron Jobs.",
+                technicalHighlight: "Resolución de condiciones de carrera mediante bloqueos transaccionales (FOR UPDATE) en PostgreSQL puro y blindaje de seguridad contra manipulación de payloads.",
+                techStack: ['React.js', 'Node.js', 'Express', 'PostgreSQL', 'Tailwind CSS', 'Mercado Pago'],
+            }
         ];
     }
 }

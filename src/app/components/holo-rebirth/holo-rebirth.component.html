@@ -11,6 +11,7 @@
         <div class="legend-box">
             <div class="legend-item"><span class="dot web"></span> WEB / APP</div>
             <div class="legend-item"><span class="dot game"></span> GAME DEV</div>
+            <div class="legend-item"><span class="dot confidential"></span> RESTRICTED</div>
         </div>
     </div>
 
@@ -20,7 +21,7 @@
     </div>
 </div>
 
-<div class="project-card" [class.visible]="activeProject()">
+<div class="project-card" [class.visible]="activeProject()" [class.confidential-card]="activeProject()?.isConfidential">
 
     @if (activeProject()?.videoUrl || activeProject()?.heroImage) {
     <div class="card-media">
@@ -33,23 +34,52 @@
     </div>
     }
 
+    @if (!activeProject()?.videoUrl && !activeProject()?.heroImage && activeProject()?.isConfidential) {
+        <div class="card-media confidential-placeholder">
+            <span class="warning-icon">⚠</span>
+            <span class="warning-text">NO VISUAL DATA AVAILABLE</span>
+        </div>
+    }
+
     <div class="card-content">
         <div class="card-header">
             <span class="card-id">ID: {{ activeProject()?.id }}</span>
+            <span class="status-badge" *ngIf="activeProject()?.status" 
+                [class.warning-badge]="activeProject()?.isConfidential">
+                [{{ activeProject()?.status }}]
+            </span>
             <button class="close-btn" (click)="closeProject()">[X]</button>
         </div>
+        
         <h2 class="card-title">{{ activeProject()?.name }}</h2>
         <div class="card-divider"></div>
+        
         <p class="card-desc">{{ activeProject()?.description }}</p>
+        
+        <div class="tech-highlight" *ngIf="activeProject()?.technicalHighlight">
+            <span class="highlight-label">SYS_LOG > </span>
+            {{ activeProject()?.technicalHighlight }}
+        </div>
+
         <div class="tech-stack">
             @for (tech of activeProject()?.techStack; track tech) {
             <span class="tech-badge">{{ tech }}</span>
             }
         </div>
+        
         <div class="card-actions">
-            <a [href]="activeProject()?.githubUrl" target="_blank" class="action-btn">
-                <span>GITHUB REPO</span> <span class="arrow">→</span>
-            </a>
+            <ng-container *ngIf="!activeProject()?.isConfidential; else lockedAction">
+                <a [href]="activeProject()?.githubUrl" target="_blank" class="action-btn">
+                    <span>GITHUB REPO</span> <span class="arrow">→</span>
+                </a>
+            </ng-container>
+            
+            <ng-template #lockedAction>
+                <div class="action-btn locked-btn">
+                    <span>ACCESO_DENEGADO</span> 
+                    <span class="arrow">✕</span>
+                </div>
+            </ng-template>
         </div>
     </div>
 </div>

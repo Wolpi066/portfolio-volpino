@@ -33,6 +33,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
   private COLOR_WEB = 0x00ffff;
   private COLOR_GAME = 0xff00ff;
   private COLOR_HOVER = 0xff0000;
+  private COLOR_CONFIDENTIAL = 0xd97706; // Nuevo color ámbar para confidencial
 
   private hoveredMarker: THREE.Group | null = null;
   private planetUniforms: any;
@@ -126,11 +127,25 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
 
   loadProjectMarkers() {
     const projects = this.dataService.projects;
-    const coords = [{ lat: 20, lon: 0 }, { lat: -20, lon: 60 }, { lat: 40, lon: -60 }]; // Añadida coordenada para el 3er proyecto
+    // Añadida una 4ta coordenada para que el nodo confidencial no se superponga
+    const coords = [
+      { lat: 20, lon: 0 }, 
+      { lat: -20, lon: 60 }, 
+      { lat: 40, lon: -60 },
+      { lat: -10, lon: 150 } 
+    ];
 
     projects.forEach((proj, i) => {
       const pos = coords[i % coords.length];
-      const color = proj.type.includes('GAME') ? this.COLOR_GAME : this.COLOR_WEB;
+      
+      // Nueva lógica de colores: Prioriza si es confidencial
+      let color = this.COLOR_WEB;
+      if (proj.isConfidential) {
+        color = this.COLOR_CONFIDENTIAL;
+      } else if (proj.type.includes('GAME')) {
+        color = this.COLOR_GAME;
+      }
+
       this.createBeacon(10, pos.lat, pos.lon, proj, color);
     });
   }

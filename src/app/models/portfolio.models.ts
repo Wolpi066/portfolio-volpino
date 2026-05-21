@@ -1,4 +1,5 @@
 // src/app/models/portfolio.models.ts
+
 export interface Skill {
     name: string;
     level: number;
@@ -9,12 +10,15 @@ export interface Project {
     id: string;
     name: string;
     type: string;
-    status: 'DEPLOYED' | 'PROTOTYPE' | 'IN_PROGRESS';
+    status: 'DEPLOYED' | 'PROTOTYPE' | 'IN_PROGRESS' | 'EN STAGING (Confidencial)';
     description: string;
     techStack: string[];
     githubUrl?: string;
     videoUrl?: string;
     heroImage?: string;
+    
+    isConfidential?: boolean;
+    technicalHighlight?: string;
 }
 
 export interface Study {
