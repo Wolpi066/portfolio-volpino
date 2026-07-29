@@ -3,9 +3,9 @@
 <img *ngIf="capturedImage && !isReady" [src]="capturedImage" class="seamless-placeholder">
 
 <div class="code-overlay" [class.active]="isGlitching">
-    <div class="code-column" *ngFor="let i of [1,2,3,4,5]">
-        {{ getRandomHex() }}
-    </div>
+    @for (col of codeColumns; track $index) {
+    <div class="code-column">{{ col }}</div>
+    }
 </div>
 
 <div class="terminal-overlay" [class.visible]="showRebootText">

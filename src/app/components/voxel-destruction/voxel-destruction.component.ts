@@ -27,7 +27,15 @@ export class VoxelDestructionComponent implements AfterViewInit, OnDestroy {
   isGlitching = false;
   showRebootText = false;
 
-  getRandomHex() {
+  /**
+   * Las columnas se generan UNA vez y se guardan.
+   * Antes el template llamaba getRandomHex() directo, asi que devolvia valores
+   * distintos en cada ciclo de deteccion de cambios: NG0100 en dev y trabajo
+   * inutil en cada frame. El efecto visual lo hace la animacion CSS, no el texto.
+   */
+  readonly codeColumns: string[] = Array.from({ length: 5 }, () => this.buildRandomHex());
+
+  private buildRandomHex(): string {
     let result = '';
     const chars = '0123456789ABCDEF@#&%';
     for (let i = 0; i < 80; i++) {

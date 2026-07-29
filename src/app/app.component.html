@@ -9,20 +9,28 @@
 
     <app-main-interface></app-main-interface>
 
+    <!-- html2canvas se carga recién acá, no en el bundle inicial. -->
     @if (narrative.currentPhase() === 'TRAP') {
+    @defer (on immediate) {
     <app-system-trap></app-system-trap>
     }
     }
+    }
 
+    <!-- Three.js sale del bundle inicial: solo lo baja quien entra a la vista orbital. -->
     @else if (narrative.currentPhase() === 'DESTRUCTION') {
+    @defer (on immediate) {
     <app-voxel-destruction></app-voxel-destruction>
+    } @loading {
+    <div class="phase-loading">CARGANDO_MOTOR_GRÁFICO...</div>
+    }
     }
 
     @else if (narrative.currentPhase() === 'REBIRTH') {
-    @defer {
+    @defer (on immediate) {
     <app-holo-rebirth></app-holo-rebirth>
     } @loading {
-    <div style="color: cyan; position:absolute; top:50%; left:50%">LOADING_HOLO_CORE...</div>
+    <div class="phase-loading">CARGANDO_NÚCLEO_ORBITAL...</div>
     }
     }
 </main>

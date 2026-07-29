@@ -5,7 +5,12 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // IMPORTACIONES
 import { DataService } from '../../services/data.service';
-import { Project } from '../../models/portfolio.models';
+import { NarrativeService } from '../../services/narrative.service';
+import { I18nService } from '../../services/i18n.service';
+import { Project, ProjectStatus } from '../../models/portfolio.models';
+
+/** Cuanto puede moverse el puntero y seguir contando como tap y no como arrastre. */
+const TAP_THRESHOLD_PX = 8;
 
 @Component({
   selector: 'app-holo-rebirth',
@@ -17,6 +22,8 @@ import { Project } from '../../models/portfolio.models';
 export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
   @ViewChild('rendererContainer') rendererContainer!: ElementRef;
   private dataService = inject(DataService);
+  private narrative = inject(NarrativeService);
+  public i18n = inject(I18nService);
 
   activeProject = signal<Project | null>(null);
 
@@ -33,10 +40,11 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
   private COLOR_WEB = 0x00ffff;
   private COLOR_GAME = 0xff00ff;
   private COLOR_HOVER = 0xff0000;
-  private COLOR_CONFIDENTIAL = 0xd97706; // Nuevo color ámbar para confidencial
+  private COLOR_LIVE = 0x00ff88; // sistemas en produccion
 
   private hoveredMarker: THREE.Group | null = null;
   private planetUniforms: any;
+  private pointerDownAt: { x: number; y: number } | null = null;
 
   private animationId = 0;
   private clock = new THREE.Clock();
@@ -126,7 +134,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
   }
 
   loadProjectMarkers() {
-    const projects = this.dataService.projects;
+    const projects = this.dataService.projects();
     // Añadida una 4ta coordenada para que el nodo confidencial no se superponga
     const coords = [
       { lat: 20, lon: 0 }, 
@@ -137,12 +145,12 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
 
     projects.forEach((proj, i) => {
       const pos = coords[i % coords.length];
-      
-      // Nueva lógica de colores: Prioriza si es confidencial
+
+      // Color por naturaleza del proyecto: en produccion, juego, o web/app.
       let color = this.COLOR_WEB;
-      if (proj.isConfidential) {
-        color = this.COLOR_CONFIDENTIAL;
-      } else if (proj.type.includes('GAME')) {
+      if (proj.status === 'PRODUCTION' || proj.status === 'DELIVERED') {
+        color = this.COLOR_LIVE;
+      } else if (proj.status === 'PROTOTYPE') {
         color = this.COLOR_GAME;
       }
 
@@ -185,22 +193,33 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
     this.markers.push(markerGroup);
   }
 
-  onMouseMove(event: MouseEvent) {
-    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  /**
+   * Lanza un rayo desde la posicion del puntero y devuelve el marcador tocado.
+   * Se usa tanto para el hover como para el tap: en touch no hay mousemove previo,
+   * asi que el click NO puede depender del estado de hover.
+   */
+  private pickMarker(clientX: number, clientY: number): THREE.Group | null {
+    this.mouse.x = (clientX / window.innerWidth) * 2 - 1;
+    this.mouse.y = -(clientY / window.innerHeight) * 2 + 1;
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
     const intersects = this.raycaster.intersectObjects(this.mainGroup.children, true);
-    let foundMarker: THREE.Group | null = null;
+    if (!intersects.length) return null;
 
-    if (intersects.length > 0) {
-      let obj = intersects[0].object;
-      while (obj.parent && obj.parent !== this.mainGroup) {
-        if (obj.userData && obj.userData['isMarker']) { foundMarker = obj as THREE.Group; break; }
-        if (obj.parent.userData && obj.parent.userData['isMarker']) { foundMarker = obj.parent as THREE.Group; break; }
-        obj = obj.parent;
-      }
+    let obj: THREE.Object3D = intersects[0].object;
+    while (obj.parent && obj.parent !== this.mainGroup) {
+      if (obj.userData && obj.userData['isMarker']) return obj as THREE.Group;
+      if (obj.parent.userData && obj.parent.userData['isMarker']) return obj.parent as THREE.Group;
+      obj = obj.parent;
     }
+    return null;
+  }
+
+  onPointerMove(event: PointerEvent) {
+    // En touch el hover no existe; el resaltado solo aplica a mouse/lapiz.
+    if (event.pointerType === 'touch') return;
+
+    const foundMarker = this.pickMarker(event.clientX, event.clientY);
 
     if (foundMarker !== this.hoveredMarker) {
       if (this.hoveredMarker) {
@@ -225,12 +244,29 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  onMouseDown(event: MouseEvent) {
-    if (this.hoveredMarker) {
+  onPointerDown(event: PointerEvent) {
+    this.pointerDownAt = { x: event.clientX, y: event.clientY };
+  }
+
+  /**
+   * La accion va en pointerup y solo si el puntero casi no se movio.
+   * Asi arrastrar para rotar el planeta no abre un proyecto sin querer.
+   */
+  onPointerUp(event: PointerEvent) {
+    const start = this.pointerDownAt;
+    this.pointerDownAt = null;
+    if (!start) return;
+
+    const moved = Math.hypot(event.clientX - start.x, event.clientY - start.y);
+    if (moved > TAP_THRESHOLD_PX) return; // fue un arrastre, no un tap
+
+    const marker = this.pickMarker(event.clientX, event.clientY);
+    if (marker) {
       this.controls.autoRotate = false;
-      this.openProject(this.hoveredMarker.userData['project']);
+      this.openProject(marker.userData['project']);
       return;
     }
+
     const planetHit = this.raycaster.intersectObjects(this.mainGroup.children, true).find(h => h.object.name === "PLANET_SURFACE");
     if (planetHit) {
       const localPoint = planetHit.point.clone().applyMatrix4(planetHit.object.matrixWorld.clone().invert());
@@ -243,6 +279,24 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
 
   openProject(project: Project) { this.activeProject.set(project); }
   closeProject() { this.activeProject.set(null); this.controls.autoRotate = true; }
+
+  statusLabel(status?: ProjectStatus): string {
+    if (!status) return '';
+    const t = this.i18n.t();
+    const map: Record<ProjectStatus, string> = {
+      PRODUCTION: t.statusPRODUCTION,
+      DELIVERED: t.statusDELIVERED,
+      DEPLOYED: t.statusDEPLOYED,
+      PROTOTYPE: t.statusPROTOTYPE
+    };
+    return map[status] ?? status;
+  }
+
+  /** Vuelve a la interfaz principal. Antes de esto, del 3D no se salia. */
+  exitToInterface() {
+    document.body.classList.remove('hover-active');
+    this.narrative.setPhase('INTERFACE');
+  }
 
   animate() {
     this.animationId = requestAnimationFrame(() => this.animate());

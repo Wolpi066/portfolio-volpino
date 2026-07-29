@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NarrativeService } from '../../services/narrative.service';
+import { I18nService } from '../../services/i18n.service';
 import html2canvas from 'html2canvas';
 
 @Component({
@@ -12,10 +13,18 @@ import html2canvas from 'html2canvas';
 })
 export class SystemTrapComponent {
   private narrative = inject(NarrativeService);
+  public i18n = inject(I18nService);
   isProcessing = false;
   isHidden = false;
 
-  confirmWipe() {
+  /** Vuelve a la interfaz sin disparar la secuencia. */
+  cancel() {
+    if (this.isProcessing) return;
+    this.narrative.setPhase('INTERFACE');
+  }
+
+  /** Captura la pantalla y arranca la destruccion hacia la vista orbital. */
+  engage() {
     if (this.isProcessing) return;
     this.isProcessing = true;
     this.isHidden = true;

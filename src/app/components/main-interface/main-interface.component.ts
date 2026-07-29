@@ -1,8 +1,12 @@
-import { Component, inject, OnInit, OnDestroy, ElementRef, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
+import {
+  Component, inject, OnInit, OnDestroy, ElementRef, ViewChildren,
+  QueryList, AfterViewInit, signal, computed, HostListener
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NarrativeService } from '../../services/narrative.service';
 import { DataService } from '../../services/data.service';
-import { Skill } from '../../models/portfolio.models'; // <--- Importación limpia
+import { I18nService } from '../../services/i18n.service';
+import { Project, ProjectStatus } from '../../models/portfolio.models';
 
 @Component({
   selector: 'app-main-interface',
@@ -14,6 +18,7 @@ import { Skill } from '../../models/portfolio.models'; // <--- Importación limp
 export class MainInterfaceComponent implements OnInit, AfterViewInit, OnDestroy {
   private narrative = inject(NarrativeService);
   public data = inject(DataService);
+  public i18n = inject(I18nService);
 
   @ViewChildren('observeItem') observeItems!: QueryList<ElementRef>;
 
@@ -25,12 +30,36 @@ export class MainInterfaceComponent implements OnInit, AfterViewInit, OnDestroy 
   isImageGlitching = false;
   private glitchTimeout: any;
 
+  /** Proyecto abierto en el modal de detalle. */
+  activeProject = signal<Project | null>(null);
+  /** Captura ampliada sobre el modal. */
+  lightboxImage = signal<string | null>(null);
+
+  /** Booleano estable: si se bindea la expresion cruda, dev tira NG0100. */
+  overlayOpen = computed(() => this.activeProject() !== null || this.lightboxImage() !== null);
+
   get skillsByCategory() {
-    const cats = ['CORE', 'FRONTEND', 'BACKEND', 'TOOLS'] as const;
+    const t = this.i18n.t();
+    const cats = ['CORE', 'BACKEND', 'FRONTEND', 'TOOLS'] as const;
+    const labels: Record<typeof cats[number], string> = {
+      CORE: t.catCORE, BACKEND: t.catBACKEND, FRONTEND: t.catFRONTEND, TOOLS: t.catTOOLS
+    };
+    const skills = this.data.skills();
     return cats.map(cat => ({
-      name: cat,
-      items: this.data.skills.filter(s => s.category === cat)
+      name: labels[cat],
+      items: skills.filter(s => s.category === cat)
     })).filter(group => group.items.length > 0);
+  }
+
+  statusLabel(status: ProjectStatus): string {
+    const t = this.i18n.t();
+    const map: Record<ProjectStatus, string> = {
+      PRODUCTION: t.statusPRODUCTION,
+      DELIVERED: t.statusDELIVERED,
+      DEPLOYED: t.statusDEPLOYED,
+      PROTOTYPE: t.statusPROTOTYPE
+    };
+    return map[status] ?? status;
   }
 
   ngOnInit() {
@@ -77,14 +106,38 @@ export class MainInterfaceComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   toggleStudy(index: number) {
-    if (this.expandedStudyIndex === index) {
-      this.expandedStudyIndex = null;
-    } else {
-      this.expandedStudyIndex = index;
+    this.expandedStudyIndex = this.expandedStudyIndex === index ? null : index;
+  }
+
+  // --- Proyectos ---
+  openProject(project: Project) {
+    this.activeProject.set(project);
+  }
+
+  closeProject() {
+    this.activeProject.set(null);
+  }
+
+  openLightbox(src: string) {
+    this.lightboxImage.set(src);
+  }
+
+  closeLightbox() {
+    this.lightboxImage.set(null);
+  }
+
+  /** Escape cierra primero la captura ampliada, despues el detalle. */
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.lightboxImage()) {
+      this.closeLightbox();
+    } else if (this.activeProject()) {
+      this.closeProject();
     }
   }
 
-  triggerSystemReset() {
+  /** Entrada a la vista orbital 3D (pasa por la secuencia de destruccion). */
+  triggerOrbitSequence() {
     this.narrative.setPhase('TRAP');
   }
 

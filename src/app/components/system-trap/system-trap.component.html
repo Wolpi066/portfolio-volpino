@@ -1,21 +1,21 @@
 <div class="trap-overlay flex-center" [class.hidden]="isHidden">
     <div class="glass-modal">
         <div class="modal-header">
-            <span class="warning-icon">⚠️</span>
-            <span class="warning-title">CRITICAL_SYSTEM_ALERT</span>
+            <span class="warning-icon">◈</span>
+            <span class="warning-title">{{ i18n.t().trapHeader }}</span>
         </div>
 
         <div class="modal-body">
-            <h2 class="glitch-text">WIPE SYSTEM DATA?</h2>
+            <h2 class="glitch-text">{{ i18n.t().trapTitle }}</h2>
             <p class="warning-desc">
-                Action is irreversible. All cached data will be lost.
-                <br>Proceed with kernel panic?
+                {{ i18n.t().trapDesc }}
+                <br><span class="reassure">{{ i18n.t().trapReassure }}</span>
             </p>
         </div>
 
         <div class="modal-actions">
-            <button class="danger-btn" (click)="confirmWipe()">YES</button>
-            <button class="danger-btn" (click)="confirmWipe()">YES</button>
+            <button class="engage-btn" (click)="engage()">{{ i18n.t().trapEngage }}</button>
+            <button class="cancel-btn" (click)="cancel()">{{ i18n.t().trapCancel }}</button>
         </div>
     </div>
 </div>

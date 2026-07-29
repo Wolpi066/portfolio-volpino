@@ -2,6 +2,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NarrativeService } from '../../services/narrative.service';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-boot-sequence',
@@ -13,18 +14,13 @@ import { NarrativeService } from '../../services/narrative.service';
 
 export class BootSequenceComponent implements OnInit {
   private narrative = inject(NarrativeService);
+  public i18n = inject(I18nService);
 
   progress = 0;
   currentLog = '';
 
-  logs: string[] = [
-    "Initializing Angular Core...",
-    "Loading Geometry Engine...",
-    "Mounting Virtual DOM...",
-    "Decrypting User_Profile: Volpino...",
-    "Establishing Secure Connection...",
-    "System Ready."
-  ];
+  /** El boot corre una sola vez, asi que fija el idioma del arranque. */
+  logs: readonly string[] = this.i18n.t().bootLogs;
 
   ngOnInit() {
     this.startBootSequence();
