@@ -1,0 +1,29 @@
+import{D as V,F as G,G as F,M as k,e as S,f as M,g as p,l as D,n as H,r as P,s as O,w as A}from"./chunk-QSBIHICJ.js";import{Ba as h,Da as v,Db as I,Oa as g,Qa as x,R as f,Ra as E,Sa as c,Ta as o,Ua as a,Va as d,bb as y,cb as w,db as C,eb as R,gb as m,ib as l,jb as T,oa as u,ra as s,yb as _,zb as b}from"./chunk-T2YUIQRV.js";var z=["rendererContainer"];function U(n,e){if(n&1&&d(0,"img",9),n&2){let t=y();c("src",t.capturedImage,u)}}function L(n,e){if(n&1&&(o(0,"div",4),l(1),a()),n&2){let t=e.$implicit;s(),T(t)}}var N=class n{rendererContainer;narrative=f(I);scene;camera;renderer;material;animationId=0;startTime=0;capturedImage=null;isReady=!1;isGlitching=!1;showRebootText=!1;codeColumns=Array.from({length:5},()=>this.buildRandomHex());buildRandomHex(){let e="",t="0123456789ABCDEF@#&%";for(let i=0;i<80;i++)e+=t.charAt(Math.floor(Math.random()*t.length))+`
+`;return e}ngAfterViewInit(){let e=this.narrative.capturedScreen();this.capturedImage=e,this.initGlitchShader(e)}initGlitchShader(e){let t=window.innerWidth,i=window.innerHeight;this.scene=new A,this.camera=new F(-1,1,1,-1,0,1),this.renderer=new k({antialias:!1}),this.renderer.setSize(t,i),this.renderer.setPixelRatio(window.devicePixelRatio),this.renderer.outputColorSpace=p,this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);let r=e?new G().load(e,()=>{requestAnimationFrame(()=>this.isReady=!0)}):new D;e&&(r.minFilter=M,r.magFilter=S,r.colorSpace=p),this.material=new O({uniforms:{tDiffuse:{value:r},uTime:{value:0},uIntensity:{value:0}},vertexShader:`
+        varying vec2 vUv;
+        void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+      `,fragmentShader:`
+        uniform sampler2D tDiffuse;
+        uniform float uTime;
+        uniform float uIntensity;
+        varying vec2 vUv;
+        float random(vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123); }
+        void main() {
+          vec2 uv = vUv;
+          float split = 0.0;
+          if (uIntensity > 0.0) {
+              float sliceY = floor(uv.y * 20.0 + uTime * 2.0); 
+              if (random(vec2(sliceY, uTime)) < uIntensity) {
+                  split = (random(vec2(uTime, sliceY)) - 0.5) * uIntensity * 0.2;
+              }
+          }
+          vec2 splitUV = vec2(uv.x + split, uv.y);
+          float r = texture2D(tDiffuse, splitUV + vec2(uIntensity * 0.01, 0.0)).r;
+          float g = texture2D(tDiffuse, splitUV).g;
+          float b = texture2D(tDiffuse, splitUV - vec2(uIntensity * 0.01, 0.0)).b;
+          float noise = random(uv * uTime) * uIntensity * 0.3;
+          vec3 color = vec3(r, g, b) + noise;
+          if (uIntensity > 0.8 && random(vec2(uTime, 0.0)) > 0.5) color = 1.0 - color;
+          gl_FragColor = vec4(color, 1.0);
+        }
+      `}),this.scene.add(new P(new V(2,2),this.material)),this.startTime=Date.now(),this.animate()}animate(){this.animationId=requestAnimationFrame(()=>this.animate());let e=(Date.now()-this.startTime)/1e3,t=0;e<1?t=0:e<3?(t=(e-1)*.3,this.isGlitching=!0):e<4.5?(t=1+Math.random()*.5,this.showRebootText=!0):(t=0,this.isGlitching=!1,this.scene.background=new H(0),this.scene.children[0]&&(this.scene.children[0].visible=!1)),this.material&&(this.material.uniforms.uTime.value=e,this.material.uniforms.uIntensity.value=t),e>6.5&&this.finishSequence(),this.renderer.render(this.scene,this.camera)}finishSequence(){this.narrative.setPhase("REBIRTH")}ngOnDestroy(){cancelAnimationFrame(this.animationId),this.renderer&&this.renderer.dispose(),this.material&&this.material.dispose()}static \u0275fac=function(t){return new(t||n)};static \u0275cmp=h({type:n,selectors:[["app-voxel-destruction"]],viewQuery:function(t,i){if(t&1&&w(z,5),t&2){let r;C(r=R())&&(i.rendererContainer=r.first)}},decls:15,vars:5,consts:[["rendererContainer",""],[1,"destruction-container"],["class","seamless-placeholder",3,"src",4,"ngIf"],[1,"code-overlay"],[1,"code-column"],[1,"terminal-overlay"],[1,"line","error"],[1,"line"],[1,"line","blink"],[1,"seamless-placeholder",3,"src"]],template:function(t,i){t&1&&(d(0,"div",1,0),v(2,U,1,1,"img",2),o(3,"div",3),x(4,L,2,1,"div",4,g),a(),o(6,"div",5)(7,"div",6),l(8,">> FATAL_SYSTEM_ERROR: 0xC000021A"),a(),o(9,"div",7),l(10,">> KERNEL_DATA_INPAGE_ERROR"),a(),o(11,"div",7),l(12,">> DUMPING_PHYSICAL_MEMORY..."),a(),o(13,"div",8),l(14,"_"),a()()),t&2&&(s(2),c("ngIf",i.capturedImage&&!i.isReady),s(),m("active",i.isGlitching),s(),E(i.codeColumns),s(2),m("visible",i.showRebootText))},dependencies:[b,_],styles:[".destruction-container[_ngcontent-%COMP%]{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999}.seamless-placeholder[_ngcontent-%COMP%]{position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:10000;pointer-events:none}.code-overlay[_ngcontent-%COMP%]{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10001;display:flex;justify-content:space-between;pointer-events:none;opacity:0;padding:0 20px}.code-overlay.active[_ngcontent-%COMP%]{opacity:.4}.code-column[_ngcontent-%COMP%]{font-family:Courier New,monospace;color:#00ff41;font-size:12px;width:20px;word-break:break-all;text-shadow:0 0 5px #00ff41;opacity:.7}.terminal-overlay[_ngcontent-%COMP%]{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:Courier New,monospace;width:80%;max-width:600px;background:#000000f2;border:1px solid #ff3333;padding:30px;box-shadow:0 0 30px #f003;z-index:10002;opacity:0;transition:opacity .2s}.line[_ngcontent-%COMP%]{margin-bottom:8px;color:#ccc;font-size:14px}.line.error[_ngcontent-%COMP%]{color:#f33;font-weight:700;text-shadow:0 0 8px #ff0000}.visible[_ngcontent-%COMP%]{opacity:1}.blink[_ngcontent-%COMP%]{animation:_ngcontent-%COMP%_blink .5s infinite}@keyframes _ngcontent-%COMP%_blink{50%{opacity:0}}"]})};export{N as VoxelDestructionComponent};
