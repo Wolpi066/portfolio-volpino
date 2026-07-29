@@ -133,18 +133,32 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
     this.mainGroup.add(new THREE.Mesh(glowGeo, glowMat));
   }
 
+  /**
+   * Espiral de Fibonacci: reparte N puntos de forma pareja sobre la esfera.
+   * Antes habia un array fijo de 4 coordenadas con `i % 4`, asi que a partir
+   * del 5to proyecto los marcadores se apilaban sobre los primeros.
+   */
+  private spherePositions(count: number): { lat: number; lon: number }[] {
+    if (count === 1) return [{ lat: 15, lon: 0 }];
+    const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+    const positions: { lat: number; lon: number }[] = [];
+
+    for (let i = 0; i < count; i++) {
+      // Evitamos los polos exactos: quedan feos y se superponen visualmente.
+      const y = 1 - ((i + 0.5) / count) * 2;
+      const lat = Math.asin(Math.max(-1, Math.min(1, y))) * (180 / Math.PI);
+      const lon = (((goldenAngle * i) * (180 / Math.PI)) % 360) - 180;
+      positions.push({ lat: lat * 0.82, lon });
+    }
+    return positions;
+  }
+
   loadProjectMarkers() {
     const projects = this.dataService.projects();
-    // Añadida una 4ta coordenada para que el nodo confidencial no se superponga
-    const coords = [
-      { lat: 20, lon: 0 }, 
-      { lat: -20, lon: 60 }, 
-      { lat: 40, lon: -60 },
-      { lat: -10, lon: 150 } 
-    ];
+    const coords = this.spherePositions(projects.length);
 
     projects.forEach((proj, i) => {
-      const pos = coords[i % coords.length];
+      const pos = coords[i];
 
       // Color por naturaleza del proyecto: en produccion, juego, o web/app.
       let color = this.COLOR_WEB;

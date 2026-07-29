@@ -11,9 +11,12 @@
             <span class="sys-text">{{ i18n.t().uptime }}: {{ uptime }}</span>
             <span class="sys-text">{{ i18n.t().version }}: 3.0.0</span>
         </div>
-        <button type="button" class="lang-btn" (click)="i18n.toggle()" [attr.aria-label]="i18n.t().langAria">
-            {{ i18n.t().langToggle }}
-        </button>
+        <div class="lang-switch" role="group" aria-label="Idioma / Language">
+            <button type="button" [class.on]="i18n.lang() === 'es'" (click)="i18n.setLang('es')"
+                [attr.aria-pressed]="i18n.lang() === 'es'">ES</button>
+            <button type="button" [class.on]="i18n.lang() === 'en'" (click)="i18n.setLang('en')"
+                [attr.aria-pressed]="i18n.lang() === 'en'">EN</button>
+        </div>
     </header>
 
     <section class="scroll-section hero-section">
@@ -108,12 +111,14 @@
             <h2 class="section-title" #observeItem>{{ i18n.t().skillsTitle }}</h2>
 
             <div class="skills-dashboard" #observeItem>
-                @for (group of skillsByCategory; track group.name) {
+                <!-- track por indice: los nombres cambian con el idioma y, si se
+                     usan como clave, Angular recrea los nodos y pierden .visible -->
+                @for (group of skillsByCategory; track $index) {
                 <div class="skill-category-panel">
                     <h3 class="category-title">:: {{ group.name }} ::</h3>
 
                     <div class="category-grid holo-grid">
-                        @for (skill of group.items; track skill.name) {
+                        @for (skill of group.items; track $index) {
                         <div class="skill-card">
                             <div class="card-bg"></div>
                             <div class="card-content">
@@ -135,7 +140,7 @@
             <h2 class="section-title" #observeItem>{{ i18n.t().eduTitle }}</h2>
 
             <div class="timeline-container">
-                @for (study of data.studies(); track study.title; let i = $index) {
+                @for (study of data.studies(); track $index; let i = $index) {
                 <div class="study-card" [class.expanded]="expandedStudyIndex === i" (click)="toggleStudy(i)"
                     #observeItem [style.transition-delay]="i * 100 + 'ms'">
 

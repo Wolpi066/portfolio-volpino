@@ -60,34 +60,48 @@
     margin-left: 20px;
 }
 
-/* El toggle va absoluto para no romper el space-between del header,
-   y para seguir visible en mobile (donde .header-right se oculta). */
-.lang-btn {
+/* Selector con las dos opciones visibles y la activa resaltada.
+   Un solo boton que dice "EN" es ambiguo: no se sabe si indica el idioma
+   actual o el destino. Va absoluto para no romper el space-between del
+   header y para seguir visible en mobile (donde .header-right se oculta). */
+.lang-switch {
     position: absolute;
     right: 16px;
     top: 50%;
     transform: translateY(-50%);
+    display: flex;
+    border: 1px solid rgba(0, 255, 170, 0.45);
+}
+
+.lang-switch button {
     background: transparent;
-    border: 1px solid #00ffaa;
-    color: #00ffaa;
+    border: none;
+    color: #4d6b60;
     font-family: inherit;
     font-size: 10px;
     font-weight: bold;
     letter-spacing: 1.5px;
-    padding: 5px 11px;
+    padding: 5px 10px;
     cursor: pointer;
-    transition: 0.25s;
+    transition: 0.2s;
 }
 
-.lang-btn:hover,
-.lang-btn:focus-visible {
+.lang-switch button:hover {
+    color: #00ffaa;
+}
+
+.lang-switch button.on {
     background: #00ffaa;
     color: #000;
-    outline: none;
+}
+
+.lang-switch button:focus-visible {
+    outline: 2px solid #00ffaa;
+    outline-offset: 2px;
 }
 
 .header-right {
-    margin-right: 55px;
+    margin-right: 78px;
 }
 
 .status-dot {

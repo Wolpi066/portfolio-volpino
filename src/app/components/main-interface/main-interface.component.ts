@@ -83,11 +83,20 @@ export class MainInterfaceComponent implements OnInit, AfterViewInit, OnDestroy 
       });
     }, options);
 
+    this.observeAll();
+
+    // Si Angular recrea nodos (por ejemplo al cambiar de idioma), los nuevos
+    // nacen con opacity:0 y sin observar. Hay que volver a engancharlos o
+    // quedan invisibles para siempre.
+    this.observeItems.changes.subscribe(() => this.observeAll());
+
+    this.scheduleNextGlitch();
+  }
+
+  private observeAll() {
     this.observeItems.forEach(item => {
       this.observer.observe(item.nativeElement);
     });
-
-    this.scheduleNextGlitch();
   }
 
   scheduleNextGlitch() {

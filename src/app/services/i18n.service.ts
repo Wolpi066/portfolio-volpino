@@ -16,8 +16,6 @@ const UI = {
         systemOnline: 'SYSTEM: ONLINE',
         uptime: 'UPTIME',
         version: 'VER',
-        langToggle: 'EN',
-        langAria: 'Switch to English',
 
         operatorProfile: '// PERFIL_OPERADOR',
         labelLoc: 'UBIC:',
@@ -90,8 +88,6 @@ const UI = {
         systemOnline: 'SYSTEM: ONLINE',
         uptime: 'UPTIME',
         version: 'VER',
-        langToggle: 'ES',
-        langAria: 'Cambiar a español',
 
         operatorProfile: '// OPERATOR_PROFILE',
         labelLoc: 'LOC:',
@@ -179,6 +175,10 @@ export class I18nService {
                 // modo incognito o storage bloqueado: no es critico
             }
         });
+    }
+
+    setLang(lang: Lang) {
+        this.lang.set(lang);
     }
 
     toggle() {
