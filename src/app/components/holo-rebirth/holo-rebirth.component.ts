@@ -301,7 +301,9 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
       PRODUCTION: t.statusPRODUCTION,
       DELIVERED: t.statusDELIVERED,
       DEPLOYED: t.statusDEPLOYED,
-      PROTOTYPE: t.statusPROTOTYPE
+      IN_DEVELOPMENT: t.statusIN_DEVELOPMENT,
+      PROTOTYPE: t.statusPROTOTYPE,
+      ARCHIVED: t.statusARCHIVED
     };
     return map[status] ?? status;
   }

@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { NarrativeService } from '../../services/narrative.service';
 import { DataService } from '../../services/data.service';
 import { I18nService } from '../../services/i18n.service';
-import { Project, ProjectStatus } from '../../models/portfolio.models';
+import { Project, ProjectStatus, Shot } from '../../models/portfolio.models';
 
 @Component({
   selector: 'app-main-interface',
@@ -33,7 +33,7 @@ export class MainInterfaceComponent implements OnInit, AfterViewInit, OnDestroy 
   /** Proyecto abierto en el modal de detalle. */
   activeProject = signal<Project | null>(null);
   /** Captura ampliada sobre el modal. */
-  lightboxImage = signal<string | null>(null);
+  lightboxImage = signal<Shot | null>(null);
 
   /** Booleano estable: si se bindea la expresion cruda, dev tira NG0100. */
   overlayOpen = computed(() => this.activeProject() !== null || this.lightboxImage() !== null);
@@ -57,7 +57,9 @@ export class MainInterfaceComponent implements OnInit, AfterViewInit, OnDestroy 
       PRODUCTION: t.statusPRODUCTION,
       DELIVERED: t.statusDELIVERED,
       DEPLOYED: t.statusDEPLOYED,
-      PROTOTYPE: t.statusPROTOTYPE
+      IN_DEVELOPMENT: t.statusIN_DEVELOPMENT,
+      PROTOTYPE: t.statusPROTOTYPE,
+      ARCHIVED: t.statusARCHIVED
     };
     return map[status] ?? status;
   }
@@ -127,8 +129,8 @@ export class MainInterfaceComponent implements OnInit, AfterViewInit, OnDestroy 
     this.activeProject.set(null);
   }
 
-  openLightbox(src: string) {
-    this.lightboxImage.set(src);
+  openLightbox(shot: Shot) {
+    this.lightboxImage.set(shot);
   }
 
   closeLightbox() {

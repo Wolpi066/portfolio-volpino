@@ -9,7 +9,7 @@
         </div>
         <div class="header-right">
             <span class="sys-text">{{ i18n.t().uptime }}: {{ uptime }}</span>
-            <span class="sys-text">{{ i18n.t().version }}: 3.0.0</span>
+            <span class="sys-text">{{ i18n.t().version }}: 3.1.0</span>
         </div>
         <div class="lang-switch" role="group" aria-label="Idioma / Language">
             <button type="button" [class.on]="i18n.lang() === 'es'" (click)="i18n.setLang('es')"
@@ -71,37 +71,27 @@
     </section>
 
     <!-- ============ PROYECTOS ============ -->
+    <!-- Aca van solo los destacados. Los once (estos incluidos) se recorren en
+         la vista orbital, que es donde vive el archivo completo. -->
     <section class="scroll-section projects-section">
         <div class="content-wrapper full-width-wrapper">
             <h2 class="section-title" #observeItem>{{ i18n.t().projectsTitle }}</h2>
+            <p class="section-lead" #observeItem>{{ i18n.t().projectsLead }}</p>
 
             <div class="projects-grid" #observeItem>
-                @for (proj of data.projects(); track proj.id) {
-                <article class="project-card" [style.transition-delay]="$index * 90 + 'ms'" tabindex="0"
-                    (click)="openProject(proj)" (keydown.enter)="openProject(proj)"
-                    (keydown.space)="$event.preventDefault(); openProject(proj)">
-
-                    <div class="pc-head">
-                        <span class="pc-id">[{{ proj.id }}]</span>
-                        <span class="pc-status" [class]="'st-' + proj.status">{{ statusLabel(proj.status) }}</span>
-                    </div>
-
-                    <h3 class="pc-name">{{ proj.name }}</h3>
-                    <p class="pc-type">{{ proj.type }}</p>
-                    <p class="pc-desc">{{ proj.description }}</p>
-
-                    <div class="pc-stack">
-                        @for (tech of proj.techStack.slice(0, 4); track tech) {
-                        <span class="pc-tag">{{ tech }}</span>
-                        }
-                        @if (proj.techStack.length > 4) {
-                        <span class="pc-tag pc-more">+{{ proj.techStack.length - 4 }}</span>
-                        }
-                    </div>
-
-                    <span class="pc-cta">{{ i18n.t().projectCta }}</span>
-                </article>
+                @for (proj of data.featuredProjects(); track proj.id) {
+                <ng-container
+                    *ngTemplateOutlet="projectCard; context: { $implicit: proj, i: $index }"></ng-container>
                 }
+            </div>
+
+            <!-- Sin esto, los otros seis no se encuentran: el boton orbital
+                 estaba al final de todo, tres secciones mas abajo. -->
+            <div class="more-in-orbit" #observeItem>
+                <p class="mio-text">{{ i18n.t().moreInOrbit }}</p>
+                <button type="button" class="orbit-btn" (click)="triggerOrbitSequence()">
+                    {{ i18n.t().orbitBtn }}
+                </button>
             </div>
         </div>
     </section>
@@ -188,10 +178,47 @@
 
 </div>
 
+<!-- ============ TARJETA DE PROYECTO (una sola definicion) ============ -->
+<ng-template #projectCard let-proj let-i="i">
+    <article class="project-card" [style.transition-delay]="i * 90 + 'ms'" tabindex="0" role="button"
+        [attr.aria-label]="proj.name + ' — ' + proj.type" (click)="openProject(proj)"
+        (keydown.enter)="openProject(proj)" (keydown.space)="$event.preventDefault(); openProject(proj)">
+
+        <div class="pc-head">
+            <span class="pc-id">[{{ proj.id }}]</span>
+            <span class="pc-status" [class]="'st-' + proj.status">{{ statusLabel(proj.status) }}</span>
+        </div>
+
+        <h3 class="pc-name">{{ proj.name }}</h3>
+        <p class="pc-type">{{ proj.type }}</p>
+        <p class="pc-desc">{{ proj.description }}</p>
+
+        @if (proj.metrics?.length) {
+        <div class="pc-metrics">
+            @for (m of proj.metrics!.slice(0, 2); track m.label) {
+            <span class="pc-metric"><b>{{ m.value }}</b> {{ m.label }}</span>
+            }
+        </div>
+        }
+
+        <div class="pc-stack">
+            @for (tech of proj.techStack.slice(0, 4); track tech) {
+            <span class="pc-tag">{{ tech }}</span>
+            }
+            @if (proj.techStack.length > 4) {
+            <span class="pc-tag pc-more">+{{ proj.techStack.length - 4 }}</span>
+            }
+        </div>
+
+        <span class="pc-cta">{{ i18n.t().projectCta }}</span>
+    </article>
+</ng-template>
+
 <!-- ============ DETALLE DE PROYECTO ============ -->
 @if (activeProject(); as proj) {
 <div class="proj-overlay" (click)="closeProject()">
-    <div class="proj-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="proj-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true"
+        [attr.aria-label]="proj.name">
 
         <div class="pm-head">
             <div class="pm-head-left">
@@ -230,10 +257,10 @@
             @if (proj.gallery?.length) {
             <div class="pm-gallery-block">
                 <h4 class="pm-sub">{{ i18n.t().subShots }}</h4>
-                <div class="pm-gallery" [class.pm-gallery-mobile]="proj.id === '01'">
-                    @for (img of proj.gallery; track img) {
-                    <button type="button" class="pm-shot" (click)="openLightbox(img)">
-                        <img [src]="img" [alt]="proj.name" loading="lazy" decoding="async">
+                <div class="pm-gallery" [class.pm-gallery-phone]="proj.galleryLayout === 'phone'">
+                    @for (shot of proj.gallery; track shot.src) {
+                    <button type="button" class="pm-shot" (click)="openLightbox(shot)" [attr.aria-label]="shot.alt">
+                        <img [src]="shot.src" [alt]="shot.alt" loading="lazy" decoding="async">
                     </button>
                     }
                 </div>
@@ -245,6 +272,13 @@
                 <h4 class="pm-sub">{{ proj.videoKind === 'demo' ? i18n.t().subDemo : i18n.t().subPreview }}</h4>
                 <video [src]="proj.videoUrl" [poster]="proj.videoPoster" controls preload="none" playsinline
                     class="pm-video"></video>
+            </div>
+            }
+
+            @if (proj.role) {
+            <div class="pm-role-block">
+                <h4 class="pm-sub">{{ i18n.t().subRole }}</h4>
+                <p class="pm-role-text">{{ proj.role }}</p>
             </div>
             }
 
@@ -261,13 +295,15 @@
             <p class="pm-note">{{ proj.note }}</p>
             }
 
-            @if (proj.githubUrl || proj.liveUrl) {
+            @if (proj.githubUrl || proj.liveUrl || proj.repoPrivate) {
             <div class="pm-actions">
                 @if (proj.liveUrl) {
                 <a [href]="proj.liveUrl" target="_blank" rel="noopener" class="tech-btn">{{ i18n.t().btnLive }}</a>
                 }
                 @if (proj.githubUrl) {
                 <a [href]="proj.githubUrl" target="_blank" rel="noopener" class="tech-btn">{{ i18n.t().btnRepo }}</a>
+                } @else if (proj.repoPrivate) {
+                <span class="tech-btn is-locked">{{ i18n.t().repoPrivate }}</span>
                 }
             </div>
             }
@@ -277,9 +313,9 @@
 }
 
 <!-- ============ LIGHTBOX ============ -->
-@if (lightboxImage(); as img) {
+@if (lightboxImage(); as shot) {
 <div class="lightbox" (click)="closeLightbox()">
-    <img [src]="img" [attr.alt]="i18n.t().ariaZoom">
+    <img [src]="shot.src" [alt]="shot.alt">
     <button class="lb-close" (click)="closeLightbox()" [attr.aria-label]="i18n.t().ariaClose">[ X ]</button>
 </div>
 }

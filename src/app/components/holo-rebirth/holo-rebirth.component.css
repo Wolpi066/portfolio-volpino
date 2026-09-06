@@ -108,6 +108,8 @@
     z-index: 20;
     display: flex;
     flex-direction: column;
+    /* Nunca mas alta que la pantalla: el contenido scrollea adentro. */
+    max-height: 84vh;
 }
 
 .project-card.visible {
@@ -135,6 +137,16 @@
     object-fit: contain;
 }
 
+/* Vertical de telefono: recortamos por arriba en vez de encogerla a una franja. */
+.card-media.is-phone {
+    height: 220px;
+}
+
+.card-media.is-phone .media-content {
+    object-fit: cover;
+    object-position: top center;
+}
+
 .media-overlay {
     position: absolute;
     top: 0;
@@ -150,6 +162,9 @@
     padding: 20px;
     font-family: 'Courier New';
     color: #fff;
+    overflow-y: auto;
+    min-height: 0;
+    scrollbar-width: thin;
 }
 
 .card-header {
@@ -262,8 +277,6 @@
     padding: 8px;
     margin-bottom: 15px;
     border-left: 2px solid #555;
-    max-height: 130px;
-    overflow-y: auto;
 }
 
 .highlight-label {

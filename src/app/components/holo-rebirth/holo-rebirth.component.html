@@ -35,8 +35,9 @@
     }
 
     @if (!activeProject()?.videoUrl && activeProject()?.gallery?.length) {
-    <div class="card-media">
-        <img [src]="activeProject()?.gallery?.[0]" [alt]="activeProject()?.name" class="media-content" loading="lazy">
+    <div class="card-media" [class.is-phone]="activeProject()?.galleryLayout === 'phone'">
+        <img [src]="activeProject()?.gallery?.[0]?.src" [alt]="activeProject()?.gallery?.[0]?.alt" class="media-content"
+            loading="eager" decoding="async">
         <div class="media-overlay"></div>
     </div>
     }
@@ -78,7 +79,7 @@
             <a [href]="activeProject()?.githubUrl" target="_blank" rel="noopener" class="action-btn">
                 <span>{{ i18n.t().btnRepo }}</span>
             </a>
-            } @else if (!activeProject()?.liveUrl) {
+            } @else if (activeProject()?.repoPrivate) {
             <div class="action-btn locked-btn">
                 <span>{{ i18n.t().privateCode }}</span>
                 <span class="arrow">✕</span>

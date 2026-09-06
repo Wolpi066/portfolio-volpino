@@ -28,13 +28,20 @@ const UI = {
         scrollDown: 'BAJAR [v]',
 
         projectsTitle: '// ARCHIVO_DE_PROYECTOS',
+        projectsLead:
+            'Once sistemas, todos construidos solo y de punta a punta. Acá abajo van los cinco que mejor muestran cómo trabajo: cuatro corriendo en producción —uno de ellos para un cliente real— y una pieza publicada. Cada número sale de una medición o de un conteo real.',
         projectCta: 'ACCEDER_A_DATOS >>',
+        moreInOrbit: 'Los otros seis —los que están en curso y los del archivo— se recorren en la vista orbital, junto con estos cinco.',
+
         statusPRODUCTION: 'EN PRODUCCIÓN',
         statusDELIVERED: 'ENTREGADO',
-        statusDEPLOYED: 'DESPLEGADO',
+        statusDEPLOYED: 'PUBLICADO',
+        statusIN_DEVELOPMENT: 'EN DESARROLLO',
         statusPROTOTYPE: 'PROTOTIPO',
+        statusARCHIVED: 'ARCHIVADO',
 
         subChallenge: '// DESAFÍO_TÉCNICO',
+        subRole: '// MI_ROL',
         subShots: '// CAPTURAS',
         subDemo: '// DEMO',
         subPreview: '// VISTA PREVIA',
@@ -42,8 +49,8 @@ const UI = {
         btnClose: '[ ESC ]',
         btnRepo: 'REPOSITORIO →',
         btnLive: 'VER EN VIVO →',
+        repoPrivate: 'REPOSITORIO PRIVADO',
         ariaClose: 'Cerrar',
-        ariaZoom: 'Captura ampliada',
 
         skillsTitle: '// MATRIZ_DE_CAPACIDADES',
         catCORE: 'FUNDAMENTOS',
@@ -55,7 +62,7 @@ const UI = {
         modulesLoaded: 'CONTENIDOS:',
         certLink: 'VER_CERTIFICADO >>',
 
-        orbitTeaser: 'Hay una vista 3D de este sistema. No es necesaria para nada, pero está.',
+        orbitTeaser: 'Y si llegaste hasta acá: los once sistemas están en la vista orbital, no solo los cinco de arriba.',
         orbitBtn: '[ INICIAR_SECUENCIA_ORBITAL ]',
 
         trapHeader: 'SECUENCIA_ORBITAL',
@@ -100,13 +107,20 @@ const UI = {
         scrollDown: 'SCROLL DOWN [v]',
 
         projectsTitle: '// PROJECT_ARCHIVE',
+        projectsLead:
+            'Eleven systems, all of them built solo and end to end. Below are the five that best show how I work: four running in production —one of them for a paying client— and one published piece. Every figure comes from a measurement or a real count.',
         projectCta: 'ACCESS_DATA >>',
+        moreInOrbit: 'The other six —the ones in progress and the archived ones— can be explored in the orbital view, together with these five.',
+
         statusPRODUCTION: 'IN PRODUCTION',
         statusDELIVERED: 'DELIVERED',
-        statusDEPLOYED: 'DEPLOYED',
+        statusDEPLOYED: 'PUBLISHED',
+        statusIN_DEVELOPMENT: 'IN DEVELOPMENT',
         statusPROTOTYPE: 'PROTOTYPE',
+        statusARCHIVED: 'ARCHIVED',
 
         subChallenge: '// TECHNICAL_CHALLENGE',
+        subRole: '// MY_ROLE',
         subShots: '// SCREENSHOTS',
         subDemo: '// DEMO',
         subPreview: '// PREVIEW',
@@ -114,8 +128,8 @@ const UI = {
         btnClose: '[ ESC ]',
         btnRepo: 'REPOSITORY →',
         btnLive: 'VIEW LIVE →',
+        repoPrivate: 'PRIVATE REPOSITORY',
         ariaClose: 'Close',
-        ariaZoom: 'Enlarged screenshot',
 
         skillsTitle: '// SYSTEM_CAPABILITIES_MATRIX',
         catCORE: 'CORE',
@@ -127,7 +141,7 @@ const UI = {
         modulesLoaded: 'MODULES:',
         certLink: 'VIEW_CERTIFICATE >>',
 
-        orbitTeaser: 'There is a 3D view of this system. Entirely optional, but it is there.',
+        orbitTeaser: 'And if you made it this far: all eleven systems live in the orbital view, not just the five above.',
         orbitBtn: '[ INITIATE_ORBIT_SEQUENCE ]',
 
         trapHeader: 'ORBIT_SEQUENCE',

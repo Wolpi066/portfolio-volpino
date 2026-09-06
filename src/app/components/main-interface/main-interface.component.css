@@ -12,7 +12,10 @@
     color: #e0e0e0;
     font-family: 'Courier New', monospace;
     overflow-y: scroll;
-    scroll-snap-type: y mandatory;
+    /* `proximity` y no `mandatory`: la seccion de proyectos es mas alta que
+       la pantalla y con snap obligatorio el navegador devuelve el scroll al
+       inicio, asi que al archivo no se llegaba nunca. */
+    scroll-snap-type: y proximity;
     scroll-behavior: smooth;
     position: relative;
     scrollbar-width: none;
@@ -787,7 +790,13 @@
     overflow: hidden;
 }
 
-/* Con 6 proyectos, 3x2 cierra parejo y entra en una pantalla. */
+/* Ya no entra en una pantalla: son tres bloques, asi que arranca arriba. */
+.projects-section {
+    align-items: flex-start;
+    padding-top: 96px;
+    padding-bottom: 90px;
+}
+
 .projects-section .content-wrapper {
     max-width: 1320px;
 }
@@ -865,8 +874,16 @@
     color: #00aaff;
 }
 
+.st-IN_DEVELOPMENT {
+    color: #ffaa00;
+}
+
 .st-PROTOTYPE {
     color: #ffee00;
+}
+
+.st-ARCHIVED {
+    color: #7d8894;
 }
 
 .pc-name {
@@ -1100,8 +1117,8 @@
     gap: 12px;
 }
 
-/* Las capturas de Vacuum son de celular: van chicas y en fila. */
-.pm-gallery.pm-gallery-mobile {
+/* Capturas de telefono: columnas angostas en vez de estiradas. */
+.pm-gallery.pm-gallery-phone {
     grid-template-columns: repeat(auto-fit, minmax(150px, 180px));
     justify-content: start;
 }
@@ -1198,6 +1215,92 @@
 }
 
 
+/* ============ PROYECTOS: BAJADA Y SALIDA AL ORBITAL ============ */
+.section-lead {
+    max-width: 860px;
+    font-size: 13px;
+    line-height: 1.85;
+    color: #8fa3b8;
+    margin: -28px 0 46px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: 1s ease-out;
+}
+
+/* Dos datos duros en la tarjeta: lo que hace que valga la pena abrirla. */
+.pc-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 2px;
+}
+
+.pc-metric {
+    font-size: 11px;
+    line-height: 1.5;
+    color: #7d8894;
+}
+
+.pc-metric b {
+    color: #00ffaa;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-right: 6px;
+    white-space: nowrap;
+}
+
+/* Los otros seis proyectos solo existen en el orbital: la salida tiene que
+   estar aca, no tres secciones mas abajo. */
+.more-in-orbit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 28px;
+    flex-wrap: wrap;
+    margin-top: 46px;
+    padding-top: 22px;
+    border-top: 1px dashed rgba(0, 170, 255, 0.22);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: 0.9s ease-out;
+}
+
+.mio-text {
+    flex: 1 1 320px;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #7d8894;
+}
+
+
+/* ============ MODAL: ROL Y REPO PRIVADO ============ */
+.pm-role-block {
+    margin-bottom: 28px;
+}
+
+.pm-role-text {
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: #9aa5b1;
+    margin: 0;
+}
+
+/* No es un enlace: hay repo, pero no se puede abrir. */
+.tech-btn.is-locked {
+    color: #6b7683;
+    border-color: #2a3542;
+    background: rgba(0, 0, 0, 0.3);
+    cursor: default;
+}
+
+.tech-btn.is-locked:hover {
+    background: rgba(0, 0, 0, 0.3);
+    color: #6b7683;
+    box-shadow: none;
+}
+
+
 /* ============ RESPONSIVE PROYECTOS ============ */
 @media (max-width: 768px) {
     .projects-grid {
@@ -1222,13 +1325,14 @@
     }
 
     .pm-gallery,
-    .pm-gallery.pm-gallery-mobile {
+    .pm-gallery.pm-gallery-phone {
         grid-template-columns: 1fr;
     }
 
     .lightbox {
         padding: 16px;
     }
+
 }
 
 
@@ -1246,6 +1350,8 @@
 
     .profile-layout,
     .section-title,
+    .section-lead,
+    .more-in-orbit,
     .study-card,
     .projects-grid,
     .skills-dashboard {
