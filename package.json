@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "ng build && angular-cli-ghpages --dir=dist/portfolio-volpino/browser"
+    "deploy": "ng build --base-href=/portfolio-volpino/ && angular-cli-ghpages --dir=dist/portfolio-volpino/browser"
   },
   "prettier": {
     "printWidth": 100,
