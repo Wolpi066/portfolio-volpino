@@ -1,12 +1,10 @@
-import {
-  Component, inject, OnInit, OnDestroy, ElementRef, ViewChildren,
-  QueryList, AfterViewInit, signal, computed, HostListener
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NarrativeService } from '../../services/narrative.service';
 import { DataService } from '../../services/data.service';
 import { I18nService } from '../../services/i18n.service';
-import { Project, ProjectStatus, Shot } from '../../models/portfolio.models';
+import { WindowsService } from '../../services/windows.service';
+import { Project, ProjectStatus } from '../../models/portfolio.models';
 
 @Component({
   selector: 'app-main-interface',
@@ -15,28 +13,19 @@ import { Project, ProjectStatus, Shot } from '../../models/portfolio.models';
   templateUrl: './main-interface.component.html',
   styleUrls: ['./main-interface.component.css']
 })
-export class MainInterfaceComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MainInterfaceComponent implements OnInit, OnDestroy {
   private narrative = inject(NarrativeService);
   public data = inject(DataService);
   public i18n = inject(I18nService);
+  public wm = inject(WindowsService);
 
-  @ViewChildren('observeItem') observeItems!: QueryList<ElementRef>;
+  uptime = signal('00:00:00');
+  openStudy = signal<number | null>(null);
+  /** Se muestra si alguien intenta entrar al orbital sin WebGL. */
+  orbitBlocked = signal(false);
 
-  observer!: IntersectionObserver;
-  uptime = '00:00:00';
-  private timer: any;
-
-  expandedStudyIndex: number | null = null;
-  isImageGlitching = false;
-  private glitchTimeout: any;
-
-  /** Proyecto abierto en el modal de detalle. */
-  activeProject = signal<Project | null>(null);
-  /** Captura ampliada sobre el modal. */
-  lightboxImage = signal<Shot | null>(null);
-
-  /** Booleano estable: si se bindea la expresion cruda, dev tira NG0100. */
-  overlayOpen = computed(() => this.activeProject() !== null || this.lightboxImage() !== null);
+  private timer?: ReturnType<typeof setInterval>;
+  private seconds = 0;
 
   get skillsByCategory() {
     const t = this.i18n.t();
@@ -45,10 +34,9 @@ export class MainInterfaceComponent implements OnInit, AfterViewInit, OnDestroy 
       CORE: t.catCORE, BACKEND: t.catBACKEND, FRONTEND: t.catFRONTEND, TOOLS: t.catTOOLS
     };
     const skills = this.data.skills();
-    return cats.map(cat => ({
-      name: labels[cat],
-      items: skills.filter(s => s.category === cat)
-    })).filter(group => group.items.length > 0);
+    return cats
+      .map(cat => ({ name: labels[cat], items: skills.filter(s => s.category === cat) }))
+      .filter(g => g.items.length > 0);
   }
 
   statusLabel(status: ProjectStatus): string {
@@ -65,96 +53,37 @@ export class MainInterfaceComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngOnInit() {
-    let seconds = 0;
     this.timer = setInterval(() => {
-      seconds++;
-      const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
-      const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-      const s = (seconds % 60).toString().padStart(2, '0');
-      this.uptime = `${h}:${m}:${s}`;
+      this.seconds++;
+      const h = Math.floor(this.seconds / 3600).toString().padStart(2, '0');
+      const m = Math.floor((this.seconds % 3600) / 60).toString().padStart(2, '0');
+      const s = (this.seconds % 60).toString().padStart(2, '0');
+      this.uptime.set(`${h}:${m}:${s}`);
     }, 1000);
   }
 
-  ngAfterViewInit() {
-    const options = { root: null, rootMargin: '0px', threshold: 0.1 };
-    this.observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, options);
-
-    this.observeAll();
-
-    // Si Angular recrea nodos (por ejemplo al cambiar de idioma), los nuevos
-    // nacen con opacity:0 y sin observar. Hay que volver a engancharlos o
-    // quedan invisibles para siempre.
-    this.observeItems.changes.subscribe(() => this.observeAll());
-
-    this.scheduleNextGlitch();
+  /** Abrir un proyecto es abrir una ventana. */
+  open(project: Project) {
+    this.wm.open(project);
   }
 
-  private observeAll() {
-    this.observeItems.forEach(item => {
-      this.observer.observe(item.nativeElement);
-    });
+  toggleStudy(i: number) {
+    this.openStudy.update(cur => (cur === i ? null : i));
   }
 
-  scheduleNextGlitch() {
-    const randomDelay = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000;
-    this.glitchTimeout = setTimeout(() => {
-      this.triggerGlitch();
-    }, randomDelay);
-  }
-
-  triggerGlitch() {
-    this.isImageGlitching = true;
-    setTimeout(() => {
-      this.isImageGlitching = false;
-      this.scheduleNextGlitch();
-    }, 500);
-  }
-
-  toggleStudy(index: number) {
-    this.expandedStudyIndex = this.expandedStudyIndex === index ? null : index;
-  }
-
-  // --- Proyectos ---
-  openProject(project: Project) {
-    this.activeProject.set(project);
-  }
-
-  closeProject() {
-    this.activeProject.set(null);
-  }
-
-  openLightbox(shot: Shot) {
-    this.lightboxImage.set(shot);
-  }
-
-  closeLightbox() {
-    this.lightboxImage.set(null);
-  }
-
-  /** Escape cierra primero la captura ampliada, despues el detalle. */
-  @HostListener('document:keydown.escape')
-  onEscape() {
-    if (this.lightboxImage()) {
-      this.closeLightbox();
-    } else if (this.activeProject()) {
-      this.closeProject();
+  /**
+   * Entrada al orbital. Si la maquina no tiene WebGL no se entra: antes se
+   * entraba igual, la escena reventaba en silencio y no habia forma de volver.
+   */
+  enterOrbit() {
+    if (!this.narrative.hasWebGL()) {
+      this.orbitBlocked.set(true);
+      return;
     }
-  }
-
-  /** Entrada a la vista orbital 3D (pasa por la secuencia de destruccion). */
-  triggerOrbitSequence() {
-    this.narrative.setPhase('TRAP');
+    this.narrative.setPhase('ORBIT');
   }
 
   ngOnDestroy() {
     if (this.timer) clearInterval(this.timer);
-    if (this.observer) this.observer.disconnect();
-    if (this.glitchTimeout) clearTimeout(this.glitchTimeout);
   }
 }

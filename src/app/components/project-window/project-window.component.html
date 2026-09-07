@@ -1,0 +1,113 @@
+@let w = win();
+@let p = w.project;
+
+<article class="frame" #frame [class.is-active]="active" [class.is-dragging]="dragging()"
+  [class.is-sheet]="isMobile()" [class.is-max]="w.maximized"
+  [style.width.px]="isMobile() ? null : w.w" [style.height.px]="isMobile() ? null : w.h"
+  role="dialog" [attr.aria-label]="p.name + ' — ' + p.type" (pointerdown)="focus()"
+  (keydown.escape)="close()">
+
+  <!-- Barra de titulo: el asa del arrastre, y tambien el control por teclado. -->
+  <header class="bar" #bar tabindex="0" (keydown)="onBarKey($event)"
+    [attr.aria-label]="i18n.t().winMoveHint" (dblclick)="toggleMax()">
+    <span class="bar-grip" aria-hidden="true"></span>
+    <span class="bar-id tabular" translate="no">[{{ p.id }}]</span>
+    <h2 class="bar-title">{{ p.name }}</h2>
+    <span class="bar-status" [class]="'st-' + p.status">{{ statusLabel(p.status) }}</span>
+
+    <div class="bar-ctl">
+      @if (!isMobile()) {
+      <button type="button" class="wbtn" (click)="minimize()" [attr.aria-label]="i18n.t().winMinimize">
+        <span class="ic-min" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="wbtn" (click)="toggleMax()"
+        [attr.aria-label]="w.maximized ? i18n.t().winRestore : i18n.t().winMaximize">
+        <span class="ic-max" aria-hidden="true"></span>
+      </button>
+      }
+      <button type="button" class="wbtn wbtn-close" (click)="close()" [attr.aria-label]="i18n.t().winClose">
+        <span class="ic-close" aria-hidden="true"></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="body">
+    <p class="w-type">{{ p.type }}</p>
+    <p class="w-desc">{{ p.description }}</p>
+
+    @if (p.metrics?.length) {
+    <ul class="w-metrics">
+      @for (m of p.metrics; track m.label) {
+      <li>
+        <span class="wm-val tabular">{{ m.value }}</span>
+        <span class="wm-lbl">{{ m.label }}</span>
+      </li>
+      }
+    </ul>
+    }
+
+    @if (p.technicalHighlight) {
+    <section class="w-block">
+      <h3 class="label">{{ i18n.t().subChallenge }}</h3>
+      <p class="w-tech">{{ p.technicalHighlight }}</p>
+    </section>
+    }
+
+    @if (p.gallery?.length) {
+    <section class="w-block">
+      <h3 class="label">{{ i18n.t().subShots }}</h3>
+      <div class="w-shots" [class.is-phone]="p.galleryLayout === 'phone'">
+        @for (s of p.gallery; track s.src) {
+        <button type="button" class="shot" (click)="lightbox.emit(s)" [attr.aria-label]="s.alt">
+          <img [src]="s.src" [alt]="s.alt" loading="lazy" decoding="async" width="1300" height="813">
+        </button>
+        }
+      </div>
+    </section>
+    }
+
+    @if (p.videoUrl) {
+    <section class="w-block">
+      <h3 class="label">{{ p.videoKind === 'demo' ? i18n.t().subDemo : i18n.t().subPreview }}</h3>
+      <video [src]="p.videoUrl" [poster]="p.videoPoster" controls preload="none" playsinline class="w-video"></video>
+    </section>
+    }
+
+    @if (p.role) {
+    <section class="w-block">
+      <h3 class="label">{{ i18n.t().subRole }}</h3>
+      <p class="w-role">{{ p.role }}</p>
+    </section>
+    }
+
+    <section class="w-block">
+      <h3 class="label">{{ i18n.t().subStack }}</h3>
+      <ul class="w-stack">
+        @for (t of p.techStack; track t) {
+        <li translate="no">{{ t }}</li>
+        }
+      </ul>
+    </section>
+
+    @if (p.note) {
+    <p class="w-note">{{ p.note }}</p>
+    }
+
+    @if (p.liveUrl || p.githubUrl || p.repoPrivate) {
+    <div class="w-actions">
+      @if (p.liveUrl) {
+      <a [href]="p.liveUrl" target="_blank" rel="noopener" class="btn btn-signal">{{ i18n.t().btnLive }}</a>
+      }
+      @if (p.githubUrl) {
+      <a [href]="p.githubUrl" target="_blank" rel="noopener" class="btn">{{ i18n.t().btnRepo }}</a>
+      } @else if (p.repoPrivate) {
+      <span class="btn is-locked">{{ i18n.t().repoPrivate }}</span>
+      }
+    </div>
+    }
+  </div>
+
+  @if (!isMobile()) {
+  <span class="grip" #grip [attr.aria-label]="i18n.t().winResize" role="separator" aria-orientation="vertical"></span>
+  }
+</article>

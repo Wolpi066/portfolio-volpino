@@ -5,16 +5,19 @@
   <meta charset="utf-8">
   <title>Emiliano Volpino | Full Stack Developer — Systems Design & Backend</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0a0a0a">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#06070b">
+  <meta name="color-scheme" content="dark">
 
   <meta name="description"
-    content="Portfolio de Emiliano Volpino. Desarrollador Full Stack orientado a backend: Node.js, TypeScript y PostgreSQL. Sistemas transaccionales y motores de automatización en producción.">
+    content="Portfolio de Emiliano Volpino. Desarrollador Full Stack orientado a backend: Node.js, TypeScript y PostgreSQL. Once sistemas construidos solo, cinco en producción, con números medidos.">
   <meta name="author" content="Emiliano Volpino">
+  <link rel="canonical" href="https://wolpi066.github.io/portfolio-volpino/">
 
   <!-- Open Graph: las URLs de imagen DEBEN ser absolutas o no se renderiza la preview -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_AR">
+  <meta property="og:locale:alternate" content="en_US">
   <meta property="og:site_name" content="Emiliano Volpino">
   <meta property="og:url" content="https://wolpi066.github.io/portfolio-volpino/">
   <meta property="og:title" content="Emiliano Volpino | Full Stack Developer">
@@ -35,7 +38,35 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Dos variables: una display con eje optico, una mono para telemetria y datos. -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=JetBrains+Mono:wght@400..700&display=swap"
+    rel="stylesheet">
+
+  <!-- Datos estructurados: el HTML servido no tiene contenido hasta que corre
+       Angular, asi que esto es lo unico que un buscador puede leer de entrada. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Emiliano Volpino",
+    "url": "https://wolpi066.github.io/portfolio-volpino/",
+    "image": "https://wolpi066.github.io/portfolio-volpino/assets/fotoDePerfil.png",
+    "jobTitle": "Desarrollador Full Stack — Diseño de sistemas y backend",
+    "email": "mailto:volpinoemiliano@gmail.com",
+    "address": { "@type": "PostalAddress", "addressLocality": "Buenos Aires", "addressCountry": "AR" },
+    "worksFor": { "@type": "Organization", "name": "Vixit Labs", "url": "https://vixit-labs.vercel.app" },
+    "sameAs": [
+      "https://github.com/Wolpi066",
+      "https://www.linkedin.com/in/emilianovolpino",
+      "https://vixit-labs.vercel.app"
+    ],
+    "knowsAbout": [
+      "TypeScript", "Node.js", "PostgreSQL", "Prisma", "Next.js", "Angular",
+      "React", "Diseño de sistemas", "Arquitectura backend", "WebGL"
+    ]
+  }
+  </script>
 </head>
 
 <body>

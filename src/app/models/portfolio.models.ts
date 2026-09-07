@@ -43,6 +43,8 @@ export interface Shot {
 export interface Project {
     id: string;
     name: string;
+    /** Identificador legible para enlazar el proyecto (#/p/it-deck). */
+    slug: string;
     group: ProjectGroup;
     type: string;
     status: ProjectStatus;

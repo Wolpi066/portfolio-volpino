@@ -1,363 +1,173 @@
-.holo-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #050505;
-    z-index: 1;
+.orbit {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(1000px 700px at 50% 55%, rgba(255, 178, 89, 0.05), transparent 62%),
+    var(--void);
+  overflow: hidden;
 }
 
-.hud-overlay {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 10;
-    background: radial-gradient(circle, transparent 50%, black 140%);
+.canvas {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  cursor: grab;
 }
 
-.legend-box {
-    margin-top: 15px;
-    border-left: 2px solid rgba(255, 255, 255, 0.2);
-    padding-left: 10px;
+.canvas:active {
+  cursor: grabbing;
 }
 
-.legend-item {
-    font-family: 'Courier New';
-    font-size: 10px;
-    color: #ccc;
-    margin-bottom: 5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.canvas canvas {
+  display: block;
 }
 
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-    box-shadow: 0 0 5px currentColor;
+/* =========================================================================
+   HUD
+   Flota sobre la escena sin robarle el puntero salvo donde hay algo que tocar.
+   ========================================================================= */
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  padding: var(--sp-5);
+  animation: hud-in 700ms var(--ease-out) 200ms backwards;
 }
 
-.dot.web {
-    background-color: #00ffff;
-    color: #00ffff;
-}
-
-
-.dot.game {
-    background-color: #ff00ff;
-    color: #ff00ff;
-}
-
-.dot.live {
-    background-color: #00ff88;
-    color: #00ff88;
-}
-
-
-
-.hud-top-left {
-    position: absolute;
-    top: 40px;
-    left: 40px;
-    color: #00ffff;
-    font-family: 'Courier New';
-}
-
-.hud-bottom-center {
-    position: absolute;
-    bottom: 40px;
-    width: 100%;
-    text-align: center;
-}
-
-.nav-hint {
-    font-size: 10px;
-    color: rgba(0, 255, 255, 0.5);
-    font-family: 'Courier New';
-    letter-spacing: 2px;
-}
-
-.scan-line {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.5), transparent);
-    animation: scan 8s linear infinite;
-    opacity: 0.2;
-}
-
-/* TARJETA */
-.project-card {
-    position: absolute;
-    top: 50%;
-    right: 10%;
-    width: 350px;
-    background: rgba(5, 10, 15, 0.95);
-    border: 1px solid #00ffff;
-    padding: 2px;
-    transform: translateY(-50%) translateX(50px);
+@keyframes hud-in {
+  from {
     opacity: 0;
-    transition: 0.4s;
-    pointer-events: none;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    /* Nunca mas alta que la pantalla: el contenido scrollea adentro. */
-    max-height: 84vh;
+  }
 }
 
-.project-card.visible {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0);
-    pointer-events: auto;
+.hud-tl {
+  position: absolute;
+  inset-block-start: var(--sp-5);
+  inset-inline-start: var(--sp-5);
 }
 
-/* MEDIA */
-.card-media {
-    width: 100%;
-    height: 180px;
-    position: relative;
-    background: #000;
-    border-bottom: 1px solid #00ffff;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.o-title {
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--signal);
+  margin-block-end: var(--sp-4);
 }
 
-.media-content {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
-/* Vertical de telefono: recortamos por arriba en vez de encogerla a una franja. */
-.card-media.is-phone {
-    height: 220px;
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.09em;
+  color: var(--text-mute);
 }
 
-.card-media.is-phone .media-content {
-    object-fit: cover;
-    object-position: top center;
+.legend .k {
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.media-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px);
-    background-size: 100% 4px;
-    pointer-events: none;
+.legend .live {
+  background: var(--live);
 }
 
-.card-content {
-    padding: 20px;
-    font-family: 'Courier New';
-    color: #fff;
-    overflow-y: auto;
-    min-height: 0;
-    scrollbar-width: thin;
+.legend .work {
+  background: var(--work);
 }
 
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
+.legend .arch {
+  background: var(--arch);
 }
 
-.close-btn {
-    background: none;
-    border: none;
-    color: #00ffff;
-    cursor: pointer;
-    font-size: 14px;
-    transition: color 0.2s;
+.o-exit {
+  position: absolute;
+  inset-block-start: var(--sp-5);
+  inset-inline-end: var(--sp-5);
+  pointer-events: auto;
 }
 
-.close-btn:hover {
-    color: #ff3333;
+.hints {
+  position: absolute;
+  inset-block-end: var(--sp-5);
+  inset-inline: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.14em;
+  color: var(--text-mute);
 }
 
-.card-title {
-    font-size: 18px;
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+/* Lectura del nodo bajo el puntero. */
+.readout {
+  position: absolute;
+  inset-block-end: calc(var(--sp-5) + 52px);
+  inset-inline: 0;
+  margin: 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--signal);
+  opacity: 0;
+  transform: translateY(5px);
+  transition:
+    opacity var(--dur-ui) var(--ease-out),
+    transform var(--dur-ui) var(--ease-out);
 }
 
-.card-divider {
-    height: 1px;
-    background: #00ffff;
-    margin: 10px 0;
-    opacity: 0.3;
+.readout.on {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.card-desc {
-    font-size: 11px;
-    color: #ccc;
-    margin-bottom: 10px;
-    border-left: 2px solid #00aaaa;
-    padding-left: 10px;
+@media (max-width: 760px) {
+  .hud {
+    padding: var(--sp-3);
+  }
+
+  .hud-tl,
+  .o-exit {
+    inset-block-start: var(--sp-3);
+  }
+
+  .hud-tl {
+    inset-inline-start: var(--sp-3);
+  }
+
+  .o-exit {
+    inset-inline-end: var(--sp-3);
+  }
+
+  .legend {
+    display: none;
+  }
 }
 
-.tech-stack {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 10px;
-}
+@media (prefers-reduced-motion: reduce) {
+  .hud {
+    animation: none;
+  }
 
-.tech-badge {
-    font-size: 9px;
-    padding: 2px 5px;
-    border: 1px solid #00ffaa;
-    color: #00ffaa;
-    border-radius: 2px;
-}
-
-.action-btn {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-    padding: 10px;
-    border: 1px solid #00ffff;
-    color: #00ffff;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 11px;
-    transition: 0.2s;
-}
-
-.action-btn:hover {
-    background: #00ffff;
-    color: black;
-}
-
-@keyframes blink {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.2;
-    }
-}
-
-@keyframes scan {
-    0% {
-        top: -10%;
-    }
-
-    100% {
-        top: 110%;
-    }
-}
-
-.status-badge {
-    font-size: 10px;
-    color: #00ffff;
-    letter-spacing: 1px;
-}
-
-.tech-highlight {
-    font-size: 10px;
-    line-height: 1.6;
-    color: #aaa;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 8px;
-    margin-bottom: 15px;
-    border-left: 2px solid #555;
-}
-
-.highlight-label {
-    color: #666;
-}
-
-.locked-btn {
-    border-color: #666;
-    color: #888;
-    cursor: not-allowed;
-}
-
-.locked-btn:hover {
-    background: transparent;
-    color: #888;
-}
-
-/* --- SALIDA DE LA VISTA ORBITAL --- */
-.exit-btn {
-    position: absolute;
-    top: 40px;
-    right: 40px;
-    pointer-events: auto;
-    background: rgba(0, 0, 0, 0.55);
-    border: 1px solid #00ffff;
-    color: #00ffff;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    padding: 10px 16px;
-    cursor: pointer;
-    transition: 0.25s;
-    z-index: 30;
-}
-
-.exit-btn:hover,
-.exit-btn:focus-visible {
-    background: #00ffff;
-    color: #000;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-    outline: none;
-}
-
-/* --- RESPONSIVE --- */
-@media (max-width: 768px) {
-    .hud-top-left {
-        top: 20px;
-        left: 20px;
-    }
-
-    .hud-top-left h1 {
-        font-size: 16px;
-    }
-
-    .exit-btn {
-        top: 20px;
-        right: 20px;
-        padding: 9px 12px;
-        font-size: 10px;
-    }
-
-    .project-card {
-        top: auto;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        width: 100%;
-        max-height: 78vh;
-        overflow-y: auto;
-        transform: translateY(100%);
-    }
-
-    .project-card.visible {
-        transform: translateY(0);
-    }
-
-    .card-media {
-        height: 140px;
-    }
-
-    .hud-bottom-center {
-        display: none;
-    }
+  .readout {
+    transition: none;
+  }
 }

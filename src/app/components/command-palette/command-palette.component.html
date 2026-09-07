@@ -1,0 +1,46 @@
+@if (open()) {
+<div class="veil" (click)="close()">
+  <div class="pal" role="dialog" aria-modal="true" [attr.aria-label]="i18n.t().cmdTitle"
+    (click)="$event.stopPropagation()">
+
+    <div class="pal-field">
+      <span class="pal-caret" aria-hidden="true">&gt;</span>
+      <input #field type="text" class="pal-input" [value]="query()"
+        (input)="onInput($any($event.target).value)" [attr.placeholder]="i18n.t().cmdPlaceholder"
+        [attr.aria-label]="i18n.t().cmdPlaceholder" autocomplete="off" spellcheck="false"
+        role="combobox" aria-expanded="true" aria-controls="cmd-list" aria-autocomplete="list">
+      <kbd class="pal-esc">ESC</kbd>
+    </div>
+
+    <ul class="pal-list" id="cmd-list" role="listbox">
+      @for (g of grouped(); track g.name) {
+      <li class="pal-group" role="presentation">
+        <span class="label">{{ g.name }}</span>
+        <ul role="presentation">
+          @for (r of g.items; track r.cmd.id) {
+          <li role="option" [attr.aria-selected]="cursor() === r.index">
+            <button type="button" class="pal-item" [class.on]="cursor() === r.index"
+              (click)="pick(r.index)" (mouseenter)="cursor.set(r.index)">
+              <span class="pi-label">{{ r.cmd.label }}</span>
+              @if (r.cmd.hint) {
+              <span class="pi-hint">{{ r.cmd.hint }}</span>
+              }
+            </button>
+          </li>
+          }
+        </ul>
+      </li>
+      }
+
+      @if (!results().length) {
+      <li class="pal-empty">{{ i18n.t().cmdEmpty }}</li>
+      }
+    </ul>
+
+    <footer class="pal-foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> {{ i18n.t().cmdMove }}</span>
+      <span><kbd>↵</kbd> {{ i18n.t().cmdRun }}</span>
+    </footer>
+  </div>
+</div>
+}

@@ -1,16 +1,25 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, inject, signal } from '@angular/core';
+import {
+  Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, inject, signal
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-// IMPORTACIONES
 import { DataService } from '../../services/data.service';
 import { NarrativeService } from '../../services/narrative.service';
 import { I18nService } from '../../services/i18n.service';
-import { Project, ProjectStatus } from '../../models/portfolio.models';
+import { WindowsService } from '../../services/windows.service';
+import { Project } from '../../models/portfolio.models';
 
-/** Cuanto puede moverse el puntero y seguir contando como tap y no como arrastre. */
-const TAP_THRESHOLD_PX = 8;
+/** Cuanto puede moverse el puntero y seguir contando como toque y no arrastre. */
+const TAP_PX = 8;
+/** Tope de densidad: a DPR 3 sin tope son ~11 Mpx por cuadro. */
+const MAX_DPR = 2;
+
+const C_LIVE = 0x46d98a;
+const C_WORK = 0x5fa8ff;
+const C_ARCH = 0x9aa4b2;
+const C_SIGNAL = 0xffb259;
 
 @Component({
   selector: 'app-holo-rebirth',
@@ -20,324 +29,443 @@ const TAP_THRESHOLD_PX = 8;
   styleUrls: ['./holo-rebirth.component.css']
 })
 export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('rendererContainer') rendererContainer!: ElementRef;
-  private dataService = inject(DataService);
+  @ViewChild('canvasHost') canvasHost!: ElementRef<HTMLElement>;
+
+  private data = inject(DataService);
   private narrative = inject(NarrativeService);
+  private wm = inject(WindowsService);
   public i18n = inject(I18nService);
 
-  activeProject = signal<Project | null>(null);
+  hovered = signal<string | null>(null);
 
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
   private renderer!: THREE.WebGLRenderer;
   private controls!: OrbitControls;
   private raycaster = new THREE.Raycaster();
-  private mouse = new THREE.Vector2();
+  private pointer = new THREE.Vector2();
 
-  private mainGroup = new THREE.Group();
+  private world = new THREE.Group();
   private markers: THREE.Group[] = [];
+  private uniforms!: Record<string, THREE.IUniform>;
 
-  private COLOR_WEB = 0x00ffff;
-  private COLOR_GAME = 0xff00ff;
-  private COLOR_HOVER = 0xff0000;
-  private COLOR_LIVE = 0x00ff88; // sistemas en produccion
-
-  private hoveredMarker: THREE.Group | null = null;
-  private planetUniforms: any;
-  private pointerDownAt: { x: number; y: number } | null = null;
-
-  private animationId = 0;
+  private hoverGroup: THREE.Group | null = null;
+  private downAt: { x: number; y: number } | null = null;
+  private frame = 0;
   private clock = new THREE.Clock();
+  private reduced = false;
+  private onResize = () => this.resize();
 
   ngAfterViewInit() {
-    this.initThreeJS();
-    this.loadProjectMarkers();
-    this.animate();
+    this.reduced = this.narrative.prefersReducedMotion();
+    try {
+      this.init();
+      this.buildPlanet();
+      this.buildMarkers();
+      this.animate();
+      window.addEventListener('resize', this.onResize);
+    } catch {
+      // Sin contexto 3D no se deja al visitante en una pantalla muerta.
+      this.exit();
+    }
   }
 
-  initThreeJS() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+  // =======================================================================
+  private init() {
+    const host = this.canvasHost.nativeElement;
+    const w = host.clientWidth || window.innerWidth;
+    const h = host.clientHeight || window.innerHeight;
+
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x050505);
-    this.scene.fog = new THREE.FogExp2(0x050505, 0.002);
+    this.scene.fog = new THREE.FogExp2(0x06070b, 0.021);
 
-    this.camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
-    this.camera.position.z = 25;
+    this.camera = new THREE.PerspectiveCamera(52, w / h, 0.1, 400);
+    this.camera.position.set(0, 7, 33);
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    this.renderer.setSize(width, height);
-    this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: window.devicePixelRatio < 2,
+      alpha: true,
+      powerPreference: 'high-performance'
+    });
+    this.renderer.setSize(w, h);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_DPR));
+    host.appendChild(this.renderer.domElement);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
-    this.controls.autoRotate = true;
-    this.controls.autoRotateSpeed = 0.8;
+    // Amortiguacion baja: al soltar sigue girando y frena solo, con inercia.
+    this.controls.dampingFactor = 0.045;
+    this.controls['rotateSpeed'] = 0.55;
+    this.controls.enablePan = false;
+    this.controls.minDistance = 19;
+    this.controls.maxDistance = 58;
+    this.controls.autoRotate = !this.reduced;
+    this.controls.autoRotateSpeed = 0.35;
 
-    const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-    this.scene.add(ambient);
-    const starGeo = new THREE.BufferGeometry();
-    const count = 3000;
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count * 3; i++) pos[i] = (Math.random() - 0.5) * 300;
-    starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    this.scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.15, color: 0xffffff, transparent: true, opacity: 0.8 })));
-
-    this.createWireframePlanet();
-    this.scene.add(this.mainGroup);
-    window.addEventListener('resize', () => {
-      this.camera.aspect = window.innerWidth / window.innerHeight;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(window.innerWidth, window.innerHeight);
-    });
+    this.scene.add(this.world);
+    this.buildStars();
   }
 
-  createWireframePlanet() {
-    const radius = 10;
-    const geometry = new THREE.IcosahedronGeometry(radius, 4);
-    this.planetUniforms = {
-      uTime: { value: 0 },
-      uColor: { value: new THREE.Color(0x00ffff) },
-      uClickPos: { value: new THREE.Vector3(0, 0, 0) },
-      uClickTime: { value: -100.0 }
-    };
-    const material = new THREE.ShaderMaterial({
-      uniforms: this.planetUniforms,
-      wireframe: true, transparent: true,
+  private buildStars() {
+    const n = 2200;
+    const pos = new Float32Array(n * 3);
+    const size = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      // Repartidas en una cascara, no en un cubo: no hay estrellas cerca.
+      const r = 90 + Math.random() * 130;
+      const th = Math.random() * Math.PI * 2;
+      const ph = Math.acos(2 * Math.random() - 1);
+      pos[i * 3] = r * Math.sin(ph) * Math.cos(th);
+      pos[i * 3 + 1] = r * Math.cos(ph);
+      pos[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th);
+      size[i] = Math.random() < 0.06 ? 2.1 : 0.75;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('aSize', new THREE.BufferAttribute(size, 1));
+
+    const m = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      uniforms: { uTime: { value: 0 } },
       vertexShader: `
-        uniform float uTime; uniform vec3 uClickPos; uniform float uClickTime;
-        varying vec3 vNormal;
+        attribute float aSize; uniform float uTime; varying float vT;
         void main() {
-          vNormal = normal; vec3 pos = position;
-          float dist = distance(pos, uClickPos);
-          float timeSinceClick = uTime - uClickTime;
-          if (timeSinceClick > 0.0 && timeSinceClick < 2.5) {
-             float waveDist = timeSinceClick * 15.0;
-             float diff = dist - waveDist;
-             if (abs(diff) < 5.0) {
-                float wave = sin(diff * 1.0) * exp(-abs(diff) * 0.5);
-                pos += normal * wave * 0.8;
-             }
-          }
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-        }
-      `,
-      fragmentShader: `uniform vec3 uColor; void main() { gl_FragColor = vec4(uColor, 0.25); }`
+          vT = fract(sin(position.x * 12.9898 + position.z * 78.233) * 43758.5453);
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = aSize * (260.0 / -mv.z);
+          gl_Position = projectionMatrix * mv;
+        }`,
+      fragmentShader: `
+        varying float vT; uniform float uTime;
+        void main() {
+          float d = length(gl_PointCoord - 0.5);
+          if (d > 0.5) discard;
+          // Centelleo lento y desfasado: ninguna parpadea igual que la de al lado.
+          float tw = 0.65 + 0.35 * sin(uTime * 0.7 + vT * 6.283);
+          gl_FragColor = vec4(vec3(0.86, 0.90, 0.97), (1.0 - d * 2.0) * tw * 0.9);
+        }`
     });
-    const sphere = new THREE.Mesh(geometry, material);
-    sphere.name = "PLANET_SURFACE";
-    this.mainGroup.add(sphere);
-    const glowGeo = new THREE.IcosahedronGeometry(radius + 0.5, 2);
-    const glowMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.05, side: THREE.BackSide });
-    this.mainGroup.add(new THREE.Mesh(glowGeo, glowMat));
+    this.scene.add(new THREE.Points(g, m));
   }
 
   /**
-   * Espiral de Fibonacci: reparte N puntos de forma pareja sobre la esfera.
-   * Antes habia un array fijo de 4 coordenadas con `i % 4`, asi que a partir
-   * del 5to proyecto los marcadores se apilaban sobre los primeros.
+   * El planeta. Antes era una esfera de alambre cian; ahora es un cuerpo:
+   * nucleo oscuro, reticula fina de meridianos y paralelos, y una atmosfera
+   * que se enciende en el borde por fresnel.
    */
-  private spherePositions(count: number): { lat: number; lon: number }[] {
-    if (count === 1) return [{ lat: 15, lon: 0 }];
-    const goldenAngle = Math.PI * (3 - Math.sqrt(5));
-    const positions: { lat: number; lon: number }[] = [];
+  private buildPlanet() {
+    const R = 9.4;
+    this.uniforms = {
+      uTime: { value: 0 },
+      uHit: { value: new THREE.Vector3() },
+      uHitAt: { value: -100 }
+    };
 
-    for (let i = 0; i < count; i++) {
-      // Evitamos los polos exactos: quedan feos y se superponen visualmente.
-      const y = 1 - ((i + 0.5) / count) * 2;
-      const lat = Math.asin(Math.max(-1, Math.min(1, y))) * (180 / Math.PI);
-      const lon = (((goldenAngle * i) * (180 / Math.PI)) % 360) - 180;
-      positions.push({ lat: lat * 0.82, lon });
-    }
-    return positions;
+    // --- Nucleo -----------------------------------------------------------
+    const core = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(R, 32),
+      new THREE.ShaderMaterial({
+        uniforms: this.uniforms,
+        vertexShader: `
+          uniform float uTime; uniform vec3 uHit; uniform float uHitAt;
+          varying vec3 vN; varying vec3 vView;
+          void main() {
+            vN = normalize(normalMatrix * normal);
+            vec3 p = position;
+            // Onda al tocar la superficie: se expande desde el punto y muere.
+            float dt = uTime - uHitAt;
+            if (dt > 0.0 && dt < 2.2) {
+              float d = distance(p, uHit) - dt * 14.0;
+              p += normal * sin(d) * exp(-abs(d) * 0.55) * 0.55 * (1.0 - dt / 2.2);
+            }
+            vec4 mv = modelViewMatrix * vec4(p, 1.0);
+            vView = -mv.xyz;
+            gl_Position = projectionMatrix * mv;
+          }`,
+        fragmentShader: `
+          varying vec3 vN; varying vec3 vView;
+          void main() {
+            float f = 1.0 - clamp(dot(normalize(vN), normalize(vView)), 0.0, 1.0);
+            // Ambar en el limbo, azul profundo en el centro.
+            vec3 col = mix(vec3(0.035, 0.045, 0.07), vec3(1.0, 0.70, 0.35), pow(f, 5.5));
+            gl_FragColor = vec4(col, 1.0);
+          }`
+      })
+    );
+    core.name = 'CORE';
+    this.world.add(core);
+
+    // --- Reticula ----------------------------------------------------------
+    const grat = new THREE.LineSegments(
+      this.graticule(R * 1.002, 12, 8),
+      new THREE.LineBasicMaterial({ color: 0x76889b, transparent: true, opacity: 0.5 })
+    );
+    this.world.add(grat);
+
+    // --- Atmosfera ---------------------------------------------------------
+    const air = new THREE.Mesh(
+      new THREE.SphereGeometry(R * 1.10, 64, 48),
+      new THREE.ShaderMaterial({
+        transparent: true,
+        side: THREE.BackSide,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        uniforms: {},
+        vertexShader: `
+          varying vec3 vN; varying vec3 vView;
+          void main() {
+            vN = normalize(normalMatrix * normal);
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            vView = -mv.xyz;
+            gl_Position = projectionMatrix * mv;
+          }`,
+        fragmentShader: `
+          varying vec3 vN; varying vec3 vView;
+          void main() {
+            // Con BackSide el fresnel es MAXIMO en la silueta de la cascara, no en
+            // el limbo del planeta: por eso un fresnel pelado da un disco plano con
+            // el borde cortado. Lo que se necesita es una banda que suba cerca del
+            // limbo y se apague antes del borde exterior.
+            float d = 1.0 - clamp(dot(normalize(vN), normalize(vView)), 0.0, 1.0);
+            float f = smoothstep(0.42, 0.90, d) * (1.0 - smoothstep(0.90, 1.0, d));
+            gl_FragColor = vec4(vec3(1.0, 0.72, 0.44) * f, f * 0.62);
+          }`
+      })
+    );
+    this.world.add(air);
   }
 
-  loadProjectMarkers() {
-    const projects = this.dataService.projects();
-    const coords = this.spherePositions(projects.length);
+  /** Meridianos y paralelos como segmentos: mucho mas barato que N circulos. */
+  private graticule(r: number, meridians: number, parallels: number): THREE.BufferGeometry {
+    const pts: number[] = [];
+    const STEP = 64;
 
-    projects.forEach((proj, i) => {
-      const pos = coords[i];
-
-      // Color por naturaleza del proyecto: en produccion, juego, o web/app.
-      let color = this.COLOR_WEB;
-      if (proj.status === 'PRODUCTION' || proj.status === 'DELIVERED') {
-        color = this.COLOR_LIVE;
-      } else if (proj.status === 'PROTOTYPE') {
-        color = this.COLOR_GAME;
+    for (let m = 0; m < meridians; m++) {
+      const lon = (m / meridians) * Math.PI * 2;
+      for (let i = 0; i < STEP; i++) {
+        for (const t of [i, i + 1]) {
+          const lat = (t / STEP) * Math.PI - Math.PI / 2;
+          pts.push(
+            r * Math.cos(lat) * Math.cos(lon),
+            r * Math.sin(lat),
+            r * Math.cos(lat) * Math.sin(lon)
+          );
+        }
       }
+    }
+    for (let p = 1; p < parallels; p++) {
+      const lat = (p / parallels) * Math.PI - Math.PI / 2;
+      const rr = r * Math.cos(lat);
+      const y = r * Math.sin(lat);
+      for (let i = 0; i < STEP; i++) {
+        for (const t of [i, i + 1]) {
+          const lon = (t / STEP) * Math.PI * 2;
+          pts.push(rr * Math.cos(lon), y, rr * Math.sin(lon));
+        }
+      }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+    return g;
+  }
 
-      this.createBeacon(10, pos.lat, pos.lon, proj, color);
+  // =======================================================================
+  private buildMarkers() {
+    const projects = this.data.projects();
+    const coords = this.fibonacci(projects.length);
+
+    projects.forEach((p, i) => {
+      const color =
+        p.status === 'PRODUCTION' || p.status === 'DELIVERED' ? C_LIVE
+          : p.status === 'PROTOTYPE' || p.status === 'ARCHIVED' ? C_ARCH
+            : C_WORK;
+      this.markers.push(this.beacon(9.4, coords[i].lat, coords[i].lon, p, color));
     });
   }
 
-  createBeacon(radius: number, lat: number, lon: number, project: Project, colorHex: number) {
-    const markerGroup = new THREE.Group();
+  /** Espiral de Fibonacci: reparte N puntos parejo sobre la esfera. */
+  private fibonacci(n: number) {
+    if (n === 1) return [{ lat: 12, lon: 0 }];
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    const out: { lat: number; lon: number }[] = [];
+    for (let i = 0; i < n; i++) {
+      const y = 1 - ((i + 0.5) / n) * 2;
+      const lat = Math.asin(Math.max(-1, Math.min(1, y))) * (180 / Math.PI);
+      const lon = ((golden * i * (180 / Math.PI)) % 360) - 180;
+      out.push({ lat: lat * 0.8, lon });
+    }
+    return out;
+  }
+
+  private beacon(r: number, lat: number, lon: number, project: Project, hex: number) {
+    const g = new THREE.Group();
     const phi = (90 - lat) * (Math.PI / 180);
     const theta = (lon + 180) * (Math.PI / 180);
-    const x = -(radius * Math.sin(phi) * Math.cos(theta));
-    const z = (radius * Math.sin(phi) * Math.sin(theta));
-    const y = (radius * Math.cos(phi));
+    const pos = new THREE.Vector3(
+      -(r * Math.sin(phi) * Math.cos(theta)),
+      r * Math.cos(phi),
+      r * Math.sin(phi) * Math.sin(theta)
+    );
+    g.position.copy(pos);
+    g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), pos.clone().normalize());
 
-    const position = new THREE.Vector3(x, y, z);
-    markerGroup.position.copy(position);
-    markerGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), position.clone().normalize());
+    const col = new THREE.Color(hex);
 
-    const diamGeo = new THREE.OctahedronGeometry(0.5, 0);
-    const diamMat = new THREE.MeshBasicMaterial({ color: colorHex, wireframe: true });
-    const diamond = new THREE.Mesh(diamGeo, diamMat);
-    diamond.position.y = 2.5;
-    diamond.name = "BEACON_DIAMOND";
-    markerGroup.add(diamond);
+    // Mastil
+    const stalk = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.018, 0.018, 1.9, 5),
+      new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.5 })
+    );
+    stalk.position.y = 0.95;
+    g.add(stalk);
 
-    const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    diamond.add(new THREE.Mesh(new THREE.OctahedronGeometry(0.2, 0), coreMat));
+    // Cabeza
+    const head = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.34, 0),
+      new THREE.MeshBasicMaterial({ color: col, wireframe: true })
+    );
+    head.position.y = 2.05;
+    head.name = 'HEAD';
+    g.add(head);
 
-    const lineMat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 0.5 });
-    const line = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 2.5, 4), lineMat);
-    line.position.y = 1.25; markerGroup.add(line);
+    const spark = new THREE.Mesh(
+      new THREE.SphereGeometry(0.11, 10, 8),
+      new THREE.MeshBasicMaterial({ color: 0xffffff })
+    );
+    spark.position.y = 2.05;
+    g.add(spark);
 
-    const ringMat = new THREE.MeshBasicMaterial({ color: colorHex, side: THREE.DoubleSide });
-    const ring = new THREE.Mesh(new THREE.RingGeometry(0.3, 0.5, 6), ringMat);
-    ring.rotation.x = Math.PI / 2; ring.position.y = 0.1; markerGroup.add(ring);
+    // Anillo de anclaje sobre la superficie
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(0.3, 0.4, 24),
+      new THREE.MeshBasicMaterial({ color: col, side: THREE.DoubleSide, transparent: true, opacity: 0.75 })
+    );
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = 0.06;
+    g.add(ring);
 
-    markerGroup.userData = { isMarker: true, project: project, baseColor: colorHex };
-    this.mainGroup.add(markerGroup);
-    this.markers.push(markerGroup);
+    g.userData = { isMarker: true, project, base: hex };
+    this.world.add(g);
+    return g;
   }
 
-  /**
-   * Lanza un rayo desde la posicion del puntero y devuelve el marcador tocado.
-   * Se usa tanto para el hover como para el tap: en touch no hay mousemove previo,
-   * asi que el click NO puede depender del estado de hover.
-   */
-  private pickMarker(clientX: number, clientY: number): THREE.Group | null {
-    this.mouse.x = (clientX / window.innerWidth) * 2 - 1;
-    this.mouse.y = -(clientY / window.innerHeight) * 2 + 1;
-    this.raycaster.setFromCamera(this.mouse, this.camera);
+  // =======================================================================
+  private pick(cx: number, cy: number): THREE.Group | null {
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    this.pointer.x = ((cx - rect.left) / rect.width) * 2 - 1;
+    this.pointer.y = -((cy - rect.top) / rect.height) * 2 + 1;
+    this.raycaster.setFromCamera(this.pointer, this.camera);
 
-    const intersects = this.raycaster.intersectObjects(this.mainGroup.children, true);
-    if (!intersects.length) return null;
-
-    let obj: THREE.Object3D = intersects[0].object;
-    while (obj.parent && obj.parent !== this.mainGroup) {
-      if (obj.userData && obj.userData['isMarker']) return obj as THREE.Group;
-      if (obj.parent.userData && obj.parent.userData['isMarker']) return obj.parent as THREE.Group;
-      obj = obj.parent;
+    const hits = this.raycaster.intersectObjects(this.world.children, true);
+    for (const h of hits) {
+      let o: THREE.Object3D | null = h.object;
+      while (o && o !== this.world) {
+        if (o.userData?.['isMarker']) return o as THREE.Group;
+        o = o.parent;
+      }
     }
     return null;
   }
 
-  onPointerMove(event: PointerEvent) {
-    // En touch el hover no existe; el resaltado solo aplica a mouse/lapiz.
-    if (event.pointerType === 'touch') return;
+  onPointerMove(e: PointerEvent) {
+    if (e.pointerType === 'touch') return;
+    const found = this.pick(e.clientX, e.clientY);
+    if (found === this.hoverGroup) return;
 
-    const foundMarker = this.pickMarker(event.clientX, event.clientY);
+    if (this.hoverGroup) this.tint(this.hoverGroup, this.hoverGroup.userData['base']);
+    if (found) this.tint(found, C_SIGNAL);
 
-    if (foundMarker !== this.hoveredMarker) {
-      if (this.hoveredMarker) {
-        this.setMarkerColor(this.hoveredMarker, this.hoveredMarker.userData['baseColor']);
-        document.body.classList.remove('hover-active');
-      }
-      if (foundMarker) {
-        this.setMarkerColor(foundMarker, this.COLOR_HOVER);
-        document.body.classList.add('hover-active');
-      }
-      this.hoveredMarker = foundMarker;
-    }
+    this.hoverGroup = found;
+    this.hovered.set(found ? (found.userData['project'] as Project).name : null);
   }
 
-  setMarkerColor(group: THREE.Group, colorHex: number) {
-    group.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        if (child.name === "BEACON_DIAMOND" || child.geometry.type === 'CylinderGeometry') {
-          (child.material as THREE.MeshBasicMaterial).color.setHex(colorHex);
-        }
+  private tint(g: THREE.Group, hex: number) {
+    g.traverse(c => {
+      if (c instanceof THREE.Mesh && c.name === 'HEAD') {
+        (c.material as THREE.MeshBasicMaterial).color.setHex(hex);
       }
     });
   }
 
-  onPointerDown(event: PointerEvent) {
-    this.pointerDownAt = { x: event.clientX, y: event.clientY };
+  onPointerDown(e: PointerEvent) {
+    this.downAt = { x: e.clientX, y: e.clientY };
   }
 
-  /**
-   * La accion va en pointerup y solo si el puntero casi no se movio.
-   * Asi arrastrar para rotar el planeta no abre un proyecto sin querer.
-   */
-  onPointerUp(event: PointerEvent) {
-    const start = this.pointerDownAt;
-    this.pointerDownAt = null;
+  /** La accion va al soltar y solo si casi no se movio: arrastrar rota. */
+  onPointerUp(e: PointerEvent) {
+    const start = this.downAt;
+    this.downAt = null;
     if (!start) return;
+    if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > TAP_PX) return;
 
-    const moved = Math.hypot(event.clientX - start.x, event.clientY - start.y);
-    if (moved > TAP_THRESHOLD_PX) return; // fue un arrastre, no un tap
-
-    const marker = this.pickMarker(event.clientX, event.clientY);
+    const marker = this.pick(e.clientX, e.clientY);
     if (marker) {
       this.controls.autoRotate = false;
-      this.openProject(marker.userData['project']);
+      this.wm.open(marker.userData['project'] as Project);
       return;
     }
 
-    const planetHit = this.raycaster.intersectObjects(this.mainGroup.children, true).find(h => h.object.name === "PLANET_SURFACE");
-    if (planetHit) {
-      const localPoint = planetHit.point.clone().applyMatrix4(planetHit.object.matrixWorld.clone().invert());
-      if (this.planetUniforms) {
-        this.planetUniforms.uClickPos.value.copy(localPoint);
-        this.planetUniforms.uClickTime.value = this.clock.getElapsedTime();
-      }
+    // Toque sobre la superficie: onda expansiva desde ese punto.
+    const hit = this.raycaster.intersectObjects(this.world.children, true)
+      .find(h => h.object.name === 'CORE');
+    if (hit && this.uniforms) {
+      const local = hit.point.clone().applyMatrix4(hit.object.matrixWorld.clone().invert());
+      this.uniforms['uHit'].value.copy(local);
+      this.uniforms['uHitAt'].value = this.clock.getElapsedTime();
     }
   }
 
-  openProject(project: Project) { this.activeProject.set(project); }
-  closeProject() { this.activeProject.set(null); this.controls.autoRotate = true; }
-
-  statusLabel(status?: ProjectStatus): string {
-    if (!status) return '';
-    const t = this.i18n.t();
-    const map: Record<ProjectStatus, string> = {
-      PRODUCTION: t.statusPRODUCTION,
-      DELIVERED: t.statusDELIVERED,
-      DEPLOYED: t.statusDEPLOYED,
-      IN_DEVELOPMENT: t.statusIN_DEVELOPMENT,
-      PROTOTYPE: t.statusPROTOTYPE,
-      ARCHIVED: t.statusARCHIVED
-    };
-    return map[status] ?? status;
-  }
-
-  /** Vuelve a la interfaz principal. Antes de esto, del 3D no se salia. */
-  exitToInterface() {
-    document.body.classList.remove('hover-active');
+  exit() {
     this.narrative.setPhase('INTERFACE');
   }
 
-  animate() {
-    this.animationId = requestAnimationFrame(() => this.animate());
-    const time = this.clock.getElapsedTime();
-    if (this.planetUniforms) { this.planetUniforms.uTime.value = time; }
-    this.markers.forEach((m, i) => {
-      const diamond = m.children[0];
-      if (diamond) {
-        diamond.rotation.y += 0.02;
-        diamond.position.y = 2.5 + Math.sin(time * 3 + i) * 0.2;
-      }
-    });
+  private resize() {
+    const host = this.canvasHost?.nativeElement;
+    if (!host || !this.renderer) return;
+    const w = host.clientWidth || window.innerWidth;
+    const h = host.clientHeight || window.innerHeight;
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_DPR));
+  }
+
+  private animate = () => {
+    this.frame = requestAnimationFrame(this.animate);
+    const t = this.clock.getElapsedTime();
+
+    if (this.uniforms) this.uniforms['uTime'].value = t;
+
+    if (!this.reduced) {
+      this.markers.forEach((m, i) => {
+        const head = m.children[1];
+        if (head) {
+          head.rotation.y += 0.014;
+          head.position.y = 2.05 + Math.sin(t * 2.2 + i * 0.9) * 0.14;
+        }
+      });
+    }
+
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
-  }
-
-  onWindowResize() {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-  }
+  };
 
   ngOnDestroy() {
-    cancelAnimationFrame(this.animationId);
-    window.removeEventListener('resize', this.onWindowResize);
-    if (this.renderer) this.renderer.dispose();
+    cancelAnimationFrame(this.frame);
+    window.removeEventListener('resize', this.onResize);
+    this.controls?.dispose();
+
+    // Liberar de verdad: antes solo se soltaba el renderer y quedaban
+    // colgadas todas las geometrias y materiales de la escena.
+    this.scene?.traverse(o => {
+      const mesh = o as THREE.Mesh;
+      mesh.geometry?.dispose?.();
+      const mat = mesh.material;
+      if (Array.isArray(mat)) mat.forEach(m => m.dispose());
+      else mat?.dispose?.();
+    });
+    this.renderer?.dispose();
+    this.renderer?.domElement.remove();
   }
 }

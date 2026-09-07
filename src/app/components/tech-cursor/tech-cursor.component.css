@@ -1,46 +1,58 @@
 :host {
-    pointer-events: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 99999;
-    mix-blend-mode: difference;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
 }
 
-.cursor-arrow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 24px;
-    height: 24px;
-    transition: transform 0.05s ease-out, filter 0.2s;
-    will-change: transform;
-    filter: drop-shadow(0 0 5px #00ffaa);
+.dot,
+.ring {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  border-radius: 50%;
+  will-change: transform;
+  /* El transform lo escribe el rAF; aca solo se animan tamaño y color. */
+  margin-inline-start: -50%;
 }
 
-.cursor-arrow svg path {
-    transition: fill 0.2s;
+.dot {
+  inline-size: 5px;
+  block-size: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  background: var(--signal);
+  transition: background-color var(--dur-ui) var(--ease-out);
 }
 
-.cursor-trail {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 8px;
-    height: 8px;
-    background: rgba(0, 255, 170, 0.5);
-    border-radius: 50%;
-    margin-left: 2px;
-    margin-top: 2px;
-    transition: transform 0.15s ease-out;
+.dot.hot {
+  background: var(--text);
 }
 
-/* ESTADO HOVER */
-.cursor-arrow.hovering {
-    filter: drop-shadow(0 0 8px #ff3333);
-    transform: scale(1.2);
+.ring {
+  inline-size: 26px;
+  block-size: 26px;
+  margin: -13px 0 0 -13px;
+  border: 1px solid var(--edge-hi);
+  transition:
+    inline-size var(--dur-ui) var(--ease-out),
+    block-size var(--dur-ui) var(--ease-out),
+    margin var(--dur-ui) var(--ease-out),
+    border-color var(--dur-ui) var(--ease-out),
+    opacity var(--dur-ui) var(--ease-out);
 }
 
-.cursor-arrow.hovering path {
-    fill: #ff3333;
+/* Sobre algo accionable el anillo se abre y toma el color de la señal. */
+.ring.hot {
+  inline-size: 38px;
+  block-size: 38px;
+  margin: -19px 0 0 -19px;
+  border-color: var(--signal);
+}
+
+/* Al apretar se cierra: el mismo gesto de confirmacion que hace un boton. */
+.ring.down {
+  inline-size: 20px;
+  block-size: 20px;
+  margin: -10px 0 0 -10px;
+  border-color: var(--signal-hi);
 }

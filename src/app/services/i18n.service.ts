@@ -13,24 +13,32 @@ const STORAGE_KEY = 'volpino-lang';
 /** Textos de interfaz. El contenido (proyectos, estudios) vive en DataService. */
 const UI = {
     es: {
-        systemOnline: 'SYSTEM: ONLINE',
-        uptime: 'UPTIME',
+        // ---- Sistema ----
+        systemOnline: 'SISTEMA: EN LÍNEA',
+        uptime: 'ACTIVO',
         version: 'VER',
+        skipLink: 'Saltar a los proyectos',
 
+        // ---- Arranque ----
+        bootColdStart: 'arranque en frío',
+        bootSkip: 'tocá una tecla para saltear',
+
+        // ---- Perfil ----
         operatorProfile: '// PERFIL_OPERADOR',
-        labelLoc: 'UBIC:',
-        labelPhone: 'TEL:',
-        labelEmail: 'EMAIL:',
-        btnGithub: 'GITHUB []',
-        btnLinkedin: 'LINKEDIN []',
-        btnCv: '[ VER CV ]',
+        labelLoc: 'UBIC',
+        labelPhone: 'TEL',
+        labelEmail: 'EMAIL',
+        btnGithub: 'GITHUB',
+        btnLinkedin: 'LINKEDIN',
+        btnCv: 'VER CV',
         cvFile: 'assets/CV_Emiliano_Volpino.pdf',
-        scrollDown: 'BAJAR [v]',
+        scrollDown: 'BAJAR',
 
+        // ---- Proyectos ----
         projectsTitle: '// ARCHIVO_DE_PROYECTOS',
         projectsLead:
             'Once sistemas, todos construidos solo y de punta a punta. Acá abajo van los cinco que mejor muestran cómo trabajo: cuatro corriendo en producción —uno de ellos para un cliente real— y una pieza publicada. Cada número sale de una medición o de un conteo real.',
-        projectCta: 'ACCEDER_A_DATOS >>',
+        projectCta: 'ABRIR',
         moreInOrbit: 'Los otros seis —los que están en curso y los del archivo— se recorren en la vista orbital, junto con estos cinco.',
 
         statusPRODUCTION: 'EN PRODUCCIÓN',
@@ -40,18 +48,44 @@ const UI = {
         statusPROTOTYPE: 'PROTOTIPO',
         statusARCHIVED: 'ARCHIVADO',
 
-        subChallenge: '// DESAFÍO_TÉCNICO',
-        subRole: '// MI_ROL',
-        subShots: '// CAPTURAS',
-        subDemo: '// DEMO',
-        subPreview: '// VISTA PREVIA',
-        subStack: '// STACK',
-        btnClose: '[ ESC ]',
-        btnRepo: 'REPOSITORIO →',
-        btnLive: 'VER EN VIVO →',
+
+        // ---- Paleta de comandos ----
+        cmdTitle: 'Paleta de comandos',
+        cmdPlaceholder: 'Buscar un proyecto o una acción…',
+        cmdProjects: 'PROYECTOS',
+        cmdGo: 'IR A',
+        cmdSystem: 'SISTEMA',
+        cmdTop: 'Volver al perfil',
+        cmdProjectsSection: 'Sección de proyectos',
+        cmdLang: 'Cambiar idioma',
+        cmdEmpty: 'Sin resultados.',
+        cmdMove: 'moverse',
+        cmdRun: 'abrir',
+        cmdHint: 'para buscar',
+        // ---- Ventanas ----
+        winMoveHint: 'Barra de la ventana: arrastrá para mover, o usá las flechas',
+        winMinimize: 'Minimizar',
+        winMaximize: 'Maximizar',
+        winRestore: 'Restaurar',
+        winClose: 'Cerrar ventana',
+        winResize: 'Redimensionar',
+        taskbarLabel: 'Ventanas abiertas',
+        closeAll: 'CERRAR TODO',
+
+        // ---- Detalle ----
+        subChallenge: 'DESAFÍO TÉCNICO',
+        subRole: 'MI ROL',
+        subShots: 'CAPTURAS',
+        subDemo: 'DEMO',
+        subPreview: 'VISTA PREVIA',
+        subStack: 'STACK',
+        btnClose: 'ESC',
+        btnRepo: 'REPOSITORIO',
+        btnLive: 'VER EN VIVO',
         repoPrivate: 'REPOSITORIO PRIVADO',
         ariaClose: 'Cerrar',
 
+        // ---- Capacidades y estudios ----
         skillsTitle: '// MATRIZ_DE_CAPACIDADES',
         catCORE: 'FUNDAMENTOS',
         catBACKEND: 'BACKEND',
@@ -59,57 +93,49 @@ const UI = {
         catTOOLS: 'INFRA Y HERRAMIENTAS',
 
         eduTitle: '// REGISTRO_ACADÉMICO',
-        modulesLoaded: 'CONTENIDOS:',
-        certLink: 'VER_CERTIFICADO >>',
+        modulesLoaded: 'CONTENIDOS',
+        certLink: 'VER CERTIFICADO',
 
+        // ---- Orbital ----
         orbitTeaser: 'Y si llegaste hasta acá: los once sistemas están en la vista orbital, no solo los cinco de arriba.',
-        orbitBtn: '[ INICIAR_SECUENCIA_ORBITAL ]',
-
-        trapHeader: 'SECUENCIA_ORBITAL',
-        trapTitle: '¿DESMONTAR LA INTERFAZ?',
-        trapDesc: 'El sistema va a colapsar esta vista para reconstruirse en el entorno orbital.',
-        trapReassure: 'Podés volver cuando quieras.',
-        trapEngage: '[ EJECUTAR ]',
-        trapCancel: '[ CANCELAR ]',
-
+        orbitBtn: 'INICIAR SECUENCIA ORBITAL',
+        orbitUnavailable: 'Tu equipo no tiene aceleración 3D, así que la vista orbital no puede abrirse. Los once proyectos se abren igual desde acá.',
         orbitView: '// VISTA_ORBITAL',
         legendLive: 'EN PRODUCCIÓN',
-        legendWeb: 'WEB / APP',
-        legendGame: 'MOTOR / JUEGO',
-        orbitExit: '<< VOLVER AL PERFIL',
-        hintDrag: '[ ARRASTRÁ PARA ROTAR ]',
-        hintTap: '[ TOCÁ UN NODO PARA ABRIR EL PROYECTO ]',
-        privateCode: 'CÓDIGO PRIVADO',
-
-        bootBooting: 'INICIANDO...',
-        bootLogs: [
-            'Iniciando núcleo Angular...',
-            'Cargando motor de geometría...',
-            'Montando DOM virtual...',
-            'Descifrando perfil: Volpino...',
-            'Estableciendo conexión segura...',
-            'Sistema listo.'
-        ]
+        legendWeb: 'PUBLICADO',
+        legendGame: 'MOTOR / PROTOTIPO',
+        orbitExit: 'VOLVER AL PERFIL',
+        hintDrag: 'arrastrá para rotar · rueda para acercar',
+        hintTap: 'tocá un nodo para abrir el proyecto',
+        privateCode: 'CÓDIGO PRIVADO'
     },
     en: {
+        // ---- System ----
         systemOnline: 'SYSTEM: ONLINE',
         uptime: 'UPTIME',
         version: 'VER',
+        skipLink: 'Skip to the projects',
 
+        // ---- Boot ----
+        bootColdStart: 'cold start',
+        bootSkip: 'press any key to skip',
+
+        // ---- Profile ----
         operatorProfile: '// OPERATOR_PROFILE',
-        labelLoc: 'LOC:',
-        labelPhone: 'PHONE:',
-        labelEmail: 'EMAIL:',
-        btnGithub: 'GITHUB []',
-        btnLinkedin: 'LINKEDIN []',
-        btnCv: '[ VIEW CV ]',
+        labelLoc: 'LOC',
+        labelPhone: 'PHONE',
+        labelEmail: 'EMAIL',
+        btnGithub: 'GITHUB',
+        btnLinkedin: 'LINKEDIN',
+        btnCv: 'VIEW CV',
         cvFile: 'assets/CV_Emiliano_Volpino_EN.pdf',
-        scrollDown: 'SCROLL DOWN [v]',
+        scrollDown: 'SCROLL',
 
+        // ---- Projects ----
         projectsTitle: '// PROJECT_ARCHIVE',
         projectsLead:
             'Eleven systems, all of them built solo and end to end. Below are the five that best show how I work: four running in production —one of them for a paying client— and one published piece. Every figure comes from a measurement or a real count.',
-        projectCta: 'ACCESS_DATA >>',
+        projectCta: 'OPEN',
         moreInOrbit: 'The other six —the ones in progress and the archived ones— can be explored in the orbital view, together with these five.',
 
         statusPRODUCTION: 'IN PRODUCTION',
@@ -119,18 +145,44 @@ const UI = {
         statusPROTOTYPE: 'PROTOTYPE',
         statusARCHIVED: 'ARCHIVED',
 
-        subChallenge: '// TECHNICAL_CHALLENGE',
-        subRole: '// MY_ROLE',
-        subShots: '// SCREENSHOTS',
-        subDemo: '// DEMO',
-        subPreview: '// PREVIEW',
-        subStack: '// STACK',
-        btnClose: '[ ESC ]',
-        btnRepo: 'REPOSITORY →',
-        btnLive: 'VIEW LIVE →',
+
+        // ---- Command palette ----
+        cmdTitle: 'Command palette',
+        cmdPlaceholder: 'Search a project or an action…',
+        cmdProjects: 'PROJECTS',
+        cmdGo: 'GO TO',
+        cmdSystem: 'SYSTEM',
+        cmdTop: 'Back to the profile',
+        cmdProjectsSection: 'Projects section',
+        cmdLang: 'Switch language',
+        cmdEmpty: 'No results.',
+        cmdMove: 'move',
+        cmdRun: 'open',
+        cmdHint: 'to search',
+        // ---- Windows ----
+        winMoveHint: 'Window bar: drag to move, or use the arrow keys',
+        winMinimize: 'Minimise',
+        winMaximize: 'Maximise',
+        winRestore: 'Restore',
+        winClose: 'Close window',
+        winResize: 'Resize',
+        taskbarLabel: 'Open windows',
+        closeAll: 'CLOSE ALL',
+
+        // ---- Detail ----
+        subChallenge: 'TECHNICAL CHALLENGE',
+        subRole: 'MY ROLE',
+        subShots: 'SCREENSHOTS',
+        subDemo: 'DEMO',
+        subPreview: 'PREVIEW',
+        subStack: 'STACK',
+        btnClose: 'ESC',
+        btnRepo: 'REPOSITORY',
+        btnLive: 'VIEW LIVE',
         repoPrivate: 'PRIVATE REPOSITORY',
         ariaClose: 'Close',
 
+        // ---- Capabilities and studies ----
         skillsTitle: '// SYSTEM_CAPABILITIES_MATRIX',
         catCORE: 'CORE',
         catBACKEND: 'BACKEND',
@@ -138,37 +190,21 @@ const UI = {
         catTOOLS: 'INFRA & TOOLING',
 
         eduTitle: '// EDUCATION_LOGS',
-        modulesLoaded: 'MODULES:',
-        certLink: 'VIEW_CERTIFICATE >>',
+        modulesLoaded: 'MODULES',
+        certLink: 'VIEW CERTIFICATE',
 
+        // ---- Orbital ----
         orbitTeaser: 'And if you made it this far: all eleven systems live in the orbital view, not just the five above.',
-        orbitBtn: '[ INITIATE_ORBIT_SEQUENCE ]',
-
-        trapHeader: 'ORBIT_SEQUENCE',
-        trapTitle: 'DISMANTLE THE INTERFACE?',
-        trapDesc: 'The system will collapse this view and rebuild itself in the orbital environment.',
-        trapReassure: 'You can come back whenever you want.',
-        trapEngage: '[ ENGAGE ]',
-        trapCancel: '[ CANCEL ]',
-
+        orbitBtn: 'INITIATE ORBIT SEQUENCE',
+        orbitUnavailable: 'Your machine has no 3D acceleration, so the orbital view cannot open. All eleven projects still open from here.',
         orbitView: '// ORBIT_VIEW',
         legendLive: 'IN PRODUCTION',
-        legendWeb: 'WEB / APP',
-        legendGame: 'ENGINE / GAME',
-        orbitExit: '<< BACK TO PROFILE',
-        hintDrag: '[ DRAG TO ROTATE ]',
-        hintTap: '[ TAP A NODE TO OPEN THE PROJECT ]',
-        privateCode: 'PRIVATE CODE',
-
-        bootBooting: 'BOOTING...',
-        bootLogs: [
-            'Initializing Angular core...',
-            'Loading geometry engine...',
-            'Mounting virtual DOM...',
-            'Decrypting profile: Volpino...',
-            'Establishing secure connection...',
-            'System ready.'
-        ]
+        legendWeb: 'PUBLISHED',
+        legendGame: 'ENGINE / PROTOTYPE',
+        orbitExit: 'BACK TO PROFILE',
+        hintDrag: 'drag to rotate · wheel to zoom',
+        hintTap: 'tap a node to open the project',
+        privateCode: 'PRIVATE CODE'
     }
 } as const;
 

@@ -141,6 +141,7 @@ export class DataService {
         return {
             id: seed.id,
             name: seed.name,
+            slug: slugify(seed.name),
             group: seed.group,
             status: seed.status,
             type: this.p(seed.type),
@@ -160,4 +161,17 @@ export class DataService {
             videoPoster: seed.videoPoster
         };
     }
+}
+
+/**
+ * Nombre a identificador de URL: "DISTRIBUIDORA HARRY'S" -> "distribuidora-harrys".
+ * Se deriva del nombre en vez de escribirse a mano para que no puedan
+ * desincronizarse.
+ */
+function slugify(name: string): string {
+    return name
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
 }

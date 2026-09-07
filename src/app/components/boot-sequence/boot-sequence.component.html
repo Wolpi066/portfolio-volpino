@@ -1,17 +1,29 @@
-<div class="boot-container flex-center">
-    <div class="terminal-window">
-        <div class="header-line">
-            <span class="system-name">VOLPINO_OS v1.0</span>
-            <span class="status">{{ i18n.t().bootBooting }}</span>
-        </div>
+<div class="boot-shell" #shell [attr.data-act]="act()">
 
-        <div class="progress-wrapper">
-            <div class="progress-bar" [style.width.%]="progress"></div>
-        </div>
+  <!-- El velo se abre a medida que la interfaz de atras gana presencia. -->
+  <div class="boot-veil" aria-hidden="true"></div>
+  <div class="boot-grid" aria-hidden="true"></div>
 
-        <div class="console-output">
-            <p>> {{ currentLog }}<span class="cursor">_</span></p>
-            <p class="percentage">{{ progress }}%</p>
-        </div>
-    </div>
+  <!-- La consola: nace en el centro y termina siendo el encabezado. -->
+  <div class="boot-console" #console>
+    <span class="bc-rule" aria-hidden="true"></span>
+    <h1 class="bc-name">
+      <span class="bc-txt" translate="no">{{ typed() }}</span><span class="bc-caret" aria-hidden="true"></span>
+    </h1>
+    <span class="bc-sub">{{ i18n.t().bootColdStart }}</span>
+  </div>
+
+  <!-- El registro ocupa el lugar que la consola deja al irse. -->
+  <ol class="boot-log" aria-hidden="true">
+    @for (l of lines; track l.label; let i = $index) {
+    <li [class.in]="i < shown()">
+      <span class="bl-tag">{{ l.tag }}</span>
+      <span class="bl-label">{{ l.label }}</span>
+      <span class="bl-fill"></span>
+      <span class="bl-val tabular">{{ l.value }}</span>
+    </li>
+    }
+  </ol>
+
+  <p class="boot-skip">{{ i18n.t().bootSkip }}</p>
 </div>

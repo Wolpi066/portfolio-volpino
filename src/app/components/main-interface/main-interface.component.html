@@ -1,321 +1,199 @@
-<div class="main-scroll-container" [class.scroll-locked]="overlayOpen()">
+<div class="shell">
 
-    <div class="grid-overlay"></div>
-
-    <header class="hud-header">
-        <div class="header-left">
-            <span class="status-dot"></span>
-            <span class="sys-text">{{ i18n.t().systemOnline }}</span>
-        </div>
-        <div class="header-right">
-            <span class="sys-text">{{ i18n.t().uptime }}: {{ uptime }}</span>
-            <span class="sys-text">{{ i18n.t().version }}: 3.1.0</span>
-        </div>
-        <div class="lang-switch" role="group" aria-label="Idioma / Language">
-            <button type="button" [class.on]="i18n.lang() === 'es'" (click)="i18n.setLang('es')"
-                [attr.aria-pressed]="i18n.lang() === 'es'">ES</button>
-            <button type="button" [class.on]="i18n.lang() === 'en'" (click)="i18n.setLang('en')"
-                [attr.aria-pressed]="i18n.lang() === 'en'">EN</button>
-        </div>
-    </header>
-
-    <section class="scroll-section hero-section">
-        <div class="content-wrapper">
-            <div class="profile-layout" #observeItem>
-
-                <div class="photo-container">
-                    <div class="photo-frame">
-                        <img [src]="data.profile().photo" alt="Emiliano Volpino" class="profile-img"
-                            [class.glitching]="isImageGlitching">
-                        <div class="corner c-tl"></div>
-                        <div class="corner c-tr"></div>
-                        <div class="corner c-bl"></div>
-                        <div class="corner c-br"></div>
-                        <div class="scan-bar"></div>
-                    </div>
-                </div>
-
-                <div class="info-container">
-                    <h4 class="pre-title">{{ i18n.t().operatorProfile }}</h4>
-                    <h1 class="glitch-name" [attr.data-text]="data.profile().name">{{ data.profile().name }}</h1>
-                    <h2 class="job-title">{{ data.profile().title }}</h2>
-
-                    <div class="data-grid">
-                        <div class="data-item"><span class="label">{{ i18n.t().labelLoc }}</span> <span class="val">{{
-                                data.profile().location }}</span></div>
-                        <div class="data-item"><span class="label">{{ i18n.t().labelPhone }}</span> <span
-                                class="val">{{ data.profile().phone }}</span></div>
-                        <div class="data-item full-width"><span class="label">{{ i18n.t().labelEmail }}</span> <span
-                                class="val">{{ data.profile().email }}</span></div>
-                    </div>
-
-                    <p class="bio-text">{{ data.profile().bio }}</p>
-
-                    <div class="social-links">
-                        <a [href]="'https://' + data.profile().github" target="_blank" rel="noopener" class="tech-btn">
-                            {{ i18n.t().btnGithub }}
-                        </a>
-                        <a [href]="'https://' + data.profile().linkedin" target="_blank" rel="noopener"
-                            class="tech-btn">
-                            {{ i18n.t().btnLinkedin }}
-                        </a>
-                        <a [href]="i18n.t().cvFile" target="_blank" rel="noopener" class="tech-btn">
-                            {{ i18n.t().btnCv }}
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        <div class="scroll-indicator">{{ i18n.t().scrollDown }}</div>
-    </section>
-
-    <!-- ============ PROYECTOS ============ -->
-    <!-- Aca van solo los destacados. Los once (estos incluidos) se recorren en
-         la vista orbital, que es donde vive el archivo completo. -->
-    <section class="scroll-section projects-section">
-        <div class="content-wrapper full-width-wrapper">
-            <h2 class="section-title" #observeItem>{{ i18n.t().projectsTitle }}</h2>
-            <p class="section-lead" #observeItem>{{ i18n.t().projectsLead }}</p>
-
-            <div class="projects-grid" #observeItem>
-                @for (proj of data.featuredProjects(); track proj.id) {
-                <ng-container
-                    *ngTemplateOutlet="projectCard; context: { $implicit: proj, i: $index }"></ng-container>
-                }
-            </div>
-
-            <!-- Sin esto, los otros seis no se encuentran: el boton orbital
-                 estaba al final de todo, tres secciones mas abajo. -->
-            <div class="more-in-orbit" #observeItem>
-                <p class="mio-text">{{ i18n.t().moreInOrbit }}</p>
-                <button type="button" class="orbit-btn" (click)="triggerOrbitSequence()">
-                    {{ i18n.t().orbitBtn }}
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <section class="scroll-section skills-section">
-        <div class="content-wrapper full-width-wrapper">
-            <h2 class="section-title" #observeItem>{{ i18n.t().skillsTitle }}</h2>
-
-            <div class="skills-dashboard" #observeItem>
-                <!-- track por indice: los nombres cambian con el idioma y, si se
-                     usan como clave, Angular recrea los nodos y pierden .visible -->
-                @for (group of skillsByCategory; track $index) {
-                <div class="skill-category-panel">
-                    <h3 class="category-title">:: {{ group.name }} ::</h3>
-
-                    <div class="category-grid holo-grid">
-                        @for (skill of group.items; track $index) {
-                        <div class="skill-card">
-                            <div class="card-bg"></div>
-                            <div class="card-content">
-                                <span class="skill-icon">◈</span>
-                                <span class="skill-name">{{ skill.name }}</span>
-                            </div>
-                            <div class="card-border"></div>
-                        </div>
-                        }
-                    </div>
-                </div>
-                }
-            </div>
-        </div>
-    </section>
-
-    <section class="scroll-section edu-section">
-        <div class="content-wrapper">
-            <h2 class="section-title" #observeItem>{{ i18n.t().eduTitle }}</h2>
-
-            <div class="timeline-container">
-                @for (study of data.studies(); track $index; let i = $index) {
-                <div class="study-card" [class.expanded]="expandedStudyIndex === i" (click)="toggleStudy(i)"
-                    #observeItem [style.transition-delay]="i * 100 + 'ms'">
-
-                    <div class="study-header">
-                        <div class="header-left">
-                            <span class="status-indicator" [class.active]="study.status === 'IN_PROGRESS'"></span>
-                            <h3 class="study-title">{{ study.title }}</h3>
-                        </div>
-                        <div class="header-right">
-                            <span class="institution">{{ study.institution }}</span>
-                            <span class="period">[{{ study.period }}]</span>
-                            <span class="arrow-icon">{{ expandedStudyIndex === i ? '▲' : '▼' }}</span>
-                        </div>
-                    </div>
-
-                    <div class="study-details">
-                        <div class="tags-container">
-                            <span class="tag-label">{{ i18n.t().modulesLoaded }}</span>
-                            @for (tag of study.tags; track tag) {
-                            <span class="tech-tag">{{ tag }}</span>
-                            }
-                        </div>
-
-                        @if (study.certificate) {
-                        <div class="cert-container">
-                            <a [href]="study.certificate" target="_blank" rel="noopener" class="cert-link"
-                                (click)="$event.stopPropagation()">
-                                {{ i18n.t().certLink }}
-                            </a>
-                        </div>
-                        }
-                    </div>
-                </div>
-                }
-            </div>
-
-            <footer class="section-footer">
-                <p class="orbit-teaser">{{ i18n.t().orbitTeaser }}</p>
-                <button type="button" class="orbit-btn" (click)="triggerOrbitSequence()">
-                    {{ i18n.t().orbitBtn }}
-                </button>
-            </footer>
-        </div>
-    </section>
-
-</div>
-
-<!-- ============ TARJETA DE PROYECTO (una sola definicion) ============ -->
-<ng-template #projectCard let-proj let-i="i">
-    <article class="project-card" [style.transition-delay]="i * 90 + 'ms'" tabindex="0" role="button"
-        [attr.aria-label]="proj.name + ' — ' + proj.type" (click)="openProject(proj)"
-        (keydown.enter)="openProject(proj)" (keydown.space)="$event.preventDefault(); openProject(proj)">
-
-        <div class="pc-head">
-            <span class="pc-id">[{{ proj.id }}]</span>
-            <span class="pc-status" [class]="'st-' + proj.status">{{ statusLabel(proj.status) }}</span>
-        </div>
-
-        <h3 class="pc-name">{{ proj.name }}</h3>
-        <p class="pc-type">{{ proj.type }}</p>
-        <p class="pc-desc">{{ proj.description }}</p>
-
-        @if (proj.metrics?.length) {
-        <div class="pc-metrics">
-            @for (m of proj.metrics!.slice(0, 2); track m.label) {
-            <span class="pc-metric"><b>{{ m.value }}</b> {{ m.label }}</span>
-            }
-        </div>
-        }
-
-        <div class="pc-stack">
-            @for (tech of proj.techStack.slice(0, 4); track tech) {
-            <span class="pc-tag">{{ tech }}</span>
-            }
-            @if (proj.techStack.length > 4) {
-            <span class="pc-tag pc-more">+{{ proj.techStack.length - 4 }}</span>
-            }
-        </div>
-
-        <span class="pc-cta">{{ i18n.t().projectCta }}</span>
-    </article>
-</ng-template>
-
-<!-- ============ DETALLE DE PROYECTO ============ -->
-@if (activeProject(); as proj) {
-<div class="proj-overlay" (click)="closeProject()">
-    <div class="proj-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true"
-        [attr.aria-label]="proj.name">
-
-        <div class="pm-head">
-            <div class="pm-head-left">
-                <span class="pm-id">[{{ proj.id }}]</span>
-                <span class="pm-status" [class]="'st-' + proj.status">{{ statusLabel(proj.status) }}</span>
-            </div>
-            <button class="pm-close" (click)="closeProject()" [attr.aria-label]="i18n.t().ariaClose">
-                {{ i18n.t().btnClose }}
-            </button>
-        </div>
-
-        <h2 class="pm-name">{{ proj.name }}</h2>
-        <p class="pm-type">{{ proj.type }}</p>
-
-        <div class="pm-body">
-            <p class="pm-desc">{{ proj.description }}</p>
-
-            @if (proj.metrics?.length) {
-            <div class="pm-metrics">
-                @for (m of proj.metrics; track m.label) {
-                <div class="pm-metric">
-                    <span class="pm-metric-val">{{ m.value }}</span>
-                    <span class="pm-metric-label">{{ m.label }}</span>
-                </div>
-                }
-            </div>
-            }
-
-            @if (proj.technicalHighlight) {
-            <div class="pm-tech-block">
-                <h4 class="pm-sub">{{ i18n.t().subChallenge }}</h4>
-                <p class="pm-tech-text">{{ proj.technicalHighlight }}</p>
-            </div>
-            }
-
-            @if (proj.gallery?.length) {
-            <div class="pm-gallery-block">
-                <h4 class="pm-sub">{{ i18n.t().subShots }}</h4>
-                <div class="pm-gallery" [class.pm-gallery-phone]="proj.galleryLayout === 'phone'">
-                    @for (shot of proj.gallery; track shot.src) {
-                    <button type="button" class="pm-shot" (click)="openLightbox(shot)" [attr.aria-label]="shot.alt">
-                        <img [src]="shot.src" [alt]="shot.alt" loading="lazy" decoding="async">
-                    </button>
-                    }
-                </div>
-            </div>
-            }
-
-            @if (proj.videoUrl) {
-            <div class="pm-gallery-block">
-                <h4 class="pm-sub">{{ proj.videoKind === 'demo' ? i18n.t().subDemo : i18n.t().subPreview }}</h4>
-                <video [src]="proj.videoUrl" [poster]="proj.videoPoster" controls preload="none" playsinline
-                    class="pm-video"></video>
-            </div>
-            }
-
-            @if (proj.role) {
-            <div class="pm-role-block">
-                <h4 class="pm-sub">{{ i18n.t().subRole }}</h4>
-                <p class="pm-role-text">{{ proj.role }}</p>
-            </div>
-            }
-
-            <div class="pm-stack-block">
-                <h4 class="pm-sub">{{ i18n.t().subStack }}</h4>
-                <div class="pm-stack">
-                    @for (tech of proj.techStack; track tech) {
-                    <span class="pm-tag">{{ tech }}</span>
-                    }
-                </div>
-            </div>
-
-            @if (proj.note) {
-            <p class="pm-note">{{ proj.note }}</p>
-            }
-
-            @if (proj.githubUrl || proj.liveUrl || proj.repoPrivate) {
-            <div class="pm-actions">
-                @if (proj.liveUrl) {
-                <a [href]="proj.liveUrl" target="_blank" rel="noopener" class="tech-btn">{{ i18n.t().btnLive }}</a>
-                }
-                @if (proj.githubUrl) {
-                <a [href]="proj.githubUrl" target="_blank" rel="noopener" class="tech-btn">{{ i18n.t().btnRepo }}</a>
-                } @else if (proj.repoPrivate) {
-                <span class="tech-btn is-locked">{{ i18n.t().repoPrivate }}</span>
-                }
-            </div>
-            }
-        </div>
+  <!-- ===================== ENCABEZADO =====================
+       .console-anchor es el punto exacto donde aterriza la consola del
+       arranque: la secuencia no se corta, se convierte en esto. -->
+  <header class="hud">
+    <div class="hud-left console-anchor">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="hud-brand" translate="no">VOLPINO_OS</span>
+      <span class="hud-state">{{ i18n.t().systemOnline }}</span>
     </div>
-</div>
-}
 
-<!-- ============ LIGHTBOX ============ -->
-@if (lightboxImage(); as shot) {
-<div class="lightbox" (click)="closeLightbox()">
-    <img [src]="shot.src" [alt]="shot.alt">
-    <button class="lb-close" (click)="closeLightbox()" [attr.aria-label]="i18n.t().ariaClose">[ X ]</button>
+    <div class="hud-right">
+      <span class="hud-stat"><i class="label">{{ i18n.t().uptime }}</i> <b class="tabular">{{ uptime() }}</b></span>
+      <span class="hud-stat"><i class="label">{{ i18n.t().version }}</i> <b class="tabular">4.0</b></span>
+      <span class="kbd-hint"><kbd>Ctrl</kbd><kbd>K</kbd> {{ i18n.t().cmdHint }}</span>
+
+      <div class="lang" role="group" aria-label="Idioma / Language">
+        <button type="button" [class.on]="i18n.lang() === 'es'" (click)="i18n.setLang('es')"
+          [attr.aria-pressed]="i18n.lang() === 'es'">ES</button>
+        <button type="button" [class.on]="i18n.lang() === 'en'" (click)="i18n.setLang('en')"
+          [attr.aria-pressed]="i18n.lang() === 'en'">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="scroll">
+
+    <!-- ===================== PERFIL ===================== -->
+    <section class="sec sec-hero">
+      <div class="wrap">
+        <div class="hero">
+          <div class="hero-photo">
+            <img [src]="data.profile().photo" alt="Emiliano Volpino" width="250" height="300">
+            <span class="ph-frame" aria-hidden="true"></span>
+            <span class="ph-scan" aria-hidden="true"></span>
+          </div>
+
+          <div class="hero-copy">
+            <p class="label">{{ i18n.t().operatorProfile }}</p>
+            <h1 class="hero-name" translate="no">{{ data.profile().name }}</h1>
+            <p class="hero-role">{{ data.profile().title }}</p>
+
+            <dl class="hero-data">
+              <div><dt class="label">{{ i18n.t().labelLoc }}</dt>
+                <dd>{{ data.profile().location }}</dd>
+              </div>
+              <div><dt class="label">{{ i18n.t().labelPhone }}</dt>
+                <dd class="tabular">{{ data.profile().phone }}</dd>
+              </div>
+              <div class="wide"><dt class="label">{{ i18n.t().labelEmail }}</dt>
+                <dd>{{ data.profile().email }}</dd>
+              </div>
+            </dl>
+
+            <p class="hero-bio">{{ data.profile().bio }}</p>
+
+            <div class="hero-links">
+              <a [href]="'https://' + data.profile().github" target="_blank" rel="noopener" class="btn">
+                {{ i18n.t().btnGithub }}
+              </a>
+              <a [href]="'https://' + data.profile().linkedin" target="_blank" rel="noopener" class="btn">
+                {{ i18n.t().btnLinkedin }}
+              </a>
+              <a [href]="i18n.t().cvFile" target="_blank" rel="noopener" class="btn btn-signal">
+                {{ i18n.t().btnCv }}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="scroll-cue">{{ i18n.t().scrollDown }}</span>
+    </section>
+
+    <!-- ===================== PROYECTOS ===================== -->
+    <section class="sec" id="proyectos" tabindex="-1">
+      <div class="wrap wrap-wide">
+        <h2 class="sec-title">{{ i18n.t().projectsTitle }}</h2>
+        <p class="sec-lead">{{ i18n.t().projectsLead }}</p>
+
+        <ul class="cards">
+          @for (p of data.featuredProjects(); track p.id) {
+          <li class="card" [style.--i]="$index">
+            <button type="button" class="card-hit" (click)="open(p)"
+              [attr.aria-label]="p.name + ' — ' + p.type">
+              <span class="card-head">
+                <span class="card-id tabular" translate="no">{{ p.id }}</span>
+                <span class="card-status" [class]="'st-' + p.status">{{ statusLabel(p.status) }}</span>
+              </span>
+
+              <span class="card-name">{{ p.name }}</span>
+              <span class="card-type">{{ p.type }}</span>
+              <span class="card-desc">{{ p.description }}</span>
+
+              @if (p.metrics?.length) {
+              <span class="card-metrics">
+                @for (m of p.metrics!.slice(0, 2); track m.label) {
+                <span class="cm"><b class="tabular">{{ m.value }}</b> {{ m.label }}</span>
+                }
+              </span>
+              }
+
+              <span class="card-stack">
+                @for (t of p.techStack.slice(0, 4); track t) {
+                <span translate="no">{{ t }}</span>
+                }
+                @if (p.techStack.length > 4) {
+                <span class="more">+{{ p.techStack.length - 4 }}</span>
+                }
+              </span>
+
+              <span class="card-cta">{{ i18n.t().projectCta }} <i aria-hidden="true">→</i></span>
+            </button>
+          </li>
+          }
+        </ul>
+
+        <div class="orbit-cta">
+          <p>{{ i18n.t().moreInOrbit }}</p>
+          <button type="button" class="btn btn-signal" (click)="enterOrbit()">
+            {{ i18n.t().orbitBtn }}
+          </button>
+        </div>
+
+        @if (orbitBlocked()) {
+        <p class="orbit-warn" role="status">{{ i18n.t().orbitUnavailable }}</p>
+        }
+      </div>
+    </section>
+
+    <!-- ===================== CAPACIDADES ===================== -->
+    <section class="sec">
+      <div class="wrap wrap-wide">
+        <h2 class="sec-title">{{ i18n.t().skillsTitle }}</h2>
+
+        <div class="matrix">
+          @for (g of skillsByCategory; track $index) {
+          <section class="matrix-col">
+            <h3 class="label">{{ g.name }}</h3>
+            <ul>
+              @for (s of g.items; track $index) {
+              <li translate="no">{{ s.name }}</li>
+              }
+            </ul>
+          </section>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ESTUDIOS =====================
+         El encabezado es un <button> de verdad: antes era un div con click
+         y no habia forma de abrirlo sin mouse. -->
+    <section class="sec">
+      <div class="wrap">
+        <h2 class="sec-title">{{ i18n.t().eduTitle }}</h2>
+
+        <ul class="edu">
+          @for (s of data.studies(); track $index; let i = $index) {
+          <li class="edu-item" [class.open]="openStudy() === i">
+            <h3>
+              <button type="button" class="edu-head" (click)="toggleStudy(i)"
+                [attr.aria-expanded]="openStudy() === i" [attr.aria-controls]="'edu-' + i">
+                <span class="edu-led" [class.live]="s.status === 'IN_PROGRESS'" aria-hidden="true"></span>
+                <span class="edu-title">{{ s.title }}</span>
+                <span class="edu-inst">{{ s.institution }}</span>
+                <span class="edu-period tabular">{{ s.period }}</span>
+                <span class="edu-chev" aria-hidden="true"></span>
+              </button>
+            </h3>
+
+            <div class="edu-body" [id]="'edu-' + i" [hidden]="openStudy() !== i">
+              <p class="label">{{ i18n.t().modulesLoaded }}</p>
+              <ul class="edu-tags">
+                @for (t of s.tags; track t) {
+                <li translate="no">{{ t }}</li>
+                }
+              </ul>
+              @if (s.certificate) {
+              <a [href]="s.certificate" target="_blank" rel="noopener" class="btn edu-cert">
+                {{ i18n.t().certLink }}
+              </a>
+              }
+            </div>
+          </li>
+          }
+        </ul>
+
+        <footer class="closing">
+          <p>{{ i18n.t().orbitTeaser }}</p>
+          <button type="button" class="btn btn-signal" (click)="enterOrbit()">
+            {{ i18n.t().orbitBtn }}
+          </button>
+        </footer>
+      </div>
+    </section>
+
+  </div>
 </div>
-}

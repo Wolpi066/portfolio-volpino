@@ -1,60 +1,235 @@
-.boot-container {
-    width: 100%;
-    height: 100vh;
-    background-color: var(--bg-deep);
-    z-index: 1000;
+/* =========================================================================
+   ARRANQUE EN FRIO
+   La consola vive en el centro del grid; GSAP la desplaza con x/y hasta la
+   posicion medida del encabezado. Por eso NO se la centra con transform:
+   colisionaria con el tween.
+   ========================================================================= */
+
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  pointer-events: none;
 }
 
-.terminal-window {
-    width: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.boot-shell {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
 }
 
-.header-line {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    color: var(--text-dim);
-    border-bottom: var(--border-thin);
-    padding-bottom: 5px;
+/* El velo se abre por etapas: la interfaz de atras se va revelando. */
+.boot-veil {
+  position: absolute;
+  inset: 0;
+  background: var(--void);
+  transition: opacity 900ms var(--ease-in-out);
 }
 
-.progress-wrapper {
-    width: 100%;
-    height: 4px;
-    background-color: var(--bg-panel);
-    border: var(--border-thin);
-    position: relative;
+.boot-shell[data-act='1'] .boot-veil {
+  opacity: 1;
 }
 
-.progress-bar {
-    height: 100%;
-    background-color: var(--accent-primary);
-    transition: width 0.1s linear;
+.boot-shell[data-act='2'] .boot-veil {
+  opacity: 0.94;
 }
 
-.console-output {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--text-main);
+.boot-shell[data-act='3'] .boot-veil {
+  opacity: 0.55;
 }
 
-/* Efecto de parpadeo del cursor */
-.cursor {
-    animation: blink 1s infinite;
+/* Retícula de instrumento: se dibuja sola en el acto I. */
+.boot-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--hairline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0;
+  mask-image: radial-gradient(circle at 50% 50%, #000 0%, transparent 68%);
+  transition: opacity 1200ms var(--ease-out);
 }
 
-@keyframes blink {
+.boot-shell[data-act='1'] .boot-grid,
+.boot-shell[data-act='2'] .boot-grid {
+  opacity: 0.5;
+}
 
-    0%,
-    100% {
-        opacity: 1;
-    }
+/* ---- La consola -------------------------------------------------------- */
+.boot-console {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 22px 30px 20px;
+  background: color-mix(in oklab, var(--panel) 88%, transparent);
+  border: 1px solid var(--edge);
+  border-radius: var(--radius);
+  box-shadow: var(--lift-3);
+  will-change: transform;
+  /* el tween mueve la esquina, no el centro visual */
+  transform-origin: 50% 50%;
+}
 
-    50% {
-        opacity: 0;
-    }
+.bc-rule {
+  position: absolute;
+  inset-block-start: -1px;
+  inset-inline-start: 0;
+  block-size: 1px;
+  inline-size: 100%;
+  background: linear-gradient(90deg, transparent, var(--signal), transparent);
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  animation: rule-draw 700ms var(--ease-out) forwards;
+}
+
+@keyframes rule-draw {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.bc-name {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.bc-caret {
+  inline-size: 0.52em;
+  block-size: 1.05em;
+  background: var(--signal);
+  animation: caret 900ms steps(1) infinite;
+}
+
+@keyframes caret {
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.bc-sub {
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+/* ---- El registro ------------------------------------------------------- */
+.boot-log {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  z-index: 2;
+  inline-size: min(460px, 84vw);
+  /* debajo del centro: al principio comparte espacio con la consola,
+     y queda solo cuando la consola se va */
+  transform: translate(-50%, -18%);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+}
+
+.boot-log li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 3px 0;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 260ms var(--ease-out),
+    transform 260ms var(--ease-out);
+}
+
+.boot-log li.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bl-tag {
+  color: var(--signal);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.bl-label {
+  color: var(--text-dim);
+}
+
+/* Los puntos de relleno de un listado de arranque real. */
+.bl-fill {
+  flex: 1;
+  min-inline-size: 12px;
+  border-block-end: 1px dotted var(--edge);
+  transform: translateY(-3px);
+}
+
+.bl-val {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ---- Salida ------------------------------------------------------------ */
+.boot-skip {
+  position: absolute;
+  inset-block-end: 30px;
+  inset-inline: 0;
+  margin: 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  opacity: 0;
+  animation: skip-in 400ms var(--ease-out) 1400ms forwards;
+}
+
+@keyframes skip-in {
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================================================================
+   MOVIMIENTO REDUCIDO
+   El componente ni siquiera se monta en ese caso, pero si alguien cambia la
+   preferencia a mitad de camino, que no quede nada girando.
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+
+  .bc-rule,
+  .bc-caret,
+  .boot-skip {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .boot-log li {
+    opacity: 1;
+    transform: none;
+  }
 }

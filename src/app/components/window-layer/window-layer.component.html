@@ -1,0 +1,47 @@
+<!-- En telefono solo tiene sentido una hoja a la vez: la de arriba. -->
+@if (isMobile()) {
+@if (wm.visible().length) {
+@let top = wm.visible()[wm.visible().length - 1];
+<app-project-window [win]="top" [isMobile]="true" (lightbox)="openZoom($event)" />
+}
+} @else {
+@for (w of wm.visible(); track w.id) {
+<app-project-window [win]="w" [isMobile]="false" (lightbox)="openZoom($event)" />
+}
+}
+
+<!-- =====================  BARRA DE TAREAS  ===================== -->
+@if (wm.count() && !isMobile()) {
+<nav class="taskbar" [attr.aria-label]="i18n.t().taskbarLabel">
+  <span class="tb-brand" translate="no">VOLPINO_OS</span>
+  <span class="tb-sep" aria-hidden="true"></span>
+
+  <ul class="tb-list">
+    @for (w of wm.windows(); track w.id) {
+    <li>
+      <button type="button" class="tb-item" [class.is-active]="wm.activeId() === w.id"
+        [class.is-min]="w.minimized" [attr.aria-pressed]="wm.activeId() === w.id"
+        (click)="w.minimized ? wm.restore(w.id) : wm.focus(w.id)">
+        <span class="tb-dot" [class]="'st-' + w.project.status" aria-hidden="true"></span>
+        <span class="tb-name">{{ w.project.name }}</span>
+      </button>
+    </li>
+    }
+  </ul>
+
+  <button type="button" class="tb-close-all" (click)="wm.closeAll()">
+    {{ i18n.t().closeAll }}
+  </button>
+</nav>
+}
+
+<!-- =====================  CAPTURA AMPLIADA  ===================== -->
+@if (zoom(); as s) {
+<div class="zoom" (click)="closeZoom()">
+  <img [src]="s.src" [alt]="s.alt">
+  <p class="zoom-cap">{{ s.alt }}</p>
+  <button type="button" class="zoom-x" (click)="closeZoom()" [attr.aria-label]="i18n.t().ariaClose">
+    {{ i18n.t().btnClose }}
+  </button>
+</div>
+}

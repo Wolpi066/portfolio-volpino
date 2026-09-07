@@ -1,90 +1,28 @@
-<div #rendererContainer class="holo-container" (pointerdown)="onPointerDown($event)"
-    (pointerup)="onPointerUp($event)" (pointermove)="onPointerMove($event)">
-</div>
+<div class="orbit">
 
-<div class="hud-overlay">
-    <div class="scan-line"></div>
+  <div class="canvas" #canvasHost (pointerdown)="onPointerDown($event)" (pointerup)="onPointerUp($event)"
+    (pointermove)="onPointerMove($event)"></div>
 
-    <div class="hud-top-left">
-        <h1>{{ i18n.t().orbitView }}</h1>
-        <div class="sub-text">{{ i18n.t().systemOnline }}</div>
-
-        <div class="legend-box">
-            <div class="legend-item"><span class="dot live"></span> {{ i18n.t().legendLive }}</div>
-            <div class="legend-item"><span class="dot web"></span> {{ i18n.t().legendWeb }}</div>
-            <div class="legend-item"><span class="dot game"></span> {{ i18n.t().legendGame }}</div>
-        </div>
+  <div class="hud">
+    <div class="hud-tl">
+      <h1 class="o-title">{{ i18n.t().orbitView }}</h1>
+      <ul class="legend">
+        <li><span class="k live" aria-hidden="true"></span>{{ i18n.t().legendLive }}</li>
+        <li><span class="k work" aria-hidden="true"></span>{{ i18n.t().legendWeb }}</li>
+        <li><span class="k arch" aria-hidden="true"></span>{{ i18n.t().legendGame }}</li>
+      </ul>
     </div>
 
-    <button class="exit-btn" (click)="exitToInterface()">{{ i18n.t().orbitExit }}</button>
+    <button type="button" class="btn o-exit" (click)="exit()">
+      {{ i18n.t().orbitExit }}
+    </button>
 
-    <div class="hud-bottom-center">
-        <div class="nav-hint">{{ i18n.t().hintDrag }}</div>
-        <div class="nav-hint">{{ i18n.t().hintTap }}</div>
-    </div>
-</div>
+    <p class="hints">
+      <span>{{ i18n.t().hintDrag }}</span>
+      <span>{{ i18n.t().hintTap }}</span>
+    </p>
 
-<div class="project-card" [class.visible]="activeProject()">
-
-    @if (activeProject()?.videoUrl) {
-    <div class="card-media">
-        <video [src]="activeProject()?.videoUrl" [poster]="activeProject()?.videoPoster" controls preload="none"
-            playsinline class="media-content"></video>
-        <div class="media-overlay"></div>
-    </div>
-    }
-
-    @if (!activeProject()?.videoUrl && activeProject()?.gallery?.length) {
-    <div class="card-media" [class.is-phone]="activeProject()?.galleryLayout === 'phone'">
-        <img [src]="activeProject()?.gallery?.[0]?.src" [alt]="activeProject()?.gallery?.[0]?.alt" class="media-content"
-            loading="eager" decoding="async">
-        <div class="media-overlay"></div>
-    </div>
-    }
-
-    <div class="card-content">
-        <div class="card-header">
-            <span class="card-id">ID: {{ activeProject()?.id }}</span>
-            @if (activeProject()?.status) {
-            <span class="status-badge">[{{ statusLabel(activeProject()?.status) }}]</span>
-            }
-            <button class="close-btn" (click)="closeProject()">[X]</button>
-        </div>
-
-        <h2 class="card-title">{{ activeProject()?.name }}</h2>
-        <div class="card-divider"></div>
-
-        <p class="card-desc">{{ activeProject()?.description }}</p>
-
-        @if (activeProject()?.technicalHighlight) {
-        <div class="tech-highlight">
-            <span class="highlight-label">SYS_LOG > </span>
-            {{ activeProject()?.technicalHighlight }}
-        </div>
-        }
-
-        <div class="tech-stack">
-            @for (tech of activeProject()?.techStack; track tech) {
-            <span class="tech-badge">{{ tech }}</span>
-            }
-        </div>
-
-        <div class="card-actions">
-            @if (activeProject()?.liveUrl) {
-            <a [href]="activeProject()?.liveUrl" target="_blank" rel="noopener" class="action-btn">
-                <span>{{ i18n.t().btnLive }}</span>
-            </a>
-            }
-            @if (activeProject()?.githubUrl) {
-            <a [href]="activeProject()?.githubUrl" target="_blank" rel="noopener" class="action-btn">
-                <span>{{ i18n.t().btnRepo }}</span>
-            </a>
-            } @else if (activeProject()?.repoPrivate) {
-            <div class="action-btn locked-btn">
-                <span>{{ i18n.t().privateCode }}</span>
-                <span class="arrow">✕</span>
-            </div>
-            }
-        </div>
-    </div>
+    <!-- El nombre del nodo bajo el puntero: sin esto hay que tantear a ciegas. -->
+    <p class="readout" [class.on]="hovered()" aria-live="polite">{{ hovered() }}</p>
+  </div>
 </div>

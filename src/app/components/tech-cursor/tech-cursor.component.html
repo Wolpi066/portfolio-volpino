@@ -1,7 +1,2 @@
-<div class="cursor-arrow" [class.hovering]="isHovering()" [style.transform]="cursorTransform()">
-    <svg viewBox="0 0 24 24" width="24" height="24">
-        <path d="M4 2L20 10L12 12L10 20L4 2Z" fill="#00ffaa" stroke="none" />
-    </svg>
-</div>
-
-<div class="cursor-trail" [style.transform]="trailTransform()"></div>
+<span class="ring" [class.hot]="hot()" [class.down]="down()" [style.transform]="ring()" aria-hidden="true"></span>
+<span class="dot" [class.hot]="hot()" [style.transform]="dot()" aria-hidden="true"></span>

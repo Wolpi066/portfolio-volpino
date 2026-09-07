@@ -1,0 +1,250 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  pointer-events: none;
+}
+
+/* =========================================================================
+   BARRA DE TAREAS
+   Aparece solo cuando hay algo abierto: no ocupa lugar sin razon.
+   ========================================================================= */
+.taskbar {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  block-size: var(--rail);
+  padding-inline: var(--sp-3);
+  pointer-events: auto;
+  background: color-mix(in oklab, var(--panel) 92%, transparent);
+  backdrop-filter: blur(12px);
+  border-block-start: 1px solid var(--edge);
+  animation: rail-in 260ms var(--ease-out);
+}
+
+@keyframes rail-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+.tb-brand {
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--signal);
+  flex-shrink: 0;
+}
+
+.tb-sep {
+  inline-size: 1px;
+  block-size: 16px;
+  background: var(--edge);
+  flex-shrink: 0;
+}
+
+.tb-list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  min-inline-size: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tb-list::-webkit-scrollbar {
+  display: none;
+}
+
+.tb-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  max-inline-size: 190px;
+  padding: 5px 11px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-ui) var(--ease-out),
+    color var(--dur-ui) var(--ease-out),
+    border-color var(--dur-ui) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tb-item:hover {
+    background: var(--panel-hi);
+    color: var(--text);
+  }
+}
+
+.tb-item:active {
+  transform: scale(0.97);
+}
+
+.tb-item.is-active {
+  background: var(--panel-hi);
+  border-color: var(--edge);
+  color: var(--text);
+}
+
+/* Minimizada: sigue en la barra, pero atenuada. */
+.tb-item.is-min {
+  opacity: 0.55;
+}
+
+.tb-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tb-dot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: currentColor;
+}
+
+.tb-dot.st-PRODUCTION {
+  color: var(--live);
+}
+
+.tb-dot.st-DEPLOYED,
+.tb-dot.st-DELIVERED {
+  color: var(--work);
+}
+
+.tb-dot.st-IN_DEVELOPMENT {
+  color: var(--wip);
+}
+
+.tb-dot.st-PROTOTYPE,
+.tb-dot.st-ARCHIVED {
+  color: var(--arch);
+}
+
+.tb-close-all {
+  flex-shrink: 0;
+  padding: 5px 11px;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  color: var(--text-mute);
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    color var(--dur-ui) var(--ease-out),
+    border-color var(--dur-ui) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tb-close-all:hover {
+    color: var(--alert);
+    border-color: var(--alert);
+  }
+}
+
+.tb-close-all:active {
+  transform: scale(0.97);
+}
+
+/* =========================================================================
+   CAPTURA AMPLIADA
+   ========================================================================= */
+.zoom {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-6) var(--sp-5) var(--sp-7);
+  pointer-events: auto;
+  background: color-mix(in oklab, var(--void) 92%, transparent);
+  backdrop-filter: blur(10px);
+  cursor: zoom-out;
+  animation: zoom-in 200ms var(--ease-out);
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.zoom img {
+  max-inline-size: min(1180px, 94vw);
+  max-block-size: 78dvh;
+  object-fit: contain;
+  border: 1px solid var(--edge);
+  border-radius: var(--radius);
+  box-shadow: var(--lift-3);
+  animation: zoom-rise 260ms var(--ease-out);
+}
+
+@keyframes zoom-rise {
+  from {
+    transform: scale(0.97);
+    opacity: 0;
+  }
+}
+
+.zoom-cap {
+  max-inline-size: 68ch;
+  margin: 0;
+  text-align: center;
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.zoom-x {
+  position: absolute;
+  inset-block-start: var(--sp-4);
+  inset-inline-end: var(--sp-4);
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--edge);
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  cursor: pointer;
+  transition: color var(--dur-ui) var(--ease-out), border-color var(--dur-ui) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .zoom-x:hover {
+    color: var(--signal);
+    border-color: var(--signal);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .taskbar,
+  .zoom,
+  .zoom img {
+    animation: none;
+  }
+}

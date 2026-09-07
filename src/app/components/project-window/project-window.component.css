@@ -1,0 +1,454 @@
+:host {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  pointer-events: none;
+}
+
+/* =========================================================================
+   MARCO
+   ========================================================================= */
+.frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: var(--radius);
+  box-shadow: var(--lift-2);
+  overflow: hidden;
+  will-change: transform;
+  /* La sombra sube al enfocar: es lo que dice cual esta al frente. */
+  transition:
+    box-shadow var(--dur-ui) var(--ease-out),
+    border-color var(--dur-ui) var(--ease-out);
+}
+
+.frame.is-active {
+  border-color: var(--edge-hi);
+  box-shadow: var(--lift-3);
+}
+
+/* Mientras se arrastra no hay que pagar transiciones ni permitir selección. */
+.frame.is-dragging {
+  transition: none;
+  user-select: none;
+}
+
+.frame.is-dragging .body {
+  pointer-events: none;
+}
+
+/* =========================================================================
+   BARRA DE TITULO
+   ========================================================================= */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-shrink: 0;
+  padding: 0 var(--sp-2) 0 var(--sp-3);
+  block-size: 40px;
+  background: var(--panel-hi);
+  border-block-end: 1px solid var(--hairline);
+  cursor: grab;
+  touch-action: none;
+}
+
+.frame.is-dragging .bar {
+  cursor: grabbing;
+}
+
+.bar:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Las tres rayitas: la señal universal de "esto se agarra". */
+.bar-grip {
+  inline-size: 10px;
+  block-size: 12px;
+  flex-shrink: 0;
+  background-image: radial-gradient(circle, var(--text-mute) 1px, transparent 1px);
+  background-size: 4px 4px;
+  opacity: 0.7;
+}
+
+.bar-id {
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  color: var(--text-mute);
+  flex-shrink: 0;
+}
+
+.bar-title {
+  flex: 1;
+  min-inline-size: 0;
+  margin: 0;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-status {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  padding: 2px 7px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.st-PRODUCTION {
+  color: var(--live);
+}
+
+.st-DEPLOYED,
+.st-DELIVERED {
+  color: var(--work);
+}
+
+.st-IN_DEVELOPMENT {
+  color: var(--wip);
+}
+
+.st-PROTOTYPE,
+.st-ARCHIVED {
+  color: var(--arch);
+}
+
+/* ---- Controles ---------------------------------------------------------- */
+.bar-ctl {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.wbtn {
+  display: grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  background: transparent;
+  border: 0;
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--text-dim);
+  transition:
+    background-color var(--dur-ui) var(--ease-out),
+    color var(--dur-ui) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wbtn:hover {
+    background: var(--edge);
+    color: var(--text);
+  }
+
+  .wbtn-close:hover {
+    background: var(--alert);
+    color: var(--void);
+  }
+}
+
+.wbtn:active {
+  transform: scale(0.9);
+}
+
+.ic-min,
+.ic-max,
+.ic-close {
+  display: block;
+  inline-size: 10px;
+  block-size: 10px;
+}
+
+.ic-min {
+  block-size: 1px;
+  background: currentColor;
+}
+
+.ic-max {
+  border: 1px solid currentColor;
+}
+
+.ic-close {
+  position: relative;
+}
+
+.ic-close::before,
+.ic-close::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 0;
+  inline-size: 100%;
+  block-size: 1px;
+  background: currentColor;
+}
+
+.ic-close::before {
+  transform: rotate(45deg);
+}
+
+.ic-close::after {
+  transform: rotate(-45deg);
+}
+
+/* =========================================================================
+   CUERPO
+   ========================================================================= */
+.body {
+  flex: 1;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--sp-5) var(--sp-5) var(--sp-6);
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge) transparent;
+}
+
+.w-type {
+  margin: 0 0 var(--sp-3);
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.w-desc {
+  margin: 0 0 var(--sp-5);
+  font-size: var(--t-base);
+  line-height: 1.7;
+  color: var(--text-dim);
+  max-inline-size: 62ch;
+  text-wrap: pretty;
+}
+
+/* ---- Metricas ----------------------------------------------------------- */
+.w-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  list-style: none;
+  margin: 0 0 var(--sp-5);
+  padding: 0;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.w-metrics li {
+  background: var(--panel);
+  padding: var(--sp-3) var(--sp-4);
+}
+
+.wm-val {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--t-md);
+  font-weight: 600;
+  color: var(--signal);
+  line-height: 1.2;
+}
+
+.wm-lbl {
+  display: block;
+  margin-block-start: 5px;
+  font-size: var(--t-xs);
+  line-height: 1.45;
+  color: var(--text-mute);
+}
+
+/* ---- Bloques ------------------------------------------------------------ */
+.w-block {
+  margin-block-end: var(--sp-5);
+}
+
+.w-block .label {
+  display: block;
+  margin-block-end: var(--sp-3);
+}
+
+.w-tech {
+  margin: 0;
+  padding: var(--sp-4);
+  background: var(--deep);
+  border-inline-start: 2px solid var(--signal-lo);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: var(--t-sm);
+  line-height: 1.75;
+  color: var(--text-dim);
+  text-wrap: pretty;
+}
+
+.w-role {
+  margin: 0;
+  font-size: var(--t-sm);
+  line-height: 1.7;
+  color: var(--text-dim);
+}
+
+/* ---- Capturas ----------------------------------------------------------- */
+.w-shots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--sp-2);
+}
+
+.w-shots.is-phone {
+  grid-template-columns: repeat(auto-fit, minmax(110px, 132px));
+  justify-content: start;
+}
+
+.shot {
+  display: block;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  background: var(--void);
+  cursor: zoom-in;
+  overflow: hidden;
+  line-height: 0;
+  transition:
+    border-color var(--dur-ui) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .shot:hover {
+    border-color: var(--signal);
+  }
+}
+
+.shot:active {
+  transform: scale(0.98);
+}
+
+.shot img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.w-video {
+  inline-size: 100%;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--void);
+}
+
+/* ---- Stack -------------------------------------------------------------- */
+.w-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.w-stack li {
+  padding: 4px 9px;
+  background: var(--deep);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  color: var(--text-dim);
+}
+
+.w-note {
+  margin: 0 0 var(--sp-5);
+  padding-block-start: var(--sp-4);
+  border-block-start: 1px dashed var(--hairline);
+  font-size: var(--t-xs);
+  line-height: 1.6;
+  color: var(--text-mute);
+  font-style: italic;
+}
+
+.w-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+.btn.is-locked {
+  color: var(--text-mute);
+  border-color: var(--hairline);
+  cursor: default;
+}
+
+/* =========================================================================
+   TIRADOR DE REDIMENSIONADO
+   ========================================================================= */
+.grip {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  inline-size: 18px;
+  block-size: 18px;
+  cursor: nwse-resize;
+  touch-action: none;
+  background:
+    linear-gradient(135deg, transparent 50%, var(--edge) 50%, var(--edge) 60%, transparent 60%,
+      transparent 72%, var(--edge) 72%, var(--edge) 82%, transparent 82%);
+}
+
+/* =========================================================================
+   HOJA DE TELEFONO
+   No hay ventanas en una pantalla de 390 px: hay una hoja que sube y se
+   cierra arrastrandola.
+   ========================================================================= */
+.frame.is-sheet {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  inline-size: 100%;
+  block-size: 92dvh;
+  border-radius: 14px 14px 0 0;
+  border-inline: 0;
+  border-block-end: 0;
+  box-shadow: 0 -18px 50px rgba(0, 0, 0, 0.6);
+}
+
+.frame.is-sheet .bar {
+  block-size: 48px;
+  padding-inline: var(--sp-4) var(--sp-2);
+}
+
+/* El tirador de hoja: horizontal y centrado, como manda el patron. */
+.frame.is-sheet .bar-grip {
+  position: absolute;
+  inset-block-start: 6px;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  inline-size: 36px;
+  block-size: 4px;
+  border-radius: 2px;
+  background: var(--edge-hi);
+  background-image: none;
+  opacity: 1;
+}
+
+.frame.is-sheet .body {
+  padding-inline: var(--sp-4);
+  padding-block-end: max(var(--sp-7), env(safe-area-inset-bottom));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame {
+    transition: none;
+  }
+}

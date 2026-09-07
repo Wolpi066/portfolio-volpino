@@ -1,0 +1,162 @@
+/* La paleta no anima al abrir: es una accion de teclado que se repite mucho
+   y cualquier transicion la haria sentir lenta. */
+
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: grid;
+  place-items: start center;
+  padding-block-start: 14vh;
+  padding-inline: var(--sp-4);
+  background: color-mix(in oklab, var(--void) 78%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.pal {
+  inline-size: min(620px, 100%);
+  max-block-size: 66dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: var(--radius);
+  box-shadow: var(--lift-3);
+  overflow: hidden;
+}
+
+/* ---- Campo -------------------------------------------------------------- */
+.pal-field {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding-inline: var(--sp-4);
+  block-size: 50px;
+  border-block-end: 1px solid var(--hairline);
+  flex-shrink: 0;
+}
+
+.pal-caret {
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+  color: var(--signal);
+  flex-shrink: 0;
+}
+
+.pal-input {
+  flex: 1;
+  min-inline-size: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--t-base);
+  letter-spacing: 0.02em;
+}
+
+.pal-input::placeholder {
+  color: var(--text-mute);
+}
+
+kbd {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  color: var(--text-mute);
+  background: var(--deep);
+}
+
+/* ---- Lista -------------------------------------------------------------- */
+.pal-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-2) 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge) transparent;
+}
+
+.pal-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pal-group>.label {
+  display: block;
+  padding: var(--sp-3) var(--sp-4) var(--sp-2);
+}
+
+.pal-item {
+  inline-size: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding: 9px var(--sp-4);
+  background: transparent;
+  border: 0;
+  border-inline-start: 2px solid transparent;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: var(--t-sm);
+  text-align: start;
+  cursor: pointer;
+}
+
+/* Sin transicion: al moverse con flechas, un fundido entre filas se arrastra. */
+.pal-item.on {
+  background: var(--panel-hi);
+  border-inline-start-color: var(--signal);
+  color: var(--text);
+}
+
+.pi-label {
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.pi-hint {
+  flex: 1;
+  min-inline-size: 0;
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  color: var(--text-mute);
+  text-align: end;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pal-empty {
+  padding: var(--sp-5) var(--sp-4);
+  text-align: center;
+  font-size: var(--t-sm);
+  color: var(--text-mute);
+}
+
+/* ---- Pie ---------------------------------------------------------------- */
+.pal-foot {
+  display: flex;
+  gap: var(--sp-5);
+  padding: var(--sp-3) var(--sp-4);
+  border-block-start: 1px solid var(--hairline);
+  font-size: var(--t-micro);
+  color: var(--text-mute);
+  flex-shrink: 0;
+}
+
+.pal-foot span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+@media (max-width: 640px) {
+  .veil {
+    padding-block-start: 8vh;
+  }
+}

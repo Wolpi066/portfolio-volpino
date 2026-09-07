@@ -1,37 +1,26 @@
-<app-tech-cursor></app-tech-cursor>
+<a class="skip-link" href="#proyectos">{{ i18n.t().skipLink }}</a>
+
+<app-tech-cursor />
 
 <main>
-    @if (narrative.currentPhase() === 'BOOT') {
-    <app-boot-sequence></app-boot-sequence>
-    }
+  @if (narrative.currentPhase() === 'ORBIT') {
+  <!-- Three.js sale del bundle inicial: solo lo baja quien entra a la vista orbital. -->
+  @defer (on immediate) {
+  <app-holo-rebirth />
+  } @loading {
+  <p class="phase-loading">{{ i18n.t().orbitView }}…</p>
+  }
+  } @else {
+  <!-- La interfaz se monta tambien durante el arranque: asi el LCP es el hero
+       real y no el cargador. -->
+  <app-main-interface />
+  }
 
-    @else if (narrative.currentPhase() === 'INTERFACE' || narrative.currentPhase() === 'TRAP') {
-
-    <app-main-interface></app-main-interface>
-
-    <!-- html2canvas se carga recién acá, no en el bundle inicial. -->
-    @if (narrative.currentPhase() === 'TRAP') {
-    @defer (on immediate) {
-    <app-system-trap></app-system-trap>
-    }
-    }
-    }
-
-    <!-- Three.js sale del bundle inicial: solo lo baja quien entra a la vista orbital. -->
-    @else if (narrative.currentPhase() === 'DESTRUCTION') {
-    @defer (on immediate) {
-    <app-voxel-destruction></app-voxel-destruction>
-    } @loading {
-    <div class="phase-loading">CARGANDO_MOTOR_GRÁFICO...</div>
-    }
-    }
-
-    @else if (narrative.currentPhase() === 'REBIRTH') {
-    @defer (on immediate) {
-    <app-holo-rebirth></app-holo-rebirth>
-    } @loading {
-    <div class="phase-loading">CARGANDO_NÚCLEO_ORBITAL...</div>
-    }
-    }
+  @if (narrative.currentPhase() === 'BOOT') {
+  <app-boot-sequence />
+  }
 </main>
-<router-outlet />
+
+<!-- Fuera de <main>: las ventanas viven igual en la interfaz que en el orbital. -->
+<app-window-layer />
+<app-command-palette />
