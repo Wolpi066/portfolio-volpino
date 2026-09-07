@@ -5,6 +5,7 @@ import { DataService } from '../../services/data.service';
 import { I18nService } from '../../services/i18n.service';
 import { WindowsService } from '../../services/windows.service';
 import { Project, ProjectStatus } from '../../models/portfolio.models';
+import { techTokens } from '../../core/tech-tokens';
 
 @Component({
   selector: 'app-main-interface',
@@ -20,6 +21,8 @@ export class MainInterfaceComponent implements OnInit, OnDestroy {
   public wm = inject(WindowsService);
 
   uptime = signal('00:00:00');
+  /** Capacidad bajo el puntero: la matriz responde a ella. */
+  activeSkill = signal<string | null>(null);
   openStudy = signal<number | null>(null);
   /** Se muestra si alguien intenta entrar al orbital sin WebGL. */
   orbitBlocked = signal(false);
@@ -35,8 +38,38 @@ export class MainInterfaceComponent implements OnInit, OnDestroy {
     };
     const skills = this.data.skills();
     return cats
-      .map(cat => ({ name: labels[cat], items: skills.filter(s => s.category === cat) }))
+      .map(cat => ({
+        name: labels[cat],
+        items: skills
+          .filter(s => s.category === cat)
+          .map(s => ({ name: s.name, used: this.systemsUsing(s.name) }))
+      }))
       .filter(g => g.items.length > 0);
+  }
+
+  /**
+   * En cuales de los once sistemas se usa esta capacidad.
+   *
+   * Se cruza contra el techStack real de cada proyecto en vez de escribirse a
+   * mano, asi la matriz no puede desincronizarse del contenido. La
+   * comparacion es tolerante porque los nombres no coinciden literalmente:
+   * la matriz dice "THREE.JS / WEBGL" y el stack dice "three.js".
+   */
+  systemsUsing(skill: string): string[] {
+    const alts = techTokens(skill);
+    if (!alts.length) return [];
+
+    // Igualdad exacta entre tokens, no subcadenas: con subcadenas "JAVA"
+    // matcheaba con "JavaScript", que es justo lo contrario de lo que dice.
+    return this.data.projects()
+      .filter(p => p.techStack.some(tech => techTokens(tech).some(t => alts.includes(t))))
+      .map(p => p.name);
+  }
+
+  /** Los sistemas de la capacidad activa, para la linea de lectura. */
+  get activeSkillSystems(): string[] {
+    const s = this.activeSkill();
+    return s ? this.systemsUsing(s) : [];
   }
 
   statusLabel(status: ProjectStatus): string {
@@ -62,9 +95,13 @@ export class MainInterfaceComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  /** Abrir un proyecto es abrir una ventana. */
-  open(project: Project) {
-    this.wm.open(project);
+  /**
+   * Abrir un proyecto es abrir una ventana, y la ventana crece desde la
+   * tarjeta: por eso viaja su rectangulo.
+   */
+  open(project: Project, ev: Event) {
+    const card = (ev.currentTarget as HTMLElement)?.getBoundingClientRect();
+    this.wm.open(project, card);
   }
 
   toggleStudy(i: number) {

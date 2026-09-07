@@ -13,6 +13,8 @@ export interface WinState {
     maximized: boolean;
     /** Geometria previa, para restaurar al desmaximizar. */
     prev?: { x: number; y: number; w: number; h: number };
+    /** Rectangulo de la tarjeta que la abrio: la ventana crece desde ahi. */
+    origin?: { left: number; top: number; width: number; height: number };
 }
 
 const LAYOUT_KEY = 'volpino-layout';
@@ -44,7 +46,7 @@ export class WindowsService {
     private topZ = 10;
 
     /** Abre el proyecto, o lo trae al frente si ya estaba. */
-    open(project: Project) {
+    open(project: Project, origin?: DOMRect) {
         const existing = this._windows().find(w => w.id === project.id);
         if (existing) {
             this.restore(project.id);
@@ -70,7 +72,8 @@ export class WindowsService {
             w, h,
             z: ++this.topZ,
             minimized: false,
-            maximized: false
+            maximized: false,
+            origin: origin ? { left: origin.left, top: origin.top, width: origin.width, height: origin.height } : undefined
         }]);
         this.persist();
     }

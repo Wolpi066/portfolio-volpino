@@ -613,27 +613,122 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 2px;
 }
 
-.matrix-col li {
+/* Cada capacidad es un control, no una viñeta: responde al puntero y al
+   teclado, y dice en cuantos sistemas se usa. */
+.cap {
+  inline-size: 100%;
+  display: grid;
+  grid-template-columns: 2px 1fr auto;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 6px var(--sp-3) 6px 0;
+  background: transparent;
+  border: 0;
+  color: var(--text-dim);
+  font: inherit;
   font-family: var(--mono);
   font-size: var(--t-xs);
-  color: var(--text-dim);
   letter-spacing: 0.03em;
-  padding-inline-start: var(--sp-3);
-  position: relative;
+  text-align: start;
+  cursor: pointer;
+  transition:
+    color var(--dur-ui) var(--ease-out),
+    background-color var(--dur-ui) var(--ease-out);
 }
 
-.matrix-col li::before {
-  content: '';
-  position: absolute;
-  inset-inline-start: 0;
-  inset-block-start: 0.62em;
-  inline-size: 4px;
-  block-size: 1px;
+/* La barra de la izquierda crece al activarse: es el indicador de señal. */
+.cap-bar {
+  block-size: 3px;
+  inline-size: 2px;
   background: var(--signal-lo);
+  transition:
+    block-size var(--dur-ui) var(--ease-out),
+    background-color var(--dur-ui) var(--ease-out);
 }
+
+.cap-name {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El conteo: cuantos de los once sistemas usan esto. */
+.cap-n {
+  min-inline-size: 18px;
+  padding: 1px 5px;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--signal);
+  text-align: center;
+  transition:
+    border-color var(--dur-ui) var(--ease-out),
+    background-color var(--dur-ui) var(--ease-out);
+}
+
+.cap.on {
+  color: var(--text);
+  background: var(--panel);
+}
+
+.cap.on .cap-bar {
+  block-size: 17px;
+  background: var(--signal);
+}
+
+.cap.on .cap-n {
+  border-color: var(--signal-lo);
+  background: var(--signal-veil);
+}
+
+/* Sin sistema propio detras: presente, pero sin fingir peso. */
+.cap.unused {
+  color: var(--text-mute);
+}
+
+.cap.unused .cap-bar {
+  background: var(--edge);
+}
+
+/* ---- Linea de lectura --------------------------------------------------- */
+.cap-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2) var(--sp-3);
+  margin-block-start: var(--sp-6);
+  padding-block-start: var(--sp-4);
+  border-block-start: 1px solid var(--hairline);
+  min-block-size: 46px;
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  line-height: 1.6;
+}
+
+.cap-readout b {
+  color: var(--signal);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.cap-readout span {
+  color: var(--text-mute);
+}
+
+.cap-readout em {
+  font-style: normal;
+  color: var(--text-dim);
+}
+
+.cap-idle {
+  color: var(--text-mute);
+}
+
 
 /* =========================================================================
    REGISTRO ACADEMICO

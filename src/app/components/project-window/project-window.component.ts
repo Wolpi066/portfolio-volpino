@@ -63,14 +63,41 @@ export class ProjectWindowComponent implements AfterViewInit, OnDestroy {
       gsap.set(el, { x: this.win().x, y: this.win().y });
     }
 
-    // Nada aparece de la nada: arranca casi entero, no desde escala cero.
-    gsap.fromTo(el,
-      { opacity: 0, scale: this.isMobile() ? 1 : 0.96, yPercent: this.isMobile() ? 100 : 0 },
-      {
-        opacity: 1, scale: 1, yPercent: 0,
-        duration: this.isMobile() ? 0.42 : 0.28,
-        ease: this.isMobile() ? 'expo.out' : 'power3.out'
+    const origin = this.win().origin;
+
+    if (!this.isMobile() && origin) {
+      // La ventana MORFEA desde la tarjeta que la abrio: se estira desde su
+      // rectangulo hasta el propio. Con transformOrigin en 0 0, x/y son la
+      // esquina superior izquierda y la cuenta cierra sola.
+      const w = this.win();
+      gsap.fromTo(el,
+        {
+          x: origin.left, y: origin.top,
+          scaleX: origin.width / w.w, scaleY: origin.height / w.h,
+          opacity: 0.55, transformOrigin: '0 0'
+        },
+        {
+          x: w.x, y: w.y, scaleX: 1, scaleY: 1, opacity: 1,
+          duration: 0.52, ease: 'expo.out',
+          // El origen vuelve al centro: si no, el cierre encoge hacia la esquina.
+          onComplete: () => gsap.set(el, { transformOrigin: '50% 50%' })
+        });
+
+      // El contenido entra despues, cuando el marco ya tiene su tamaño:
+      // si entra durante el morfeo se lee deformado.
+      gsap.from(el.querySelector('.body'), {
+        opacity: 0, y: 10, duration: 0.34, delay: 0.2, ease: 'power2.out'
       });
+    } else {
+      // Nada aparece de la nada: arranca casi entero, no desde escala cero.
+      gsap.fromTo(el,
+        { opacity: 0, scale: this.isMobile() ? 1 : 0.96, yPercent: this.isMobile() ? 100 : 0 },
+        {
+          opacity: 1, scale: 1, yPercent: 0,
+          duration: this.isMobile() ? 0.42 : 0.28,
+          ease: this.isMobile() ? 'expo.out' : 'power3.out'
+        });
+    }
 
     this.isMobile() ? this.setupSheet(el) : this.setupWindow(el);
   }

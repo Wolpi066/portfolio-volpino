@@ -92,6 +92,11 @@ const UI = {
         catFRONTEND: 'FRONTEND',
         catTOOLS: 'INFRA Y HERRAMIENTAS',
 
+        skillsLead: 'No es una lista de deseos: cada capacidad está cruzada contra el stack real de los once sistemas. El número dice en cuántos se usa.',
+        capUsedIn: 'sistemas',
+        capAcademic: '— de formación, todavía sin sistema propio en producción.',
+        capHint: 'Pasá por una capacidad para ver en qué sistemas se usa.',
+
         eduTitle: '// REGISTRO_ACADÉMICO',
         modulesLoaded: 'CONTENIDOS',
         certLink: 'VER CERTIFICADO',
@@ -188,6 +193,11 @@ const UI = {
         catBACKEND: 'BACKEND',
         catFRONTEND: 'FRONTEND',
         catTOOLS: 'INFRA & TOOLING',
+
+        skillsLead: 'Not a wish list: every capability is cross-referenced against the real stack of the eleven systems. The number says how many use it.',
+        capUsedIn: 'systems',
+        capAcademic: '— from training, no system of my own in production yet.',
+        capHint: 'Hover a capability to see which systems use it.',
 
         eduTitle: '// EDUCATION_LOGS',
         modulesLoaded: 'MODULES',

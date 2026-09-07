@@ -38,10 +38,18 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Dos variables: una display con eje optico, una mono para telemetria y datos. -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=JetBrains+Mono:wght@400..700&display=swap"
-    rel="stylesheet">
+  <!-- Dos variables: una display con eje optico, una mono para telemetria y datos.
+       Se cargan SIN bloquear el pintado: como hoja de estilos normal costaban
+       ~900 ms de FCP, porque el navegador no dibuja nada hasta resolverlas.
+       La pila de respaldo pinta al instante y las variables entran despues. -->
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=JetBrains+Mono:wght@400..700&display=swap">
+  <link rel="stylesheet" media="print" onload="this.media='all';this.onload=null"
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=JetBrains+Mono:wght@400..700&display=swap">
+  <noscript>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=JetBrains+Mono:wght@400..700&display=swap">
+  </noscript>
 
   <!-- Datos estructurados: el HTML servido no tiene contenido hasta que corre
        Angular, asi que esto es lo unico que un buscador puede leer de entrada. -->
