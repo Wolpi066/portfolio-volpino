@@ -99,7 +99,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
     this.camera.position.set(0, 7, 34);
 
     this.renderer = new THREE.WebGLRenderer({
-      antialias: false,       // el bloom ya suaviza; el MSAA encima sale caro
+      antialias: true,        // con el bloom bajo, el MSAA es lo que da el filo
       alpha: true,
       powerPreference: 'high-performance'
     });
@@ -115,7 +115,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
       this.composer.setPixelRatio(Math.min(dpr, BLOOM_DPR));
       this.composer.setSize(w, h);
       this.composer.addPass(new RenderPass(this.scene, this.camera));
-      this.bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 0.62, 0.55, 0.72);
+      this.bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 0.34, 0.48, 0.86);
       this.composer.addPass(this.bloom);
       this.composer.addPass(new OutputPass());
     } catch {
@@ -150,7 +150,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
       pos[i * 3] = r * Math.sin(ph) * Math.cos(th);
       pos[i * 3 + 1] = r * Math.cos(ph);
       pos[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th);
-      size[i] = Math.random() < 0.07 ? 2.4 : 0.8;
+      size[i] = Math.random() < 0.05 ? 1.9 : 0.68;
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
@@ -176,7 +176,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
           float d = length(gl_PointCoord - 0.5);
           if (d > 0.5) discard;
           float tw = 0.6 + 0.4 * sin(uTime * 0.7 + vT * 6.283);
-          gl_FragColor = vec4(vec3(0.88, 0.92, 1.0), (1.0 - d * 2.0) * tw);
+          gl_FragColor = vec4(vec3(0.82, 0.87, 0.97), (1.0 - d * 2.0) * tw * 0.8);
         }`
     })));
   }
@@ -191,7 +191,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
 
     // --- Nucleo con bandas de energia -------------------------------------
     const core = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(R, 48),
+      new THREE.IcosahedronGeometry(R, 64),
       new THREE.ShaderMaterial({
         uniforms: this.core,
         vertexShader: CORE_VERT,
@@ -203,9 +203,9 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
 
     // --- Reticula ----------------------------------------------------------
     this.world.add(new THREE.LineSegments(
-      this.graticule(R * 1.003, 12, 8),
+      this.graticule(R * 1.0025, 18, 12),
       new THREE.LineBasicMaterial({
-        color: 0x8fa4b8, transparent: true, opacity: 0.42,
+        color: 0x7d90a6, transparent: true, opacity: 0.20,
         blending: THREE.AdditiveBlending, depthWrite: false
       })
     ));
@@ -214,7 +214,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
     const airU = { uTime: { value: 0 } };
     this.clocks.push(airU.uTime);
     this.world.add(new THREE.Mesh(
-      new THREE.SphereGeometry(R * 1.12, 64, 48),
+      new THREE.SphereGeometry(R * 1.09, 96, 64),
       new THREE.ShaderMaterial({
         uniforms: airU,
         vertexShader: AIR_VERT,
@@ -235,7 +235,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
       [R * 1.92, 0.72, -0.42, -0.06],
       [R * 2.45, 1.42, 0.58, 0.04]
     ];
-    const cols = [C_SIGNAL, C_WORK, C_SIGNAL];
+    const cols = [0x9fb4c8, 0x7f97ad, 0x9fb4c8];
 
     specs.forEach(([rad, rx, rz, speed], i) => {
       const u = {
@@ -245,7 +245,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
       };
       this.clocks.push(u.uTime);
       const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(rad, 0.022, 3, 240),
+        new THREE.TorusGeometry(rad, 0.014, 3, 320),
         new THREE.ShaderMaterial({
           uniforms: u,
           vertexShader: RING_VERT,
@@ -316,6 +316,13 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
     return out;
   }
 
+  /**
+   * Marcador de proyecto: una reticula de instrumento.
+   *
+   * Antes era un octaedro brillante que se leia como objeto de videojuego.
+   * Ahora es un mastil finisimo, un anillo palido y un nucleo minusculo en el
+   * color del estado: el color aparece en un punto, no en todo el nodo.
+   */
   private beacon(lat: number, lon: number, project: Project, hex: number, seed: number) {
     const g = new THREE.Group();
     const phi = (90 - lat) * (Math.PI / 180);
@@ -329,16 +336,18 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
     g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), pos.clone().normalize());
 
     const col = new THREE.Color(hex);
+    const pale = new THREE.Color(0x9fb1c4);
+    const TOP = 1.95;
 
-    // Haz de luz: es lo que hace que el nodo se lea a distancia.
+    // Mastil
     const beamU = {
       uTime: { value: 0 },
-      uColor: { value: col.clone() },
+      uColor: { value: pale.clone() },
       uSeed: { value: seed * 1.7 }
     };
     this.clocks.push(beamU.uTime);
-    const beam = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.10, 0.30, 3.4, 10, 1, true),
+    const stalk = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.014, 0.030, TOP, 6, 1, true),
       new THREE.ShaderMaterial({
         uniforms: beamU,
         vertexShader: BEAM_VERT,
@@ -349,37 +358,39 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
         blending: THREE.AdditiveBlending
       })
     );
-    beam.position.y = 1.7;
-    beam.name = 'BEAM';
-    g.add(beam);
+    stalk.position.y = TOP / 2;
+    stalk.name = 'BEAM';
+    g.add(stalk);
 
-    // Cabeza
+    // Anillo de reticula
     const head = new THREE.Mesh(
-      new THREE.OctahedronGeometry(0.36, 0),
-      new THREE.MeshBasicMaterial({ color: col, wireframe: true })
+      new THREE.TorusGeometry(0.31, 0.014, 3, 44),
+      new THREE.MeshBasicMaterial({ color: pale, transparent: true, opacity: 0.85 })
     );
-    head.position.y = 2.2;
+    head.position.y = TOP;
+    head.rotation.x = Math.PI / 2;
     head.name = 'HEAD';
     g.add(head);
 
-    const spark = new THREE.Mesh(
-      new THREE.SphereGeometry(0.13, 12, 10),
-      new THREE.MeshBasicMaterial({ color: 0xffffff })
+    // Nucleo: el unico lugar donde aparece el color del estado.
+    const core = new THREE.Mesh(
+      new THREE.SphereGeometry(0.085, 14, 12),
+      new THREE.MeshBasicMaterial({ color: col })
     );
-    spark.position.y = 2.2;
-    spark.name = 'SPARK';
-    g.add(spark);
+    core.position.y = TOP;
+    core.name = 'SPARK';
+    g.add(core);
 
-    // Anillo de anclaje sobre la superficie
+    // Marca de anclaje sobre la superficie
     const pad = new THREE.Mesh(
-      new THREE.RingGeometry(0.32, 0.44, 28),
+      new THREE.RingGeometry(0.24, 0.275, 36),
       new THREE.MeshBasicMaterial({
-        color: col, side: THREE.DoubleSide, transparent: true,
-        opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false
+        color: pale, side: THREE.DoubleSide, transparent: true,
+        opacity: 0.55, depthWrite: false
       })
     );
     pad.rotation.x = Math.PI / 2;
-    pad.position.y = 0.05;
+    pad.position.y = 0.03;
     pad.name = 'PAD';
     g.add(pad);
 
@@ -420,14 +431,19 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
 
   /** Al pasar por encima el nodo no solo cambia de color: crece. */
   private mark(g: THREE.Group, hex: number, scale: number) {
+    const on = scale > 1;
     g.traverse(c => {
       if (!(c instanceof THREE.Mesh)) return;
+      const m = c.material as THREE.MeshBasicMaterial;
       if (c.name === 'HEAD') {
-        (c.material as THREE.MeshBasicMaterial).color.setHex(hex);
+        m.color.setHex(on ? hex : 0x9fb1c4);
+        m.opacity = on ? 1 : 0.85;
         c.scale.setScalar(scale);
       } else if (c.name === 'PAD') {
-        (c.material as THREE.MeshBasicMaterial).color.setHex(hex);
+        m.opacity = on ? 0.85 : 0.42;
         c.scale.setScalar(scale);
+      } else if (c.name === 'SPARK') {
+        c.scale.setScalar(on ? 1.5 : 1);
       }
     });
   }
@@ -486,8 +502,8 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
         const head = m.getObjectByName('HEAD');
         const spark = m.getObjectByName('SPARK');
         if (head) {
-          head.rotation.y += 0.016;
-          head.position.y = 2.2 + Math.sin(t * 2.2 + i * 0.9) * 0.15;
+          head.rotation.z += 0.010;
+          head.position.y = 1.95 + Math.sin(t * 1.5 + i * 0.9) * 0.06;
           if (spark) spark.position.y = head.position.y;
         }
       });

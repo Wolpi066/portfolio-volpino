@@ -134,48 +134,7 @@
         <h2 class="sec-title">{{ i18n.t().skillsTitle }}</h2>
         <p class="sec-lead">{{ i18n.t().skillsLead }}</p>
 
-        <div class="matrix" (pointerleave)="activeSkill.set(null)">
-          @for (g of skillsByCategory; track $index) {
-          <section class="matrix-col">
-            <h3 class="label">{{ g.name }}</h3>
-            <ul>
-              @for (s of g.items; track $index) {
-              <li>
-                <button type="button" class="cap" [class.on]="activeSkill() === s.name"
-                  [class.unused]="!s.used.length" [style.--d]="$index"
-                  (pointerenter)="activeSkill.set(s.name)" (focus)="activeSkill.set(s.name)"
-                  (blur)="activeSkill.set(null)"
-                  [attr.aria-label]="s.used.length
-                    ? s.name + ' — ' + s.used.length + ' ' + i18n.t().capUsedIn
-                    : s.name">
-                  <span class="cap-bar" aria-hidden="true"></span>
-                  <span class="cap-name" translate="no">{{ s.name }}</span>
-                  @if (s.used.length) {
-                  <span class="cap-n tabular">{{ s.used.length }}</span>
-                  }
-                </button>
-              </li>
-              }
-            </ul>
-          </section>
-          }
-        </div>
-
-        <!-- Linea de lectura: dice en que sistemas se uso lo que estas mirando. -->
-        <p class="cap-readout" aria-live="polite">
-          @if (activeSkill(); as s) {
-          @if (activeSkillSystems.length) {
-          <b translate="no">{{ s }}</b>
-          <span>{{ i18n.t().capUsedIn }}:</span>
-          <em translate="no">{{ activeSkillSystems.join(' · ') }}</em>
-          } @else {
-          <b translate="no">{{ s }}</b>
-          <span>{{ i18n.t().capAcademic }}</span>
-          }
-          } @else {
-          <span class="cap-idle">{{ i18n.t().capHint }}</span>
-          }
-        </p>
+        <app-capability-map />
       </div>
     </section>
 

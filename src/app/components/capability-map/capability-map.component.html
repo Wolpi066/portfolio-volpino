@@ -1,0 +1,50 @@
+<div class="map">
+
+  <div class="map-box" #box>
+    <canvas #cv class="map-cv" (pointerdown)="onDown($event)" (pointermove)="onMove($event)"
+      (pointerup)="onUp($event)" (pointerleave)="onLeave()" role="img"
+      [attr.aria-label]="i18n.t().mapAria"></canvas>
+
+    <p class="map-hint">{{ i18n.t().mapHint }}</p>
+
+    <button type="button" class="map-shuffle" (click)="shuffle()">
+      {{ i18n.t().mapShuffle }}
+    </button>
+
+    <ul class="map-key" aria-hidden="true">
+      <li><span class="k g"></span>{{ i18n.t().mapArea }}</li>
+      <li><span class="k c"></span>{{ i18n.t().mapCapability }}</li>
+      <li><span class="k s"></span>{{ i18n.t().mapSystem }}</li>
+    </ul>
+  </div>
+
+  <!-- Lectura del nodo enfocado. -->
+  <p class="map-readout" aria-live="polite">
+    @if (focus(); as f) {
+    <span class="mr-kind">{{ f.kind }}</span>
+    <b translate="no">{{ f.label }}</b>
+    <em>{{ f.detail }}</em>
+    } @else {
+    <span class="mr-idle">{{ i18n.t().mapIdle }}</span>
+    }
+  </p>
+
+  <!-- El grafo vive en un canvas, que no existe para un lector de pantalla.
+       Los mismos datos, en texto y navegables con teclado. -->
+  <details class="map-list">
+    <summary>{{ i18n.t().mapAsList }}</summary>
+    <ul>
+      @for (r of rows; track r.name) {
+      <li>
+        <b translate="no">{{ r.name }}</b>
+        @if (r.used.length) {
+        <span>{{ r.used.length }} {{ i18n.t().capUsedIn }}:</span>
+        <em translate="no">{{ r.used.join(' · ') }}</em>
+        } @else {
+        <span>{{ i18n.t().capAcademic }}</span>
+        }
+      </li>
+      }
+    </ul>
+  </details>
+</div>

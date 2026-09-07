@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { Draggable } from 'gsap/Draggable';
 import { InertiaPlugin } from 'gsap/InertiaPlugin';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 
 let registered = false;
 
@@ -10,7 +11,7 @@ let registered = false;
  */
 export function useGsap() {
     if (!registered) {
-        gsap.registerPlugin(Draggable, InertiaPlugin);
+        gsap.registerPlugin(Draggable, InertiaPlugin, ScrambleTextPlugin);
         registered = true;
     }
     return { gsap, Draggable };

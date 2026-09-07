@@ -8,11 +8,14 @@
   (keydown.escape)="close()">
 
   <!-- Barra de titulo: el asa del arrastre, y tambien el control por teclado. -->
+  <!-- Barrido de encendido: recorre la ventana una vez al abrirse. -->
+  <span class="scan" #scan aria-hidden="true"></span>
+
   <header class="bar" #bar tabindex="0" (keydown)="onBarKey($event)"
     [attr.aria-label]="i18n.t().winMoveHint" (dblclick)="toggleMax()">
     <span class="bar-grip" aria-hidden="true"></span>
     <span class="bar-id tabular" translate="no">[{{ p.id }}]</span>
-    <h2 class="bar-title">{{ p.name }}</h2>
+    <h2 class="bar-title" #title>{{ p.name }}</h2>
     <span class="bar-status" [class]="'st-' + p.status">{{ statusLabel(p.status) }}</span>
 
     <div class="bar-ctl">

@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CapabilityMapComponent } from '../capability-map/capability-map.component';
 import { NarrativeService } from '../../services/narrative.service';
 import { DataService } from '../../services/data.service';
 import { I18nService } from '../../services/i18n.service';
@@ -10,7 +11,7 @@ import { techTokens } from '../../core/tech-tokens';
 @Component({
   selector: 'app-main-interface',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CapabilityMapComponent],
   templateUrl: './main-interface.component.html',
   styleUrls: ['./main-interface.component.css']
 })

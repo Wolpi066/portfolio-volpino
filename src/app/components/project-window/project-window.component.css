@@ -452,3 +452,25 @@
     transition: none;
   }
 }
+
+/* =========================================================================
+   BARRIDO DE ENCENDIDO
+   Recorre la ventana una sola vez al abrirse. GSAP le anima `top`, asi que
+   no puede ir en un transform.
+   ========================================================================= */
+.scan {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 3;
+  block-size: 1px;
+  background: linear-gradient(90deg, transparent, var(--signal), transparent);
+  box-shadow: 0 0 14px 1px var(--signal-glow);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan {
+    display: none;
+  }
+}

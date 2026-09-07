@@ -1,0 +1,219 @@
+.map-box {
+  position: relative;
+  inline-size: 100%;
+  block-size: clamp(420px, 56vh, 620px);
+  background:
+    radial-gradient(720px 420px at 50% 46%, rgba(255, 178, 89, 0.05), transparent 68%),
+    var(--deep);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* Retícula de fondo: da escala al espacio y evita que los nodos floten
+   sobre la nada. */
+.map-box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--hairline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(circle at 50% 50%, #000 10%, transparent 76%);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.map-cv {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.map-cv:active {
+  cursor: grabbing;
+}
+
+/* ---- Cromo del lienzo ---------------------------------------------------- */
+.map-hint,
+.map-key,
+.map-shuffle {
+  position: absolute;
+  z-index: 2;
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+}
+
+.map-hint {
+  inset-block-end: var(--sp-3);
+  inset-inline-start: var(--sp-4);
+  margin: 0;
+  letter-spacing: 0.12em;
+  color: var(--text-mute);
+  pointer-events: none;
+}
+
+.map-shuffle {
+  inset-block-start: var(--sp-3);
+  inset-inline-end: var(--sp-3);
+  padding: 7px 12px;
+  min-block-size: 32px;
+  background: color-mix(in oklab, var(--panel) 88%, transparent);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition:
+    color var(--dur-ui) var(--ease-out),
+    border-color var(--dur-ui) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .map-shuffle:hover {
+    color: var(--signal);
+    border-color: var(--signal-lo);
+  }
+}
+
+.map-shuffle:active {
+  transform: scale(0.96);
+}
+
+.map-key {
+  inset-block-start: var(--sp-3);
+  inset-inline-start: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: var(--text-mute);
+  pointer-events: none;
+}
+
+.map-key li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.08em;
+}
+
+.map-key .k {
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: 50%;
+}
+
+.map-key .g { background: var(--signal); }
+.map-key .c { background: #8b95a4; }
+.map-key .s { background: var(--live); }
+
+/* ---- Lectura ------------------------------------------------------------- */
+.map-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2) var(--sp-3);
+  min-block-size: 44px;
+  margin: var(--sp-4) 0 0;
+  padding-block-start: var(--sp-3);
+  border-block-start: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  line-height: 1.6;
+}
+
+.mr-kind {
+  padding: 2px 7px;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+
+.map-readout b {
+  color: var(--signal);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.map-readout em {
+  font-style: normal;
+  color: var(--text-dim);
+}
+
+.mr-idle {
+  color: var(--text-mute);
+}
+
+/* ---- Equivalente en texto ------------------------------------------------ */
+.map-list {
+  margin-block-start: var(--sp-4);
+  font-size: var(--t-xs);
+}
+
+.map-list summary {
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  cursor: pointer;
+  padding: var(--sp-2) 0;
+}
+
+.map-list summary:hover {
+  color: var(--text-dim);
+}
+
+.map-list ul {
+  list-style: none;
+  margin: var(--sp-3) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--sp-2) var(--sp-5);
+}
+
+.map-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  padding-block: 4px;
+  font-family: var(--mono);
+  line-height: 1.5;
+}
+
+.map-list b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.map-list span {
+  color: var(--text-mute);
+}
+
+.map-list em {
+  font-style: normal;
+  color: var(--text-dim);
+  flex-basis: 100%;
+}
+
+@media (max-width: 760px) {
+  .map-box {
+    block-size: 440px;
+  }
+
+  .map-key {
+    display: none;
+  }
+}

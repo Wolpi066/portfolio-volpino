@@ -44,6 +44,8 @@ export class ProjectWindowComponent implements AfterViewInit, OnDestroy {
   @ViewChild('frame') frame!: ElementRef<HTMLElement>;
   @ViewChild('bar') bar!: ElementRef<HTMLElement>;
   @ViewChild('grip') grip!: ElementRef<HTMLElement>;
+  @ViewChild('scan') scan!: ElementRef<HTMLElement>;
+  @ViewChild('title') title!: ElementRef<HTMLElement>;
 
   dragging = signal(false);
 
@@ -83,11 +85,7 @@ export class ProjectWindowComponent implements AfterViewInit, OnDestroy {
           onComplete: () => gsap.set(el, { transformOrigin: '50% 50%' })
         });
 
-      // El contenido entra despues, cuando el marco ya tiene su tamaño:
-      // si entra durante el morfeo se lee deformado.
-      gsap.from(el.querySelector('.body'), {
-        opacity: 0, y: 10, duration: 0.34, delay: 0.2, ease: 'power2.out'
-      });
+      this.bootWindow(gsap, el);
     } else {
       // Nada aparece de la nada: arranca casi entero, no desde escala cero.
       gsap.fromTo(el,
@@ -100,6 +98,45 @@ export class ProjectWindowComponent implements AfterViewInit, OnDestroy {
     }
 
     this.isMobile() ? this.setupSheet(el) : this.setupWindow(el);
+  }
+
+  /**
+   * La ventana no aparece: arranca.
+   *
+   * Mientras el marco todavia esta creciendo desde la tarjeta, un barrido
+   * recorre el panel de arriba abajo, el contenido se revela detras de el con
+   * un limpiado, y el titulo se resuelve desde caracteres revueltos. Los tres
+   * gestos son de una pantalla encendiendose, que es lo que este sitio dice
+   * ser — y es lo que lo distingue de un modal que hace escala y opacidad.
+   */
+  private bootWindow(gsap: typeof import('gsap').gsap, el: HTMLElement) {
+    const body = el.querySelector('.body') as HTMLElement | null;
+    const scan = this.scan?.nativeElement;
+    const title = this.title?.nativeElement;
+
+    if (scan) {
+      gsap.fromTo(scan,
+        { top: 0, opacity: 0 },
+        {
+          top: '100%', opacity: 1, duration: 0.5, delay: 0.12, ease: 'power2.inOut',
+          onComplete: () => gsap.to(scan, { opacity: 0, duration: 0.18 })
+        });
+    }
+
+    if (body) {
+      // El limpiado va detras del barrido: el contenido aparece donde la
+      // linea ya paso, no antes.
+      gsap.fromTo(body,
+        { clipPath: 'inset(0 0 100% 0)', opacity: 0.4 },
+        { clipPath: 'inset(0 0 0% 0)', opacity: 1, duration: 0.52, delay: 0.14, ease: 'power2.inOut' });
+    }
+
+    if (title) {
+      gsap.to(title, {
+        duration: 0.55, delay: 0.16, ease: 'none',
+        scrambleText: { text: this.win().project.name, chars: 'upperCase', speed: 0.7, revealDelay: 0.12 }
+      });
+    }
   }
 
   // ---- Escritorio ---------------------------------------------------------
