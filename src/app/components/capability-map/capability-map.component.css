@@ -155,58 +155,174 @@
   color: var(--text-mute);
 }
 
-/* ---- Equivalente en texto ------------------------------------------------ */
-.map-list {
+/* ---- Equivalente en texto -------------------------------------------------
+   El grafo vive en un canvas y un canvas no existe para un lector de
+   pantalla. Esta lista es el mismo contenido, navegable con teclado. */
+.list {
   margin-block-start: var(--sp-4);
-  font-size: var(--t-xs);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--panel);
+  overflow: hidden;
 }
 
-.map-list summary {
+.list-btn {
+  inline-size: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  min-block-size: 48px;
+  background: transparent;
+  border: 0;
+  color: var(--text-dim);
   font-family: var(--mono);
-  font-size: var(--t-micro);
+  font-size: var(--t-xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--text-mute);
+  text-align: start;
   cursor: pointer;
-  padding: var(--sp-2) 0;
+  transition:
+    background-color var(--dur-ui) var(--ease-out),
+    color var(--dur-ui) var(--ease-out);
 }
 
-.map-list summary:hover {
-  color: var(--text-dim);
+@media (hover: hover) and (pointer: fine) {
+  .list-btn:hover {
+    background: var(--panel-hi);
+    color: var(--text);
+  }
 }
 
-.map-list ul {
-  list-style: none;
-  margin: var(--sp-3) 0 0;
-  padding: 0;
+.lb-chev {
+  inline-size: 8px;
+  block-size: 8px;
+  flex-shrink: 0;
+  border-inline-end: 1.5px solid var(--signal);
+  border-block-end: 1.5px solid var(--signal);
+  transform: rotate(-45deg);
+  transition: transform var(--dur-panel) var(--ease-out);
+}
+
+.list.open .lb-chev {
+  transform: rotate(45deg);
+}
+
+.lb-txt {
+  flex: 1;
+}
+
+.lb-n {
+  padding: 2px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  font-size: 10px;
+  color: var(--signal);
+}
+
+/* El truco de las filas de grid: 0fr a 1fr anima hasta la altura real del
+   contenido, que es lo que `height: auto` no sabe hacer. */
+.list-wrap {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--sp-2) var(--sp-5);
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-panel) var(--ease-out);
 }
 
-.map-list li {
+.list.open .list-wrap {
+  grid-template-rows: 1fr;
+}
+
+.list-inner {
+  min-block-size: 0;
+  overflow: hidden;
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--sp-4);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0 var(--sp-5);
+}
+
+.list.open .list-inner {
+  padding-block-end: var(--sp-4);
+}
+
+.list-inner li {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 8px;
-  padding-block: 4px;
+  align-items: baseline;
+  gap: 5px 9px;
+  padding-block: 7px;
+  border-block-start: 1px solid var(--hairline);
   font-family: var(--mono);
+  font-size: var(--t-micro);
   line-height: 1.5;
+  opacity: 0;
+  transform: translateY(6px);
 }
 
-.map-list b {
+/* Las filas entran escalonadas al abrir: el desfase hace que se lea como
+   una lista que se despliega y no como un bloque que aparece. */
+.list.open .list-inner li {
+  animation: row-in 280ms var(--ease-out) forwards;
+  animation-delay: calc(var(--d) * 12ms);
+}
+
+@keyframes row-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.list-inner b {
   color: var(--text);
   font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
-.map-list span {
+.ln {
+  min-inline-size: 17px;
+  padding: 1px 5px;
+  border: 1px solid var(--signal-lo);
+  border-radius: 2px;
+  background: var(--signal-veil);
+  color: var(--signal);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.lu {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.lu em {
+  font-style: normal;
+  padding: 1px 6px;
+  background: var(--deep);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  font-size: 9.5px;
   color: var(--text-mute);
 }
 
-.map-list em {
-  font-style: normal;
-  color: var(--text-dim);
-  flex-basis: 100%;
+.lacad {
+  color: var(--text-mute);
+  font-style: italic;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .list-inner li {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
 
 @media (max-width: 760px) {
   .map-box {

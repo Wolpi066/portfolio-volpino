@@ -3,6 +3,13 @@
   <div class="canvas" #canvasHost (pointerdown)="onPointerDown($event)" (pointerup)="onPointerUp($event)"
     (pointermove)="onPointerMove($event)"></div>
 
+  <!-- Etiquetas de los marcadores, proyectadas desde 3D cada cuadro. -->
+  <div class="tags" aria-hidden="true">
+    @for (p of data.projects(); track p.id) {
+    <span class="tag" #tag translate="no">{{ p.name }}</span>
+    }
+  </div>
+
   <div class="hud">
     <div class="hud-tl">
       <h1 class="o-title">{{ i18n.t().orbitView }}</h1>

@@ -57,6 +57,8 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
 
   /** Lo que se lee debajo del lienzo. */
   focus = signal<{ label: string; kind: string; detail: string } | null>(null);
+  /** El equivalente en texto, desplegado. */
+  listOpen = signal(false);
 
   private g!: ForceGraph;
   private ctx!: CanvasRenderingContext2D;
@@ -66,6 +68,8 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
   private h = 0;
 
   private hot: GNode | null = null;
+  /** Foco fijado con un clic: sobrevive a que el puntero se vaya. */
+  private pinned: GNode | null = null;
   private dragging: GNode | null = null;
   private downAt = { x: 0, y: 0, moved: false };
   /** Intensidad del resaltado, animada aparte para que entre suave. */
@@ -112,7 +116,7 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
 
     groups.forEach(([cat, label], i) => {
       add({
-        id: 'g:' + cat, kind: 'group', label, color: COL.group, r: 9,
+        id: 'g:' + cat, kind: 'group', label, color: COL.group, r: 10, charge: 2.4,
         ...seed(i, 4, 90), vx: 0, vy: 0, near: new Set()
       });
     });
@@ -124,7 +128,7 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
         color: p.status === 'PRODUCTION' || p.status === 'DELIVERED' ? COL.live
           : p.status === 'IN_DEVELOPMENT' ? COL.wip
             : p.status === 'DEPLOYED' ? COL.work : COL.arch,
-        r: 7, ...seed(i, projects.length, 250), vx: 0, vy: 0,
+        r: 7.5, charge: 1.5, ...seed(i, projects.length, 250), vx: 0, vy: 0,
         payload: p, near: new Set()
       });
     });
@@ -138,14 +142,14 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
     this.data.skills().forEach((s, i) => {
       const id = 'c:' + s.name;
       const node = add({
-        id, kind: 'cap', label: s.name, color: COL.cap, r: 4.2,
+        id, kind: 'cap', label: s.name, color: COL.cap, r: 4.2, charge: 1,
         ...seed(i, 38, 165), vx: 0, vy: 0, near: new Set()
       });
 
       // Rama al area: es lo que le da esqueleto al grafo y evita que las
       // capacidades sin sistema propio se vayan flotando al infinito.
       const grp = byId.get('g:' + s.category)!;
-      links.push({ a: grp, b: node, len: 62, k: 0.035 });
+      links.push({ a: grp, b: node, len: 54, k: 0.055 });
       grp.near.add(id); node.near.add(grp.id);
 
       // Rama a cada sistema que la usa de verdad.
@@ -154,7 +158,7 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
       for (const p of projTokens) {
         if (!alts.some(a => p.tokens.has(a))) continue;
         const sys = byId.get(p.id)!;
-        links.push({ a: node, b: sys, len: 108, k: 0.018 });
+        links.push({ a: node, b: sys, len: 150, k: 0.012 });
         node.near.add(sys.id); sys.near.add(id);
         used.push(sys.label);
       }
@@ -230,6 +234,16 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
       const lit = on(n);
       c.globalAlpha = lit ? 1 : 1 - this.glow * 0.78;
 
+      // Anillo del nodo fijado con clic
+      if (this.pinned && n.id === this.pinned.id) {
+        c.beginPath();
+        c.arc(n.x, n.y, n.r + 11, 0, Math.PI * 2);
+        c.strokeStyle = COL.group;
+        c.setLineDash([3, 3]);
+        c.stroke();
+        c.setLineDash([]);
+      }
+
       // Halo del nodo enfocado
       if (n.id === hotId) {
         c.beginPath();
@@ -257,10 +271,28 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
     // Solo areas y sistemas siempre; las capacidades, al enfocarlas. Con las
     // treinta y ocho a la vez esto es una maraña ilegible.
     c.textBaseline = 'middle';
-    for (const n of this.g.nodes) {
-      const isCap = n.kind === 'cap';
-      const show = !isCap || n.id === hotId || (hotId && this.hot!.near.has(n.id));
-      if (!show) continue;
+
+    // Las etiquetas que se van a dibujar, ordenadas de arriba hacia abajo.
+    // En un grafo de fuerzas dos nodos quedan pegados constantemente, y dos
+    // etiquetas encimadas no se leen ni con placa de fondo. Se resuelve con
+    // una pasada vertical: cada una se corre hacia abajo lo justo para no
+    // tocar a la anterior.
+    const labels = this.g.nodes
+      .filter(n => n.kind !== 'cap' || n.id === hotId || (hotId && this.hot!.near.has(n.id)))
+      .map(n => ({ n, y: n.y }))
+      .sort((p, q) => p.y - q.y);
+
+    const H = 17;
+    for (let i = 1; i < labels.length; i++) {
+      const prev = labels[i - 1];
+      const cur = labels[i];
+      // Solo se corrigen las que ademas estan cerca en horizontal: dos
+      // etiquetas a la misma altura pero en extremos opuestos no se tocan.
+      if (Math.abs(cur.n.x - prev.n.x) > 150) continue;
+      if (cur.y - prev.y < H) cur.y = prev.y + H;
+    }
+
+    for (const { n, y } of labels) {
 
       const lit = on(n);
       c.globalAlpha = lit ? 1 : 1 - this.glow * 0.85;
@@ -269,8 +301,32 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
         : n.kind === 'system'
           ? '500 10.5px "JetBrains Mono", monospace'
           : '10px "JetBrains Mono", monospace';
+
+      // Del lado derecho del lienzo la etiqueta va a la izquierda del nodo:
+      // asi no se sale del recuadro ni cruza el grafo.
+      const right = n.x > this.w * 0.62;
+      const tw = c.measureText(n.label).width;
+      const tx = right ? n.x - n.r - 8 - tw : n.x + n.r + 8;
+
+      // Placa de fondo: dos etiquetas encimadas sin esto son ilegibles, y en
+      // un grafo de fuerzas encimarse es la norma, no la excepcion.
+      c.fillStyle = 'rgba(6,7,11,0.78)';
+      c.beginPath();
+      c.roundRect(tx - 4, y - 8, tw + 8, 16, 2);
+      c.fill();
+
       c.fillStyle = n.kind === 'group' ? COL.group : n.kind === 'system' ? COL.text : COL.capOn;
-      c.fillText(n.label, n.x + n.r + 7, n.y);
+      c.fillText(n.label, tx, y);
+
+      // Si la etiqueta se corrio, una guia la une con su nodo.
+      if (Math.abs(y - n.y) > 2) {
+        c.globalAlpha *= 0.45;
+        c.beginPath();
+        c.moveTo(right ? n.x - n.r - 2 : n.x + n.r + 2, n.y);
+        c.lineTo(right ? tx + tw + 3 : tx - 3, y);
+        c.strokeStyle = COL.dim;
+        c.stroke();
+      }
     }
     c.globalAlpha = 1;
   }
@@ -306,6 +362,8 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
+    // Con un nodo fijado, mover el puntero no cambia lo que se lee.
+    if (this.pinned) return;
     const n = this.g.pick(x, y);
     if (n === this.hot) return;
     this.hot = n;
@@ -326,11 +384,26 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
     if (this.downAt.moved) return;
     const { x, y } = this.local(e);
     const n = this.g.pick(x, y);
-    if (n?.kind === 'system' && n.payload) this.wm.open(n.payload as Project);
+
+    if (n?.kind === 'system' && n.payload) {
+      this.wm.open(n.payload as Project);
+      return;
+    }
+
+    // Areas y capacidades: el clic fija el foco, y vuelve a hacerlo lo suelta.
+    if (n) {
+      this.pinned = this.pinned === n ? null : n;
+      this.hot = this.pinned ?? n;
+      this.setFocus(this.hot);
+    } else {
+      this.pinned = null;
+      this.hot = null;
+      this.setFocus(null);
+    }
   }
 
   onLeave() {
-    if (this.dragging) return;
+    if (this.dragging || this.pinned) return;
     this.hot = null;
     this.focus.set(null);
   }
@@ -358,6 +431,9 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
 
   /** Vuelve a repartir todo: util despues de despeinar el grafo arrastrando. */
   shuffle() {
+    this.pinned = null;
+    this.hot = null;
+    this.focus.set(null);
     for (const n of this.g.nodes) {
       n.vx += (Math.random() - 0.5) * 90;
       n.vy += (Math.random() - 0.5) * 90;

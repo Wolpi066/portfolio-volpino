@@ -1,5 +1,6 @@
 import {
-  Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, inject, signal
+  Component, ElementRef, ViewChild, ViewChildren, QueryList,
+  AfterViewInit, OnDestroy, inject, signal
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as THREE from 'three';
@@ -41,8 +42,9 @@ const C_SIGNAL = 0xffb259;
 })
 export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvasHost') canvasHost!: ElementRef<HTMLElement>;
+  @ViewChildren('tag') tagRefs!: QueryList<ElementRef<HTMLElement>>;
 
-  private data = inject(DataService);
+  public data = inject(DataService);
   private narrative = inject(NarrativeService);
   private wm = inject(WindowsService);
   public i18n = inject(I18nService);
@@ -71,6 +73,8 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
   private clock = new THREE.Clock();
   private reduced = false;
   private onResize = () => this.resize();
+  private tagEls: HTMLElement[] = [];
+  private tmp = new THREE.Vector3();
 
   ngAfterViewInit() {
     this.reduced = this.narrative.prefersReducedMotion();
@@ -293,6 +297,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
   private buildMarkers() {
     const projects = this.data.projects();
     const coords = this.fibonacci(projects.length);
+
     projects.forEach((p, i) => {
       const color =
         p.status === 'PRODUCTION' || p.status === 'DELIVERED' ? C_LIVE
@@ -300,6 +305,47 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
             : C_WORK;
       this.markers.push(this.beacon(coords[i].lat, coords[i].lon, p, color, i));
     });
+
+    // Las etiquetas salen de la plantilla, en el mismo orden que los
+    // marcadores porque las dos listas recorren data.projects().
+    this.tagEls = this.tagRefs?.map(r => r.nativeElement) ?? [];
+  }
+
+  /**
+   * Coloca las etiquetas proyectando cada marcador a la pantalla.
+   *
+   * Solo se muestran las del hemisferio que mira a la camara: las de atras
+   * se apagan al doblar el limbo. Se escribe directo sobre el nodo, sin
+   * bindings: son once elementos por cuadro.
+   */
+  private placeTags() {
+    if (!this.tagEls.length) return;
+    const rect = this.renderer.domElement;
+    const w = rect.clientWidth;
+    const h = rect.clientHeight;
+    const camDir = this.camera.position.clone().normalize();
+
+    for (let i = 0; i < this.markers.length; i++) {
+      const el = this.tagEls[i];
+      if (!el) continue;
+
+      this.markers[i].getWorldPosition(this.tmp);
+      // Cuanto mira el marcador hacia la camara: negativo es cara oculta.
+      const facing = this.tmp.clone().normalize().dot(camDir);
+
+      if (facing < 0.08) { el.style.opacity = '0'; continue; }
+
+      // La etiqueta flota por encima de la reticula, no sobre el nodo.
+      const p = this.tmp.clone().multiplyScalar((R + 2.9) / R).project(this.camera);
+      // El translate en porcentaje va DENTRO del transform: ahi los
+      // porcentajes se resuelven contra el tamaño de la propia etiqueta,
+      // que es lo que la centra sobre el marcador.
+      el.style.transform =
+        'translate3d(' + Math.round((p.x * 0.5 + 0.5) * w) + 'px,' +
+        Math.round((-p.y * 0.5 + 0.5) * h) + 'px,0) translate(-50%,-100%)';
+      // Entra progresiva al doblar el limbo, sin aparecer de golpe.
+      el.style.opacity = String(Math.min(1, (facing - 0.08) / 0.26));
+    }
   }
 
   /** Espiral de Fibonacci: reparte N puntos parejo sobre la esfera. */
@@ -394,6 +440,18 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
     pad.name = 'PAD';
     g.add(pad);
 
+    // Blanco de click generoso e invisible. La reticula mide 0,3 de radio
+    // y acertarla pedia una punteria absurda; esta esfera mide tres veces
+    // eso. No se puede usar visible=false porque three saltea los objetos
+    // invisibles al trazar rayos: tiene que ser transparente con alfa cero.
+    const hit = new THREE.Mesh(
+      new THREE.SphereGeometry(0.95, 10, 8),
+      new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
+    );
+    hit.position.y = TOP;
+    hit.name = 'HIT';
+    g.add(hit);
+
     g.userData = { isMarker: true, project, base: hex };
     this.world.add(g);
     return g;
@@ -424,6 +482,11 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
 
     if (this.hoverGroup) this.mark(this.hoverGroup, this.hoverGroup.userData['base'], 1);
     if (found) this.mark(found, C_SIGNAL, 1.75);
+
+    const prev = this.markers.indexOf(this.hoverGroup!);
+    if (prev >= 0) this.tagEls[prev]?.classList.remove('on');
+    const next = found ? this.markers.indexOf(found) : -1;
+    if (next >= 0) this.tagEls[next]?.classList.add('on');
 
     this.hoverGroup = found;
     this.hovered.set(found ? (found.userData['project'] as Project).name : null);
@@ -512,6 +575,7 @@ export class HoloRebirthComponent implements AfterViewInit, OnDestroy {
     }
 
     this.controls.update();
+    this.placeTags();
     if (this.composer) this.composer.render();
     else this.renderer.render(this.scene, this.camera);
   };

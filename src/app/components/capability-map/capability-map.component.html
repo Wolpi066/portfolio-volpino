@@ -31,20 +31,34 @@
 
   <!-- El grafo vive en un canvas, que no existe para un lector de pantalla.
        Los mismos datos, en texto y navegables con teclado. -->
-  <details class="map-list">
-    <summary>{{ i18n.t().mapAsList }}</summary>
-    <ul>
-      @for (r of rows; track r.name) {
-      <li>
-        <b translate="no">{{ r.name }}</b>
-        @if (r.used.length) {
-        <span>{{ r.used.length }} {{ i18n.t().capUsedIn }}:</span>
-        <em translate="no">{{ r.used.join(' · ') }}</em>
-        } @else {
-        <span>{{ i18n.t().capAcademic }}</span>
+  <!-- El grafo vive en un canvas, que no existe para un lector de pantalla.
+       Los mismos datos, en texto y navegables con teclado. -->
+  <div class="list" [class.open]="listOpen()">
+    <button type="button" class="list-btn" (click)="listOpen.set(!listOpen())"
+      [attr.aria-expanded]="listOpen()" aria-controls="cap-list">
+      <span class="lb-chev" aria-hidden="true"></span>
+      <span class="lb-txt">{{ i18n.t().mapAsList }}</span>
+      <span class="lb-n tabular">{{ rows.length }}</span>
+    </button>
+
+    <div class="list-wrap" id="cap-list" [attr.inert]="listOpen() ? null : ''">
+      <ul class="list-inner">
+        @for (r of rows; track r.name; let i = $index) {
+        <li [style.--d]="i">
+          <b translate="no">{{ r.name }}</b>
+          @if (r.used.length) {
+          <span class="ln">{{ r.used.length }}</span>
+          <span class="lu">
+            @for (u of r.used; track u) {
+            <em translate="no">{{ u }}</em>
+            }
+          </span>
+          } @else {
+          <span class="lacad">{{ i18n.t().capAcademic }}</span>
+          }
+        </li>
         }
-      </li>
-      }
-    </ul>
-  </details>
+      </ul>
+    </div>
+  </div>
 </div>

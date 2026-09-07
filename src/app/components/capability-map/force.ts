@@ -11,6 +11,8 @@ export type NodeKind = 'group' | 'cap' | 'system';
 export interface GNode {
     id: string;
     kind: NodeKind;
+    /** Cuanto empuja este nodo. Las areas mucho, para separar los racimos. */
+    charge: number;
     label: string;
     /** Color base del nodo. */
     color: string;
@@ -75,7 +77,7 @@ export class ForceGraph {
                 // Sin piso, dos nodos superpuestos generan una fuerza infinita
                 // y la simulacion explota en el primer cuadro.
                 if (d2 < 1) { d2 = 1; dx = Math.random() - 0.5; dy = Math.random() - 0.5; }
-                const f = REPULSION / d2;
+                const f = (REPULSION * a.charge * b.charge) / d2;
                 const d = Math.sqrt(d2);
                 const fx = (dx / d) * f;
                 const fy = (dy / d) * f;
