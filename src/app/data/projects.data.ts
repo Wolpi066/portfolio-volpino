@@ -25,8 +25,8 @@ export const PROJECTS: ProjectSeed[] = [
             en: 'B2B/B2C E-COMMERCE + POINT OF SALE · PAYING CLIENT'
         },
         description: {
-            es: 'Plataforma transaccional en producción para un cliente real: precios, mínimos de compra y descuentos distintos para consumidor final y mayorista sobre un único catálogo, punto de venta del local sincronizado en tiempo real con el inventario web, cobros online que se acreditan solos y panel de gestión con métricas de rentabilidad.',
-            en: 'Live transactional platform built for a paying client: differentiated pricing, minimum orders and discounts for retail and wholesale customers over a single catalogue, an in-store point of sale synced in real time with web inventory, self-clearing online payments, and an admin panel with profitability metrics.'
+            es: 'Plataforma transaccional en producción para un cliente real: precios, mínimos de compra y descuentos distintos para consumidor final y mayorista sobre un único catálogo, punto de venta de los locales sincronizado en tiempo real con el inventario web, cobros online que se acreditan solos y panel de gestión con métricas de rentabilidad.',
+            en: 'Live transactional platform built for a paying client: differentiated pricing, minimum orders and discounts for retail and wholesale customers over a single catalogue, an in-store point of sale for every branch, synced in real time with web inventory, self-clearing online payments, and an admin panel with profitability metrics.'
         },
         technicalHighlight: {
             es: 'Blindaje transaccional: ningún importe se confía al cliente. El backend revalida y recalcula precios, stock y cupones contra la base antes de confirmar cada operación, tanto en la web como en el mostrador. La ingesta masiva de catálogo por Excel resiste condiciones de carrera combinando caché reactiva en memoria, bloqueos de fila (FOR UPDATE) e inserciones idempotentes (ON CONFLICT DO NOTHING). Del lado del navegador, partir el bundle único llevó la carga de entrada de 1,54 MB a 444 kB.',
@@ -38,26 +38,26 @@ export const PROJECTS: ProjectSeed[] = [
         },
         metrics: [
             {
-                value: '792',
-                label: { es: 'productos publicados en el catálogo público', en: 'products live in the public catalogue' }
+                value: '4',
+                label: { es: 'locales y la web vendiendo del mismo stock', en: 'stores plus the website, selling from one stock pool' }
             },
             {
                 value: '1,54 MB → 444 kB',
                 label: { es: 'carga de entrada tras partir el bundle (−71%)', en: 'entry payload after code-splitting (−71%)' }
             },
             {
-                value: 'Web + POS',
-                label: { es: 'un mismo stock, dos canales concurrentes', en: 'one stock pool, two concurrent channels' }
+                value: 'Mercado Pago',
+                label: { es: 'el estado de cada pago se vuelve a consultar contra la API', en: 'every payment status is re-checked against the API' }
             },
             {
                 value: { es: 'En producción', en: 'In production' },
-                label: { es: 'sitio público, operado a diario por el cliente', en: 'public site, run daily by the client' }
+                label: { es: 'desde mayo de 2026, operado a diario por el cliente', en: 'since May 2026, run daily by the client' }
             }
         ],
         techStack: [
             'React.js', 'TypeScript', 'Vite', 'Tailwind CSS', 'Radix UI',
             'Node.js', 'Express', 'PostgreSQL', 'Zod', 'JWT',
-            'Mercado Pago', 'Cloudinary', 'Cypress', 'Vercel', 'Railway', 'Cloudflare'
+            'Mercado Pago', 'Cloudinary', 'Jest', 'Cypress', 'Railway', 'Cloudflare Workers'
         ],
         liveUrl: 'https://www.distribuidoraharrys.com.ar',
         galleryLayout: 'wide',
@@ -128,8 +128,8 @@ export const PROJECTS: ProjectSeed[] = [
             en: 'IT FLASHCARD GAME · PWA + ANDROID'
         },
         description: {
-            es: 'Juego de flashcards de IT en español rioplatense, hecho porque no hay buen material de certificación en castellano. Doce mil preguntas con explicación repartidas en cinco ramas gratuitas, once certificaciones y doce perfiles de puesto, con modos de partida, liga entre amigos, duelos uno contra uno y barajas propias.',
-            en: 'An IT flashcard game in Rioplatense Spanish, built because good certification material in Spanish does not exist. Twelve thousand explained questions across five free branches, eleven certifications and twelve job profiles, with several game modes, a friends league, one-on-one duels and user-made decks.'
+            es: 'Juego de flashcards de IT en español rioplatense, hecho porque no hay buen material de certificación en castellano. Doce mil preguntas con explicación repartidas en cinco ramas gratuitas, once certificaciones y doce perfiles de puesto, con modos de partida, liga por temporadas, duelos uno contra uno y barajas propias. La web está publicada y la app de Android, en prueba cerrada en Google Play.',
+            en: 'An IT flashcard game in Rioplatense Spanish, built because good certification material in Spanish does not exist. Twelve thousand explained questions across five free branches, eleven certifications and twelve job profiles, with several game modes, a seasonal league, one-on-one duels and user-made decks. The web app is live and the Android app is in closed testing on Google Play.'
         },
         technicalHighlight: {
             es: 'Es un único HTML sin framework ni dependencias de runtime: el banco entero se inyecta en el build y la aplicación funciona sin conexión, con el progreso guardado en el dispositivo. El build calcula un hash del contenido publicado y lo escribe en el HTML y en el service worker, así los teléfonos ya instalados se actualizan solos la próxima vez que abren con señal. Las preguntas prácticas dibujan la consola en HTML en vez de usar capturas: doscientos bytes contra cincuenta o doscientos kilobytes, legible por lectores de pantalla y corregible como cualquier otra carta.',
@@ -141,11 +141,11 @@ export const PROJECTS: ProjectSeed[] = [
         },
         metrics: [
             {
-                value: '12.046',
+                value: '12.050',
                 label: { es: 'preguntas, el 100% con explicación', en: 'questions, 100% with an explanation' }
             },
             {
-                value: '653',
+                value: '679',
                 label: { es: 'tests en verde, corriendo en cada push', en: 'tests passing, run on every push' }
             },
             {
@@ -160,9 +160,9 @@ export const PROJECTS: ProjectSeed[] = [
         techStack: [
             'JavaScript', 'HTML5', 'PWA / SERVICE WORKER', 'Node.js',
             'Cloudflare Workers', 'Durable Objects', 'Web Push (VAPID)',
-            'Capacitor (Android)', 'GitHub Actions', 'Vercel'
+            'Capacitor (Android)', 'Google Play Billing', 'GitHub Actions', 'Cloudflare Pages'
         ],
-        liveUrl: 'https://it-deck-ten.vercel.app',
+        liveUrl: 'https://it-deck.pages.dev',
         repoPrivate: true,
         galleryLayout: 'phone',
         gallery: [
@@ -203,76 +203,76 @@ export const PROJECTS: ProjectSeed[] = [
 
     {
         id: '03',
-        name: 'VACUUM ENGINE',
+        name: 'ELECTROQUICK',
         group: 'FEATURED',
         status: 'PRODUCTION',
         type: {
-            es: 'MOTOR DE AUTOMATIZACIÓN COMERCIAL B2B',
-            en: 'B2B COMMERCIAL AUTOMATION ENGINE'
+            es: 'SISTEMA COMERCIAL · TIENDA + APP DE GESTIÓN',
+            en: 'SALES SYSTEM · STOREFRONT + BACK-OFFICE APP'
         },
         description: {
-            es: 'Plataforma que centraliza una operación comercial completa: intercepta las ofertas que los proveedores publican en canales de mensajería, sincroniza a diario los catálogos de cuatro proveedores y permite reenviar cualquier oferta a los clientes desde una única bandeja web. Reemplaza unas tres horas por día de mirar, copiar y reenviar a mano.',
-            en: 'A platform that centralises an entire commercial operation: it intercepts the offers suppliers post on messaging channels, syncs four supplier catalogues daily, and lets any offer be forwarded to customers from a single web inbox. It removes roughly three hours a day of watching, copying and forwarding by hand.'
+            es: 'El sistema comercial del negocio de electrodomésticos de mi familia. Junta las ofertas de los proveedores, de sus sitios y de sus canales de WhatsApp, les aplica las reglas de precio del negocio y publica una tienda pública y una app de gestión para Android que usa el dueño. Reemplaza el trabajo de precios y publicación que yo mismo hacía a mano desde 2022.',
+            en: 'The sales system for my family’s appliance business. It collects supplier offers from their websites and WhatsApp channels, applies the business’s pricing rules, and publishes a public storefront and an Android back-office app the owner uses. It replaces the pricing and publishing work I had been doing by hand since 2022.'
         },
         technicalHighlight: {
-            es: 'Diagnostiqué la causa raíz de un fallo de autenticación recurrente en producción: al terminar el proceso sin cerrar el socket, el estado criptográfico de la sesión —el ratchet del protocolo Signal— quedaba a medio escribir, el servidor rechazaba la reconexión con un 401 y había que re-vincular a mano. Resuelto con un handler de SIGTERM/SIGINT que cierra el socket sin desvincular el dispositivo y drena las escrituras pendientes antes de salir. Sacar el navegador headless del servidor y hablar el protocolo directo por socket liberó memoria suficiente para que el proceso deje de morir por OOM.',
-            en: 'I traced a recurring production authentication failure to its root cause: terminating the process without closing the socket left the session’s cryptographic state —the Signal protocol ratchet— half-written, so the server rejected reconnection with a 401 and manual re-pairing was needed. Fixed with a SIGTERM/SIGINT handler that closes the socket without unlinking the device and drains pending writes before exiting. Removing the headless browser from the server and speaking the protocol directly over a socket freed enough memory for the process to stop dying to the OOM killer.'
+            es: 'La corrida de cada noche aplica reglas de negocio, no solo scraping: reconoce el mismo producto entre fuentes, aplica escalas de margen por rubro y retiene lo dudoso, como un precio con un cero de menos, para sugerirlo en vez de corregirlo solo. Un OCR borra los carteles promocionales que los proveedores pegan en sus fotos. Absorbió a Vacuum Engine, mi motor anterior de ofertas por WhatsApp: ahí saqué el navegador headless del servidor para hablar el protocolo directo por socket, y la memoria libre pasó de unos 55 MB a más de 300 MB. En noviembre, cuando WhatsApp dejó de aceptar la vinculación del bot, la causa era la versión de WhatsApp Web con la que se presentaba; ahora toma la vigente en cada arranque.',
+            en: 'The nightly run applies business rules, not just scraping: it recognises the same product across sources, applies margin tiers per category and holds back anything doubtful, like a price missing a zero, to suggest it instead of silently fixing it. An OCR step removes the promotional banners suppliers paste onto their photos. It absorbed Vacuum Engine, my earlier WhatsApp offers engine: there I removed the headless browser from the server to speak the protocol directly over a socket, and free memory went from about 55 MB to over 300 MB. In November, when WhatsApp stopped accepting the bot’s pairing, the cause was the WhatsApp Web version it presented; it now reads the current one on every start.'
         },
         role: {
-            es: 'Diseño, backend, scrapers, frontend, servidor y monitoreo. Solo, de punta a punta.',
-            en: 'Design, backend, scrapers, frontend, server and monitoring. Solo, end to end.'
+            es: 'Producto, scrapers, reglas de precio, backend, tienda, app, bot e infraestructura. Solo, de punta a punta.',
+            en: 'Product, scrapers, pricing rules, backend, storefront, app, bot and infrastructure. Solo, end to end.'
         },
         metrics: [
             {
-                value: '3.400+',
-                label: { es: 'productos sincronizados a diario, de cuatro proveedores', en: 'products synced daily, across four suppliers' }
+                value: '~600',
+                label: { es: 'productos en la tienda pública, con el precio del día', en: 'products in the public storefront, priced daily' }
             },
             {
-                value: { es: '~3 h', en: '~3 h' },
-                label: { es: 'de trabajo manual eliminadas por día', en: 'of manual work removed per day' }
+                value: '58 / 58',
+                label: { es: 'fotos de televisores publicables después del OCR', en: 'TV photos publishable after the OCR step' }
             },
             {
-                value: { es: '5-6 s → 1,1 s', en: '5-6 s → 1.1 s' },
-                label: { es: 'carga completa de la aplicación', en: 'full application load' }
+                value: '55 → 300+ MB',
+                label: { es: 'memoria libre al sacar el navegador del servidor', en: 'free memory after removing the browser from the server' }
             },
             {
-                value: '55 → 380 MB',
-                label: { es: 'RAM libre tras sacar el navegador del servidor', en: 'free RAM after removing the browser from the server' }
+                value: { es: 'En producción', en: 'In production' },
+                label: { es: 'desde octubre de 2026; la app se actualiza por OTA', en: 'since October 2026; the app updates over the air' }
             }
         ],
         techStack: [
-            'Node.js', 'TypeScript', 'Express', 'Prisma', 'PostgreSQL', 'Supabase',
-            'Angular', 'Angular Material', 'Puppeteer', 'Cheerio',
-            'GitHub Actions', 'nginx', 'systemd', 'VPS'
+            'Python', 'TypeScript', 'Cloudflare Workers', 'PostgreSQL', 'Neon', 'Hyperdrive',
+            'Expo', 'React Native', 'Baileys', 'Railway', 'GitHub Actions'
         ],
+        liveUrl: 'https://electroquick.vixit.workers.dev',
         repoPrivate: true,
-        galleryLayout: 'phone',
+        galleryLayout: 'wide',
         gallery: [
             {
-                src: 'assets/projects/vacuum-01-catalogos.png',
+                src: 'assets/projects/eq-01-portada.webp',
                 alt: {
-                    es: 'Vista de catálogos: los productos sincronizados de los proveedores, con buscador y filtros.',
-                    en: 'Catalogue view: products synced from suppliers, with search and filters.'
+                    es: 'Portada de la tienda, con los precios del día y cada rubro con su cantidad de productos.',
+                    en: 'Storefront home, with today’s prices and each category with its product count.'
                 }
             },
             {
-                src: 'assets/projects/vacuum-02-bandeja.png',
+                src: 'assets/projects/eq-02-rubro.webp',
                 alt: {
-                    es: 'Bandeja de ofertas interceptadas, lista para reenviar a los clientes desde un solo lugar.',
-                    en: 'Inbox of intercepted offers, ready to be forwarded to customers from one place.'
+                    es: 'Un rubro con filtros por frigorías y por tipo, y los productos ordenados por precio.',
+                    en: 'A category with filters by cooling capacity and type, sorted by price.'
                 }
             },
             {
-                src: 'assets/projects/vacuum-03-origenes.png',
+                src: 'assets/projects/eq-03-producto.webp',
                 alt: {
-                    es: 'Pantalla de orígenes: alta y control de los canales que el motor escucha.',
-                    en: 'Sources screen: adding and managing the channels the engine listens to.'
+                    es: 'Ficha de producto: el precio final del día y la consulta por WhatsApp con el código del producto.',
+                    en: 'Product page: today’s final price and a WhatsApp enquiry that carries the product code.'
                 }
             }
         ],
         note: {
-            es: 'Los nombres de proveedores y canales están ocultos por confidencialidad comercial. Corre en un servidor propio, así que no hay enlace público; el código es privado.',
-            en: 'Supplier and channel names are hidden for commercial confidentiality. It runs on a private server, so there is no public link; the code is private.'
+            es: 'El negocio es de mi familia. La tienda es pública; la app de gestión y el código son privados, y los nombres de los proveedores no se muestran.',
+            en: 'The business belongs to my family. The storefront is public; the back-office app and the code are private, and supplier names are not shown.'
         }
     },
 
@@ -584,8 +584,8 @@ export const PROJECTS: ProjectSeed[] = [
             en: 'BILINGUAL COMPANY WEBSITE'
         },
         description: {
-            es: 'La web del estudio. Un catálogo de las piezas propias en producción con sus números reales, siete servicios que salen de esos mismos sistemas, el método de trabajo en cinco etapas y una página de caso por producto. Bilingüe completo, con ruta por idioma y contenido equivalente en los dos.',
-            en: 'The studio website. A catalogue of the in-house pieces running in production with their real figures, seven services that come out of those same systems, the five-stage working method, and a case page per product. Fully bilingual, with a route per language and equivalent content in both.'
+            es: 'La web del estudio. Un catálogo de las piezas propias en producción con sus números reales, siete servicios que salen de esos mismos sistemas, el método de trabajo en cinco etapas y los casos con sus números. Bilingüe completo, con ruta por idioma y contenido equivalente en los dos.',
+            en: 'The studio website. A catalogue of the in-house pieces running in production with their real figures, seven services that come out of those same systems, the five-stage working method, and the case studies with their figures. Fully bilingual, with a route per language and equivalent content in both.'
         },
         technicalHighlight: {
             es: 'Sin base de datos y sin superficie expuesta: todo se renderiza en el servidor a partir de diccionarios tipados por idioma, y lo único dinámico es el formulario de contacto, que entra por webhook al CRM de Vixit Platform y además manda correo por su cuenta, así una consulta no se pierde aunque el webhook falle. Tener el contenido en un solo diccionario por idioma significa que corregir un texto no toca ningún componente.',
@@ -599,10 +599,6 @@ export const PROJECTS: ProjectSeed[] = [
             {
                 value: { es: '2 idiomas', en: '2 languages' },
                 label: { es: 'contenido completo, no una traducción parcial', en: 'complete content, not a partial translation' }
-            },
-            {
-                value: '8',
-                label: { es: 'páginas: home, servicios, estudio, casos y legales', en: 'pages: home, services, studio, cases and legal' }
             },
             {
                 value: { es: 'Sin base de datos', en: 'No database' },
@@ -634,8 +630,8 @@ export const PROJECTS: ProjectSeed[] = [
             {
                 src: 'assets/projects/vixitlabs-03-caso.webp',
                 alt: {
-                    es: 'Página de caso de Distribuidora Harry’s, el único cliente con nombre y enlace.',
-                    en: 'Case page for Distribuidora Harry’s, the only client shown by name and link.'
+                    es: 'Página de caso de Distribuidora Harry’s.',
+                    en: 'Case page for Distribuidora Harry’s.'
                 }
             }
         ],
@@ -653,23 +649,23 @@ export const PROJECTS: ProjectSeed[] = [
     {
         id: '09',
         name: 'CLAVO',
-        group: 'ARCHIVE',
-        status: 'PROTOTYPE',
+        group: 'ACTIVE',
+        status: 'IN_DEVELOPMENT',
         type: {
-            es: 'JUEGO 3D · IA DE HORDA EN GODOT',
-            en: '3D GAME · HORDE AI IN GODOT'
+            es: 'JUEGO 3D EN EQUIPO · IA DE HORDA EN GODOT',
+            en: '3D TEAM GAME · HORDE AI IN GODOT'
         },
         description: {
             es: 'Híbrido de tower defense y acción en tercera persona. Lo que vale del proyecto no es el juego: es la inteligencia artificial de la horda, donde cada enemigo es un individuo con personalidad, moral y memoria en vez de una unidad que camina hacia el objetivo.',
             en: 'A tower-defense and third-person-action hybrid. What matters here is not the game: it is the horde AI, where each enemy is an individual with a personality, morale and memory rather than a unit that walks towards the objective.'
         },
         technicalHighlight: {
-            es: 'Cada enemigo corre una máquina de estados de trece estados y decide solo. Cinco arquetipos de personalidad, manadas con líder de estandarte que las envalentona, pánico en cadena cuando hay una matanza cerca o cae el líder, vendetta —el que escapó herido vuelve en la oleada siguiente, más fuerte y con nombre propio— y miedo aprendido: los más listos rodean las trampas que ya vieron matar. Mil cien líneas solo para el duende.',
-            en: 'Each enemy runs a thirteen-state machine and decides for itself. Five personality archetypes, packs led by a standard-bearer who emboldens them, chain panic when a slaughter happens nearby or the leader falls, vendetta —the one who escaped wounded comes back the next wave, stronger and with a name of its own— and learned fear: the smarter ones walk around traps they have seen kill. Eleven hundred lines for the goblin alone.'
+            es: 'Cada enemigo corre una máquina de estados de trece estados y decide solo. Cinco arquetipos de personalidad, manadas con líder de estandarte que las envalentona, pánico en cadena cuando hay una matanza cerca o cae el líder, vendetta —el que escapó herido vuelve en la oleada siguiente, más fuerte y con nombre propio— y miedo aprendido: los más listos rodean las trampas que ya vieron matar. Más de mil quinientas líneas solo para el duende.',
+            en: 'Each enemy runs a thirteen-state machine and decides for itself. Five personality archetypes, packs led by a standard-bearer who emboldens them, chain panic when a slaughter happens nearby or the leader falls, vendetta —the one who escaped wounded comes back the next wave, stronger and with a name of its own— and learned fear: the smarter ones walk around traps they have seen kill. Over fifteen hundred lines for the goblin alone.'
         },
         role: {
-            es: 'Diseño de juego, IA, sistemas y programación. Solo, de punta a punta.',
-            en: 'Game design, AI, systems and programming. Solo, end to end.'
+            es: 'Proyecto en equipo de la facultad. Hice la mayor parte de la programación, incluida la IA de la horda.',
+            en: 'A team project for my degree. I did most of the programming, including the horde AI.'
         },
         metrics: [
             {
@@ -681,15 +677,15 @@ export const PROJECTS: ProjectSeed[] = [
                 label: { es: 'arquetipos: guerrero, saqueador, berserk, cobarde, cruel', en: 'archetypes: warrior, looter, berserk, coward, cruel' }
             },
             {
-                value: '60',
-                label: { es: 'scripts de GDScript, ~450 kB de lógica', en: 'GDScript files, ~450 kB of logic' }
+                value: '91',
+                label: { es: 'scripts de GDScript', en: 'GDScript files' }
             }
         ],
         techStack: ['Godot 4.5', 'GDScript', 'Python'],
         repoPrivate: true,
         note: {
-            es: 'Prototipo pausado. El repositorio es privado.',
-            en: 'Prototype on hold. The repository is private.'
+            es: 'La demo es en diciembre de 2026. El repositorio es privado.',
+            en: 'The demo is in December 2026. The repository is private.'
         }
     },
 
@@ -716,10 +712,14 @@ export const PROJECTS: ProjectSeed[] = [
             { es: 'PHP (MVC nativo)', en: 'PHP (vanilla MVC)' },
             'MySQL', 'JWT', 'Bcrypt'
         ],
-        githubUrl: 'https://github.com/Wolpi066/Breath',
+        repoPrivate: true,
         videoUrl: 'assets/heroBreathe.mp4',
         videoKind: 'hero',
-        videoPoster: 'assets/breath-poster.jpg'
+        videoPoster: 'assets/breath-poster.jpg',
+        note: {
+            es: 'El repositorio es privado.',
+            en: 'The repository is private.'
+        }
     },
 
     {

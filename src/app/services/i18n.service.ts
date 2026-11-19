@@ -37,7 +37,7 @@ const UI = {
         // ---- Proyectos ----
         projectsTitle: '// ARCHIVO_DE_PROYECTOS',
         projectsLead:
-            'Once sistemas, todos construidos solo y de punta a punta. Acá abajo van los cinco que mejor muestran cómo trabajo: cuatro corriendo en producción —uno de ellos para un cliente real— y una pieza publicada. Cada número sale de una medición o de un conteo real.',
+            'Once sistemas, hechos de punta a punta. Acá abajo van los cinco que mejor muestran cómo trabajo: cuatro en producción, dos de ellos para negocios reales, y una pieza publicada. Cada número sale de una medición o de un conteo real.',
         projectCta: 'ABRIR',
         moreInOrbit: 'Los otros seis —los que están en curso y los del archivo— se recorren en la vista orbital, junto con estos cinco.',
 
@@ -148,7 +148,7 @@ const UI = {
         // ---- Projects ----
         projectsTitle: '// PROJECT_ARCHIVE',
         projectsLead:
-            'Eleven systems, all of them built solo and end to end. Below are the five that best show how I work: four running in production —one of them for a paying client— and one published piece. Every figure comes from a measurement or a real count.',
+            'Eleven systems, built end to end. Below are the five that best show how I work: four in production, two of them for real businesses, and one published piece. Every figure comes from a measurement or a real count.',
         projectCta: 'OPEN',
         moreInOrbit: 'The other six —the ones in progress and the archived ones— can be explored in the orbital view, together with these five.',
 

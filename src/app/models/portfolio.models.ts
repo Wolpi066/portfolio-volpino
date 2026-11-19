@@ -103,5 +103,5 @@ export interface Study {
     period: string;
     tags: string[];
     certificate?: string;
-    status: 'COMPLETED' | 'IN_PROGRESS';
+    status: 'COMPLETED' | 'IN_PROGRESS' | 'NOT_COMPLETED';
 }

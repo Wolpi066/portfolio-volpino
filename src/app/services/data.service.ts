@@ -20,8 +20,8 @@ export class DataService {
     profile = computed(() => ({
         name: 'EMILIANO VOLPINO',
         title: this.p({
-            es: 'DESARROLLADOR FULL STACK — DISEÑO DE SISTEMAS & BACKEND',
-            en: 'FULL STACK DEVELOPER — SYSTEMS DESIGN & BACKEND'
+            es: 'PRODUCT ENGINEER · FULL STACK',
+            en: 'PRODUCT ENGINEER · FULL STACK'
         }),
         location: this.p({ es: 'CABA, ARGENTINA', en: 'BUENOS AIRES, ARGENTINA (UTC−3)' }),
         email: 'volpinoemiliano@gmail.com',
@@ -30,8 +30,8 @@ export class DataService {
         linkedin: 'linkedin.com/in/emilianovolpino',
         photo: 'assets/fotoDePerfil.png',
         bio: this.p({
-            es: 'Diseño y construyo sistemas completos, no features aisladas. Llevo plataformas de la pizarra a producción y las mantengo funcionando: reglas de negocio, modelo de datos, arquitectura de backend, integraciones, despliegue e infraestructura. Hoy opero varios sistemas en producción, incluido el de un cliente real. Mi terreno fuerte es lo que pasa cuando el sistema se cruza con la realidad: concurrencia, consistencia transaccional, límites de recursos y fallas diagnosticadas hasta la causa raíz.',
-            en: 'I design and build complete systems, not isolated features. I take platforms from whiteboard to production and keep them running: business rules, data modelling, backend architecture, integrations, deployment and infrastructure. I currently operate several systems in production, including one for a paying client. My strongest ground is what happens when a system meets reality: concurrency, transactional consistency, resource limits and failures traced to root cause.'
+            es: 'Llevo problemas de negocio reales desde la primera charla con el cliente hasta un sistema en producción, y después lo opero. Mi terreno fuerte es donde el sistema se cruza con la realidad: datos sucios de proveedores, el mostrador y la web vendiendo el mismo stock, pagos que fallan y errores de producción perseguidos hasta la causa. Construyo dirigiendo agentes de codificación: las decisiones de producto, arquitectura y datos son mías, y reviso cada cambio antes de que llegue a producción.',
+            en: 'I take real business problems from the first conversation with the client to a system in production, and then I run it. My strongest ground is where the system meets reality: messy supplier data, the counter and the website selling the same stock, payments that fail, and production errors traced to the root cause. I build by directing AI coding agents: product, architecture and data decisions are mine, and I review every change before it reaches production.'
         })
     }));
 
@@ -68,6 +68,7 @@ export class DataService {
             { name: 'CSS3 / SASS', category: 'FRONTEND' },
             { name: 'THREE.JS / WEBGL', category: 'FRONTEND' },
             { name: 'PWA / SERVICE WORKERS', category: 'FRONTEND' },
+            { name: 'EXPO / REACT NATIVE', category: 'FRONTEND' },
 
             { name: 'LINUX / BASH', category: 'TOOLS' },
             { name: 'NGINX', category: 'TOOLS' },
@@ -103,10 +104,10 @@ export class DataService {
             tags: this.p({ es: 'Ciberseguridad,Ethical Hacking,Redes', en: 'Cybersecurity,Ethical Hacking,Networks' }).split(',')
         },
         {
-            title: this.p({ es: 'ANALISTA EN SISTEMAS', en: 'SYSTEMS ANALYST' }),
+            title: this.p({ es: 'ANALISTA DE SISTEMAS', en: 'SYSTEMS ANALYST' }),
             institution: 'INSTITUTO TECNOLÓGICO ORT',
-            period: '2020 - 2022',
-            status: 'COMPLETED',
+            period: this.p({ es: '2022 - 2024 · cursado, sin título', en: '2022 - 2024 · coursework, no degree' }),
+            status: 'NOT_COMPLETED',
             tags: ['Java', 'SQL', 'HTML5', 'CSS3', 'SCRUM', 'UML', 'BPMN']
         },
         {

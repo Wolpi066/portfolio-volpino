@@ -1,72 +1,31 @@
-# 🚀 Portfolio Interactivo - Emiliano Volpino
+# Emiliano Volpino · Portfolio
 
-¡Hola! Bienvenidos a mi repositorio.
+**Live:** [wolpi066.github.io/portfolio-volpino](https://wolpi066.github.io/portfolio-volpino/)
 
-Es una **Single Page Application (SPA)** diseñada como una experiencia narrativa. Básicamente, te llevo desde una terminal de sistema retro hasta un entorno 3D en el espacio.
+My interactive portfolio, in Spanish and English. It shows the systems I've built, with real figures, screenshots and links to the ones that are public.
 
----
+## What's inside
 
-## 🌟 La Experiencia (Cómo funciona)
+- **Cold start:** a short three-act boot sequence that you can skip with any key.
+- **Profile and projects:** the five projects that best show how I work, each one opening in a draggable window with the problem, the technical challenge, my role, the stack and screenshots.
+- **Capability map:** a draggable graph that links each skill to the projects that actually use it. Every edge comes from a project's real stack, not from a hand-written list.
+- **Orbital view:** all eleven projects as markers on a 3D planet, built with Three.js and custom shaders. If the machine has no 3D acceleration, the projects still open from the main page.
+- **Command palette:** `Ctrl+K` / `⌘K` to jump to any project or action.
 
-La app está dividida en "Fases" que controlan la narrativa:
+## Stack
 
-1.  **Fase 1: Boot Sequence** 🟢
-    * Un pre-loader estilo BIOS/Terminal que simula la carga del sistema operativo.
+Angular 20 (standalone components and signals), Three.js with GLSL shaders, GSAP and plain CSS. Deployed to GitHub Pages.
 
-2.  **Fase 2: Main Interface (Aerospace UI)** 🛸
-    * Mi perfil, skills y estudios presentados con una estética de ingeniería aeroespacial.
-    * Le metí mucho cariño al **Scroll-Telling** (animaciones al bajar) y al **Cursor Táctico** personalizado.
-    * **Skills Matrix:** Mis habilidades no son una lista aburrida, son chips holográficos.
+## Run it locally
 
-3.  **Fase 3: The System Trap** ⚠️
-    * Hay un botón de "System Reset" escondido abajo de todo.
+```bash
+npm install
+npm start          # http://localhost:4200
+npm run deploy     # builds and publishes to GitHub Pages
+```
 
-4.  **Fase 4: Glitch & Data Corruption** 👾
-    * Uso `html2canvas` para sacarle una "foto" a la web en tiempo real y después la rompo con **Shaders WebGL** (Three.js) simulando un fallo de tarjeta gráfica y corrupción de datos.
+Project content lives in `src/app/data/projects.data.ts`. Adding a project means adding one object there.
 
-5.  **Fase 5: Holo Rebirth (El Planeta 3D)** 🌍
-    * El sistema se reinicia en un entorno 3D interactivo.
-    * Es un planeta wireframe con físicas de ondas (Ripple Effect) al hacer click.
-    * Los marcadores orbitando son mis proyectos reales (como **Breath Shop** y **El Cisma**). Podés clickearlos para ver info y videos.
+## More
 
----
-
-## 🛠️ Stack Tecnológico
-
-* **Framework:** Angular 17+ (Aprovechando Standalone Components, Signals y la nueva sintaxis `@defer`).
-* **3D & Gráficos:** Three.js (WebGL puro).
-* **VFX:** html2canvas + Custom GLSL Shaders (para el efecto Matrix/Glitch).
-* **Estilos:** CSS3 Puro. Todo el diseño grid/flex y las animaciones están hechas a mano.
-* **Deploy:** GitHub Pages (automatizado con `angular-cli-ghpages`).
-
----
-
-## 🚀 ¿Querés correrlo en tu máquina?
-
-Es súper fácil. Si tenés Node.js y Angular CLI instalados:
-
-1.  **Cloná el repo:**
-    git clone [https://github.com/Wolpi066/portfolio-volpino.git](https://github.com/Wolpi066/portfolio-volpino.git)
-    cd portfolio-volpino
-
-2.  **Instalá las dependencias:**
-    npm install
-
-3.  **Levantá el servidor:**
-    ng serve
-    Y andá a `http://localhost:4200/` para ver la magia.
-
----
-
-## 👤 Autor
-
-**Emiliano Volpino**
-*Full Stack Developer & Creative Coder*
-
-Me encanta resolver problemas complejos y crear interfaces que impacten. Si te gustó el proyecto o querés charlar sobre código, ¡contactame!
-
-[LinkedIn](www.linkedin.com/in/emiliano-volpino-626647268) | [GitHub](https://github.com/Wolpi066) | 📧 volpinoemiliano@gmail.com
-
----
-
-*Hecho con 💻, 🎵 y mucho café.*
+[GitHub profile](https://github.com/Wolpi066) · [Vixit Labs](https://vixit-labs.vercel.app), my independent studio · [LinkedIn](https://linkedin.com/in/emilianovolpino)
