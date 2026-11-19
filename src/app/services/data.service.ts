@@ -42,7 +42,6 @@ export class DataService {
         return [
             { name: core, category: 'CORE' },
             { name: 'POO / OOP', category: 'CORE' },
-            { name: 'TDD', category: 'CORE' },
             { name: conc, category: 'CORE' },
             { name: multi, category: 'CORE' },
             { name: 'C++', category: 'CORE' },
@@ -94,7 +93,7 @@ export class DataService {
             institution: 'UCES',
             period: this.p({ es: 'En curso — egreso dic. 2026', en: 'In progress — expected Dec. 2026' }),
             status: 'IN_PROGRESS',
-            tags: ['C++', 'Java', 'POO', 'TDD', 'HTML5', 'CSS3', 'Bootstrap', 'Angular', 'PHP', 'TS', 'SQL']
+            tags: ['C++', 'Java', 'POO', 'HTML5', 'CSS3', 'Bootstrap', 'Angular', 'PHP', 'TS', 'SQL']
         },
         {
             title: this.p({ es: 'CIBERSEGURIDAD Y ETHICAL HACKING', en: 'CYBERSECURITY AND ETHICAL HACKING' }),

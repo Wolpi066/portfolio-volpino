@@ -733,14 +733,14 @@ export const PROJECTS: ProjectSeed[] = [
             en: '2D engine in C++ with Raylib: custom game loop and manual memory management without garbage collection, with explicit control over every entity’s lifecycle and the frame budget.'
         },
         technicalHighlight: {
-            es: 'Máquinas de estados finitos para la IA de enemigos —patrullar, perseguir y atacar— con transiciones disparadas por proximidad y estímulos sonoros. El motor está diseñado para ser testeable de forma aislada, con tests unitarios bajo TDD sobre colisiones y lógica de inventario.',
-            en: 'Finite state machines driving enemy AI —patrol, chase and attack— with transitions triggered by proximity and sound cues. The engine is designed to be testable in isolation, with TDD unit tests covering collisions and inventory logic.'
+            es: 'Máquinas de estados finitos para la IA de enemigos —patrullar, perseguir y atacar— con transiciones disparadas por proximidad y estímulos sonoros. Tiene tests unitarios sobre el protagonista, los enemigos, los ítems y las balas.',
+            en: 'Finite state machines driving enemy AI —patrol, chase and attack— with transitions triggered by proximity and sound cues. It has unit tests covering the player, enemies, items and bullets.'
         },
         role: {
             es: 'Motor, IA y tests. Solo, de punta a punta.',
             en: 'Engine, AI and tests. Solo, end to end.'
         },
-        techStack: ['C++', 'Raylib', 'Tau', 'TDD'],
+        techStack: ['C++', 'Raylib', 'Tau'],
         githubUrl: 'https://github.com/Wolpi066/ElCisma',
         videoUrl: 'assets/ElCisma.mp4',
         videoKind: 'demo',
