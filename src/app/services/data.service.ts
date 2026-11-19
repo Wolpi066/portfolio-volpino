@@ -128,7 +128,7 @@ export class DataService {
         }
     ]);
 
-    /** Los 11 sistemas, traducidos al idioma activo. */
+    /** Los 12 sistemas, traducidos al idioma activo. */
     projects = computed<Project[]>(() => PROJECTS.map(seed => this.resolve(seed)));
 
     /**
@@ -150,6 +150,7 @@ export class DataService {
             role: seed.role ? this.p(seed.role) : undefined,
             metrics: seed.metrics?.map(m => ({ value: this.pAny(m.value), label: this.p(m.label) })),
             techStack: seed.techStack.map(t => this.pAny(t)),
+            practices: seed.practices?.map(t => this.pAny(t)),
             gallery: seed.gallery?.map(g => ({ src: g.src, alt: this.p(g.alt) })),
             galleryLayout: seed.galleryLayout,
             note: seed.note ? this.p(seed.note) : undefined,

@@ -56,6 +56,12 @@ export interface Project {
     role?: string;
     metrics?: Metric[];
     techStack: string[];
+    /**
+     * Practicas que el sistema aplica de verdad (diseno de sistemas,
+     * concurrencia, webhooks...). No se muestran como chips: solo conectan el
+     * mapa de capacidades con las que no son una tecnologia del stack.
+     */
+    practices?: string[];
     gallery?: Shot[];
     galleryLayout?: GalleryLayout;
     /** Aclaracion al pie del detalle (ej: por que hay datos tapados). */
@@ -86,6 +92,7 @@ export interface ProjectSeed {
     metrics?: { value: string | L10n; label: L10n }[];
     /** Casi siempre nombres propios; algun tag se dice distinto en cada idioma. */
     techStack: (string | L10n)[];
+    practices?: (string | L10n)[];
     gallery?: { src: string; alt: L10n }[];
     galleryLayout?: GalleryLayout;
     note?: L10n;

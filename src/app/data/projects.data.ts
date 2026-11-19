@@ -9,6 +9,17 @@
 
 import { ProjectSeed } from '../models/portfolio.models';
 
+// Practicas que no son una tecnologia del stack. Se escriben igual que en el
+// mapa de capacidades (DataService.skills) para que se encuentren.
+const SYS = { es: 'DISEÑO DE SISTEMAS', en: 'SYSTEMS DESIGN' };
+const CONC = { es: 'CONCURRENCIA', en: 'CONCURRENCY' };
+const MULTI = 'MULTI-TENANCY';
+const OOP = 'POO / OOP';
+const HOOKS = 'REST / WEBHOOKS';
+const GIT = 'GIT / GITHUB';
+const LINUX = 'LINUX / BASH';
+const CSS = 'CSS3 / SASS';
+
 export const PROJECTS: ProjectSeed[] = [
 
     // ─────────────────────────────────────────────────────────────────────
@@ -54,6 +65,7 @@ export const PROJECTS: ProjectSeed[] = [
                 label: { es: 'desde mayo de 2026, operado a diario por el cliente', en: 'since May 2026, run daily by the client' }
             }
         ],
+        practices: [SYS, CONC, HOOKS, GIT],
         techStack: [
             'React.js', 'TypeScript', 'Vite', 'Tailwind CSS', 'Radix UI',
             'Node.js', 'Express', 'PostgreSQL', 'Zod', 'JWT',
@@ -157,6 +169,7 @@ export const PROJECTS: ProjectSeed[] = [
                 label: { es: 'PWA instalable; el progreso vive en el dispositivo', en: 'installable PWA; progress lives on the device' }
             }
         ],
+        practices: [SYS, CSS, GIT],
         techStack: [
             'JavaScript', 'HTML5', 'PWA / SERVICE WORKER', 'Node.js',
             'Cloudflare Workers', 'Durable Objects', 'Web Push (VAPID)',
@@ -215,8 +228,8 @@ export const PROJECTS: ProjectSeed[] = [
             en: 'The sales system for my family’s appliance business. It collects supplier offers from their websites and WhatsApp channels, applies the business’s pricing rules, and publishes a public storefront and an Android back-office app the owner uses. It replaces the pricing and publishing work I had been doing by hand since 2022.'
         },
         technicalHighlight: {
-            es: 'La corrida de cada noche aplica reglas de negocio, no solo scraping: reconoce el mismo producto entre fuentes, aplica escalas de margen por rubro y retiene lo dudoso, como un precio con un cero de menos, para sugerirlo en vez de corregirlo solo. Un OCR borra los carteles promocionales que los proveedores pegan en sus fotos. Absorbió a Vacuum Engine, mi motor anterior de ofertas por WhatsApp: ahí saqué el navegador headless del servidor para hablar el protocolo directo por socket, y la memoria libre pasó de unos 55 MB a más de 300 MB. En noviembre, cuando WhatsApp dejó de aceptar la vinculación del bot, la causa era la versión de WhatsApp Web con la que se presentaba; ahora toma la vigente en cada arranque.',
-            en: 'The nightly run applies business rules, not just scraping: it recognises the same product across sources, applies margin tiers per category and holds back anything doubtful, like a price missing a zero, to suggest it instead of silently fixing it. An OCR step removes the promotional banners suppliers paste onto their photos. It absorbed Vacuum Engine, my earlier WhatsApp offers engine: there I removed the headless browser from the server to speak the protocol directly over a socket, and free memory went from about 55 MB to over 300 MB. In November, when WhatsApp stopped accepting the bot’s pairing, the cause was the WhatsApp Web version it presented; it now reads the current one on every start.'
+            es: 'La corrida de cada noche aplica reglas de negocio, no solo scraping: reconoce el mismo producto entre fuentes, aplica escalas de margen por rubro y retiene lo dudoso, como un precio con un cero de menos, para sugerirlo en vez de corregirlo solo. Un OCR borra los carteles promocionales que los proveedores pegan en sus fotos. Absorbió a Vacuum Engine, mi motor anterior de ofertas por WhatsApp, que hoy es una pestaña de la app. En noviembre, cuando WhatsApp dejó de aceptar la vinculación del bot, la causa era la versión de WhatsApp Web con la que se presentaba; ahora toma la vigente en cada arranque.',
+            en: 'The nightly run applies business rules, not just scraping: it recognises the same product across sources, applies margin tiers per category and holds back anything doubtful, like a price missing a zero, to suggest it instead of silently fixing it. An OCR step removes the promotional banners suppliers paste onto their photos. It absorbed Vacuum Engine, my earlier WhatsApp offers engine, which is now a tab in the app. In November, when WhatsApp stopped accepting the bot’s pairing, the cause was the WhatsApp Web version it presented; it now reads the current one on every start.'
         },
         role: {
             es: 'Producto, scrapers, reglas de precio, backend, tienda, app, bot e infraestructura. Solo, de punta a punta.',
@@ -232,14 +245,15 @@ export const PROJECTS: ProjectSeed[] = [
                 label: { es: 'fotos de televisores publicables después del OCR', en: 'TV photos publishable after the OCR step' }
             },
             {
-                value: '55 → 300+ MB',
-                label: { es: 'memoria libre al sacar el navegador del servidor', en: 'free memory after removing the browser from the server' }
+                value: { es: 'Cada noche', en: 'Every night' },
+                label: { es: 'la corrida actualiza los precios y publica la tienda sola', en: 'the run refreshes prices and publishes the storefront on its own' }
             },
             {
                 value: { es: 'En producción', en: 'In production' },
                 label: { es: 'desde octubre de 2026; la app se actualiza por OTA', en: 'since October 2026; the app updates over the air' }
             }
         ],
+        practices: [SYS, HOOKS, GIT],
         techStack: [
             'Python', 'TypeScript', 'Cloudflare Workers', 'PostgreSQL', 'Neon', 'Hyperdrive',
             'Expo', 'React Native', 'Baileys', 'Railway', 'GitHub Actions'
@@ -315,6 +329,7 @@ export const PROJECTS: ProjectSeed[] = [
                 label: { es: 'el cliente entra sin crear cuenta', en: 'clients get in without an account' }
             }
         ],
+        practices: [SYS, HOOKS, GIT],
         techStack: [
             'Next.js 16', 'React 19', 'TypeScript', 'Prisma 7', 'PostgreSQL',
             'Auth.js v5', 'Tailwind CSS 4', 'shadcn/ui', 'Zod', 'Recharts',
@@ -384,6 +399,7 @@ export const PROJECTS: ProjectSeed[] = [
                 label: { es: 'tests unitarios y recorridos de punta a punta', en: 'unit tests and end-to-end journeys' }
             }
         ],
+        practices: [GIT],
         techStack: [
             'Next.js 16', 'React 19', 'TypeScript', 'three.js', 'React Three Fiber',
             'WebGL2 / GLSL', 'Tone.js', 'Web Audio API', 'Tailwind CSS 4',
@@ -459,6 +475,7 @@ export const PROJECTS: ProjectSeed[] = [
                 label: { es: 'export y anonimización de datos personales', en: 'personal data export and anonymisation' }
             }
         ],
+        practices: [SYS, MULTI, GIT],
         techStack: [
             'Next.js 16', 'React 19', 'TypeScript', 'Prisma 7', 'PostgreSQL',
             'Auth.js v5', 'Tailwind CSS 4', 'Zod', 'SheetJS', 'react-pdf',
@@ -551,6 +568,7 @@ export const PROJECTS: ProjectSeed[] = [
                 label: { es: 'el lead entra sin carga manual', en: 'the lead lands with no manual entry' }
             }
         ],
+        practices: [HOOKS, GIT],
         techStack: [
             'Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'next/image', 'Cal.com', 'Vercel'
         ],
@@ -605,6 +623,7 @@ export const PROJECTS: ProjectSeed[] = [
                 label: { es: 'renderizado en servidor y servido desde CDN', en: 'server-rendered and served from a CDN' }
             }
         ],
+        practices: [HOOKS, GIT],
         techStack: [
             'Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS 4',
             'Motion', 'Lenis', 'Zod', 'Resend', 'Vercel'
@@ -681,6 +700,7 @@ export const PROJECTS: ProjectSeed[] = [
                 label: { es: 'scripts de GDScript', en: 'GDScript files' }
             }
         ],
+        practices: [OOP, GIT],
         techStack: ['Godot 4.5', 'GDScript', 'Python'],
         repoPrivate: true,
         note: {
@@ -707,6 +727,7 @@ export const PROJECTS: ProjectSeed[] = [
             es: 'Frontend, backend y base de datos. Solo, de punta a punta.',
             en: 'Frontend, backend and database. Solo, end to end.'
         },
+        practices: [OOP, CONC, CSS, GIT],
         techStack: [
             'Angular 17+',
             { es: 'PHP (MVC nativo)', en: 'PHP (vanilla MVC)' },
@@ -740,10 +761,74 @@ export const PROJECTS: ProjectSeed[] = [
             es: 'Motor, IA y tests. Solo, de punta a punta.',
             en: 'Engine, AI and tests. Solo, end to end.'
         },
+        practices: [OOP, GIT],
         techStack: ['C++', 'Raylib', 'Tau'],
         githubUrl: 'https://github.com/Wolpi066/ElCisma',
         videoUrl: 'assets/ElCisma.mp4',
         videoKind: 'demo',
         videoPoster: 'assets/ElCisma-poster.jpg'
+    },
+    {
+        id: '12',
+        name: 'VACUUM ENGINE',
+        group: 'ARCHIVE',
+        status: 'ARCHIVED',
+        type: {
+            es: 'MOTOR DE OFERTAS POR WHATSAPP · HOY DENTRO DE ELECTROQUICK',
+            en: 'WHATSAPP OFFERS ENGINE · NOW PART OF ELECTROQUICK'
+        },
+        description: {
+            es: 'Escuchaba las ofertas que los proveedores publican en sus canales de WhatsApp, sincronizaba sus catálogos y dejaba reenviar cualquier oferta a los clientes desde una bandeja web. Corrió en un servidor propio hasta octubre de 2026, cuando pasó a ser la pestaña Vacuum de la app de ElectroQuick.',
+            en: 'It listened to the offers suppliers post on their WhatsApp channels, synced their catalogues and let any offer be forwarded to customers from a web inbox. It ran on its own server until October 2026, when it became the Vacuum tab in the ElectroQuick app.'
+        },
+        technicalHighlight: {
+            es: 'Diagnostiqué la causa raíz de un fallo de autenticación recurrente en producción: al terminar el proceso sin cerrar el socket, el estado criptográfico de la sesión quedaba a medio escribir, el servidor rechazaba la reconexión con un 401 y había que volver a vincular a mano. Lo resolví con un handler de SIGTERM y SIGINT que cierra el socket sin desvincular el dispositivo y espera las escrituras pendientes antes de salir. Sacar el navegador headless del servidor y hablar el protocolo directo por socket liberó la memoria que hacía falta para que el proceso dejara de morir por falta de RAM.',
+            en: 'I traced a recurring production authentication failure to its root cause: terminating the process without closing the socket left the session’s cryptographic state half-written, so the server rejected reconnection with a 401 and the device had to be paired again by hand. I fixed it with a SIGTERM and SIGINT handler that closes the socket without unlinking the device and waits for pending writes before exiting. Removing the headless browser from the server and speaking the protocol directly over a socket freed the memory the process needed to stop dying from running out of RAM.'
+        },
+        role: {
+            es: 'Diseño, backend, scrapers, frontend, servidor y monitoreo. Solo, de punta a punta.',
+            en: 'Design, backend, scrapers, frontend, server and monitoring. Solo, end to end.'
+        },
+        metrics: [
+            {
+                value: '55 → 300+ MB',
+                label: { es: 'memoria libre al sacar el navegador del servidor', en: 'free memory after removing the browser from the server' }
+            }
+        ],
+        practices: [SYS, LINUX, GIT],
+        techStack: [
+            'Node.js', 'TypeScript', 'Express', 'Prisma', 'PostgreSQL', 'Supabase',
+            'Angular', 'Angular Material', 'Puppeteer', 'Cheerio',
+            'GitHub Actions', 'nginx', 'systemd', 'VPS'
+        ],
+        repoPrivate: true,
+        galleryLayout: 'phone',
+        gallery: [
+            {
+                src: 'assets/projects/vacuum-01-catalogos.png',
+                alt: {
+                    es: 'Vista de catálogos: los productos sincronizados de los proveedores, con buscador y filtros.',
+                    en: 'Catalogue view: products synced from suppliers, with search and filters.'
+                }
+            },
+            {
+                src: 'assets/projects/vacuum-02-bandeja.png',
+                alt: {
+                    es: 'Bandeja de ofertas recibidas, lista para reenviar a los clientes desde un solo lugar.',
+                    en: 'Inbox of received offers, ready to be forwarded to customers from one place.'
+                }
+            },
+            {
+                src: 'assets/projects/vacuum-03-origenes.png',
+                alt: {
+                    es: 'Pantalla de orígenes: alta y control de los canales que el motor escuchaba.',
+                    en: 'Sources screen: adding and managing the channels the engine listened to.'
+                }
+            }
+        ],
+        note: {
+            es: 'Los nombres de proveedores y canales están ocultos. El servidor propio se apagó cuando el motor pasó a ElectroQuick; el código es privado.',
+            en: 'Supplier and channel names are hidden. Its own server was shut down when the engine moved into ElectroQuick; the code is private.'
+        }
     }
 ];

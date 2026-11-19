@@ -37,9 +37,9 @@ const UI = {
         // ---- Proyectos ----
         projectsTitle: '// ARCHIVO_DE_PROYECTOS',
         projectsLead:
-            'Once sistemas, hechos de punta a punta. Acá abajo van los cinco que mejor muestran cómo trabajo: cuatro en producción, dos de ellos para negocios reales, y una pieza publicada. Cada número sale de una medición o de un conteo real.',
+            'Doce sistemas, hechos de punta a punta. Acá abajo van los cinco que mejor muestran cómo trabajo: cuatro en producción, dos de ellos para negocios reales, y una pieza publicada. Cada número sale de una medición o de un conteo real.',
         projectCta: 'ABRIR',
-        moreInOrbit: 'Los otros seis —los que están en curso y los del archivo— se recorren en la vista orbital, junto con estos cinco.',
+        moreInOrbit: 'Los otros siete, los que están en curso y los del archivo, se recorren en la vista orbital, junto con estos cinco.',
 
         statusPRODUCTION: 'EN PRODUCCIÓN',
         statusDELIVERED: 'ENTREGADO',
@@ -92,7 +92,7 @@ const UI = {
         catFRONTEND: 'FRONTEND',
         catTOOLS: 'INFRA Y HERRAMIENTAS',
 
-        skillsLead: 'No es una lista de deseos. Cada rama sale del stack real de los once sistemas: si una capacidad se conecta con un sistema, es porque ese sistema la usa. Arrastrá cualquier nodo.',
+        skillsLead: 'No es una lista de deseos. Cada rama sale de lo que usan de verdad los doce sistemas: si una capacidad se conecta con un sistema, es porque ese sistema la usa. Arrastrá cualquier nodo.',
         capUsedIn: 'sistemas',
         capAcademic: '— de formación, todavía sin sistema propio en producción.',
         capHint: 'Pasá por una capacidad para ver en qué sistemas se usa.',
@@ -102,8 +102,8 @@ const UI = {
         mapSystem: 'Sistema',
         mapHint: 'arrastrá cualquier nodo · clic para fijar · tocá un sistema para abrirlo',
         mapShuffle: 'REORDENAR',
-        mapIdle: 'Pasá por un nodo para leerlo. Las aristas salen del stack real de cada sistema, no de una lista escrita a mano.',
-        mapAria: 'Mapa de capacidades: las cuatro áreas, sus capacidades y los once sistemas que las usan. El mismo contenido está en texto debajo.',
+        mapIdle: 'Pasá por un nodo para leerlo. Las aristas salen del stack y de las prácticas de cada sistema.',
+        mapAria: 'Mapa de capacidades: las cuatro áreas, sus capacidades y los doce sistemas que las usan. El mismo contenido está en texto debajo.',
         mapAsList: 'Ver como lista',
 
         eduTitle: '// REGISTRO_ACADÉMICO',
@@ -111,9 +111,9 @@ const UI = {
         certLink: 'VER CERTIFICADO',
 
         // ---- Orbital ----
-        orbitTeaser: 'Y si llegaste hasta acá: los once sistemas están en la vista orbital, no solo los cinco de arriba.',
+        orbitTeaser: 'Y si llegaste hasta acá: los doce sistemas están en la vista orbital, no solo los cinco de arriba.',
         orbitBtn: 'INICIAR SECUENCIA ORBITAL',
-        orbitUnavailable: 'Tu equipo no tiene aceleración 3D, así que la vista orbital no puede abrirse. Los once proyectos se abren igual desde acá.',
+        orbitUnavailable: 'Tu equipo no tiene aceleración 3D, así que la vista orbital no puede abrirse. Los doce proyectos se abren igual desde acá.',
         orbitView: '// VISTA_ORBITAL',
         legendLive: 'EN PRODUCCIÓN',
         legendWeb: 'PUBLICADO',
@@ -148,9 +148,9 @@ const UI = {
         // ---- Projects ----
         projectsTitle: '// PROJECT_ARCHIVE',
         projectsLead:
-            'Eleven systems, built end to end. Below are the five that best show how I work: four in production, two of them for real businesses, and one published piece. Every figure comes from a measurement or a real count.',
+            'Twelve systems, built end to end. Below are the five that best show how I work: four in production, two of them for real businesses, and one published piece. Every figure comes from a measurement or a real count.',
         projectCta: 'OPEN',
-        moreInOrbit: 'The other six —the ones in progress and the archived ones— can be explored in the orbital view, together with these five.',
+        moreInOrbit: 'The other seven, the ones in progress and the archived ones, can be explored in the orbital view, together with these five.',
 
         statusPRODUCTION: 'IN PRODUCTION',
         statusDELIVERED: 'DELIVERED',
@@ -203,7 +203,7 @@ const UI = {
         catFRONTEND: 'FRONTEND',
         catTOOLS: 'INFRA & TOOLING',
 
-        skillsLead: 'Not a wish list. Every branch comes from the real stack of the eleven systems: if a capability connects to a system, that system uses it. Drag any node.',
+        skillsLead: 'Not a wish list. Every branch comes from what the twelve systems actually use: if a capability connects to a system, that system uses it. Drag any node.',
         capUsedIn: 'systems',
         capAcademic: '— from training, no system of my own in production yet.',
         capHint: 'Hover a capability to see which systems use it.',
@@ -213,8 +213,8 @@ const UI = {
         mapSystem: 'System',
         mapHint: 'drag any node · click to pin · tap a system to open it',
         mapShuffle: 'RESHUFFLE',
-        mapIdle: 'Hover a node to read it. The edges come from the real stack of each system, not from a hand-written list.',
-        mapAria: 'Capability map: the four areas, their capabilities and the eleven systems that use them. The same content is in text below.',
+        mapIdle: 'Hover a node to read it. The edges come from each system’s stack and practices.',
+        mapAria: 'Capability map: the four areas, their capabilities and the twelve systems that use them. The same content is in text below.',
         mapAsList: 'View as a list',
 
         eduTitle: '// EDUCATION_LOGS',
@@ -222,9 +222,9 @@ const UI = {
         certLink: 'VIEW CERTIFICATE',
 
         // ---- Orbital ----
-        orbitTeaser: 'And if you made it this far: all eleven systems live in the orbital view, not just the five above.',
+        orbitTeaser: 'And if you made it this far: all twelve systems live in the orbital view, not just the five above.',
         orbitBtn: 'INITIATE ORBIT SEQUENCE',
-        orbitUnavailable: 'Your machine has no 3D acceleration, so the orbital view cannot open. All eleven projects still open from here.',
+        orbitUnavailable: 'Your machine has no 3D acceleration, so the orbital view cannot open. All twelve projects still open from here.',
         orbitView: '// ORBIT_VIEW',
         legendLive: 'IN PRODUCTION',
         legendWeb: 'PUBLISHED',

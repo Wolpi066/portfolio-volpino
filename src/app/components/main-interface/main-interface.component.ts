@@ -49,7 +49,7 @@ export class MainInterfaceComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * En cuales de los once sistemas se usa esta capacidad.
+   * En cuales de los doce sistemas se usa esta capacidad.
    *
    * Se cruza contra el techStack real de cada proyecto en vez de escribirse a
    * mano, asi la matriz no puede desincronizarse del contenido. La
@@ -63,7 +63,7 @@ export class MainInterfaceComponent implements OnInit, OnDestroy {
     // Igualdad exacta entre tokens, no subcadenas: con subcadenas "JAVA"
     // matcheaba con "JavaScript", que es justo lo contrario de lo que dice.
     return this.data.projects()
-      .filter(p => p.techStack.some(tech => techTokens(tech).some(t => alts.includes(t))))
+      .filter(p => [...p.techStack, ...(p.practices ?? [])].some(tech => techTokens(tech).some(t => alts.includes(t))))
       .map(p => p.name);
   }
 

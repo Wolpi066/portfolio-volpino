@@ -27,7 +27,7 @@ const COL = {
  * MAPA DE CAPACIDADES
  *
  * Un grafo de fuerzas con tres niveles: las cuatro areas, las capacidades
- * que cuelgan de cada una, y los once sistemas. Una arista entre capacidad y
+ * que cuelgan de cada una, y los doce sistemas. Una arista entre capacidad y
  * sistema significa que ese sistema la usa de verdad — sale del techStack,
  * no de una lista escrita a mano.
  *
@@ -136,7 +136,7 @@ export class CapabilityMapComponent implements AfterViewInit, OnDestroy {
     // Indice de tokens por proyecto: se calcula una vez, no por comparacion.
     const projTokens = projects.map(p => ({
       id: 's:' + p.id,
-      tokens: new Set(p.techStack.flatMap(techTokens))
+      tokens: new Set([...p.techStack, ...(p.practices ?? [])].flatMap(techTokens))
     }));
 
     this.data.skills().forEach((s, i) => {
